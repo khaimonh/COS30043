@@ -1,5 +1,18 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import '../assets/styles/eventInformation.css'
+
+const events = ref([])
+
+onMounted(async () => {
+    try {
+        const response = await fetch('/events.txt')
+        const text = await response.text()
+        events.value = eval(text)
+    } catch (error) {
+        console.error('Error loading events:', error)
+    }
+})
 </script>
 
 <template>
@@ -170,11 +183,11 @@ import '../assets/styles/eventInformation.css'
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Loading...</td>
-                                        <td>Loading...</td>
-                                        <td>Loading...</td>
-                                        <td>Loading...</td>
+                                    <tr v-for="event in events" :key="event.eventid">
+                                        <td>{{ event.eventid }}</td>
+                                        <td>{{ event.eventname }}</td>
+                                        <td>{{ event.category }}</td>
+                                        <td>{{ event.durationhour }}</td>
                                     </tr>
                                 </tbody>
                             </table>
