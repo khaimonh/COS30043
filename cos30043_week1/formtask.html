@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>WAI Form Task</title>
+        <meta charset="utf-8" />
+        <meta name="language" content="english" />
+        <meta name="keywords" content="Accessibility,Lab,Tasks" />
+        <meta name="description" content="WAI Form Task" />
+    </head>
+    <body>
+        <h1>WAI Form Example</h1>
+        <form
+            method="post"
+            action="http://mercury.swin.edu.au/it000000/formtest.php"
+        >
+            <p>Contact Information</p>
+            <p>
+                <label for="cname">Name:</label>
+                <input type="text" name="cname" id="cname" />
+            </p>
+            <p>
+                <label for="cemail">E-mail Address:</label>
+                <input type="text" name="cemail" id="cemail" />
+            </p>
+            <p>
+                <label for="caddr">Mailing Address:</label><br />
+                <textarea name="caddr" id="caddr" rows="4" cols="40"></textarea>
+            </p>
+            <p>Credit Card Information</p>
+            <fieldset>
+                <legend>Credit Card Information</legend>
+                <p>
+                    <input type="radio" name="card" id="cvisa" value="visa" />
+                    <label for="cvisa">Visa</label>
+                    <input type="radio" name="card" id="cmc" value="mc" />
+                    <label for="cmc">MasterCard</label>
+                </p>
+                <p>
+                    <label for="cnumber">Number:</label>
+                    <input type="text" name="number" id="cnumber" />
+                </p>
+                <p>
+                    <label for="cexpiry">Expiry:</label>
+                    <input type="text" name="expiry" id="cexpiry" />
+                </p>
+            </fieldset>
+            <p>
+                <input type="submit" value="Submit order" />
+                <label for="clear-order">Clear order</label>
+                <input type="reset" id="clear-order" value="Clear order" />
+            </p>
+        </form>
+    </body>
+</html>

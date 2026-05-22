@@ -1,0 +1,77 @@
+#registration-form {
+    background: #f5f7fb;
+}
+
+#registration-form .page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    text-align: center;
+}
+
+#registration-form .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+#registration-form .form-card,
+#registration-form .summary-section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+#registration-form .form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+#registration-form .form-control,
+#registration-form .form-select {
+    border-radius: 8px;
+}
+
+#registration-form .category-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+#registration-form .category-option {
+    margin: 0;
+}
+
+#registration-form .confirm-password-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#registration-form .mismatch-message {
+    color: #dc2626;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+#registration-form .summary-section p {
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+@media (max-width: 576px) {
+    #registration-form .page-title {
+        font-size: 1.5rem;
+    }
+
+    #registration-form .form-card,
+    #registration-form .summary-section {
+        padding: 1rem;
+        border-radius: 10px;
+    }
+}
