@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import '../assets/styles/eventInformation.css'
 
 const events = ref([])
@@ -12,6 +12,21 @@ onMounted(async () => {
     } catch (error) {
         console.error('Error loading events:', error)
     }
+})
+
+const eventIdSearch = ref('')
+const eventNameSearch = ref('')
+const durationSearch = ref('')
+const selectedCategory = ref('All')
+const filteredEvents = computed(() => {
+    return events.value.filter(event => {
+        const matchesId = event.eventid.toLowerCase().includes(eventIdSearch.value.toLowerCase())
+        const matchesName = event.eventname.toLowerCase().includes(eventNameSearch.value.toLowerCase())
+        const matchesDuration = !durationSearch.value || event.durationhour.toString() === durationSearch.value
+        const matchesCategory = selectedCategory.value === 'All' || event.category === selectedCategory.value
+        
+        return matchesId && matchesName && matchesDuration && matchesCategory
+    })
 })
 </script>
 
@@ -40,6 +55,7 @@ onMounted(async () => {
                                         type="text"
                                         id="event-id-search"
                                         placeholder="Enter Event ID"
+                                        v-model="eventIdSearch"
                                     />
                                 </div>
                             </div>
@@ -54,6 +70,7 @@ onMounted(async () => {
                                         type="text"
                                         id="event-name-search"
                                         placeholder="Enter Event Name"
+                                        v-model="eventNameSearch"
                                     />
                                 </div>
                             </div>
@@ -68,6 +85,7 @@ onMounted(async () => {
                                         type="text"
                                         id="duration-search"
                                         placeholder="Enter Duration"
+                                        v-model="durationSearch"
                                     />
                                 </div>
                             </div>
@@ -88,22 +106,24 @@ onMounted(async () => {
                                         name="category"
                                         value="All"
                                         checked
-                                    />
-                                    <label
+                                        v-model="selectedCategory"
+                                        />
+                                        <label
                                         class="form-check-label"
                                         for="category-all"
                                         >All</label
-                                    >
-                                </div>
-                                <div
+                                        >
+                                    </div>
+                                    <div
                                     class="form-check form-check-inline radio-item"
-                                >
+                                    >
                                     <input
                                         class="form-check-input"
                                         type="radio"
                                         id="category-technology"
                                         name="category"
                                         value="Technology"
+                                        v-model="selectedCategory"
                                     />
                                     <label
                                         class="form-check-label"
@@ -120,6 +140,7 @@ onMounted(async () => {
                                         id="category-business"
                                         name="category"
                                         value="Business"
+                                        v-model="selectedCategory"
                                     />
                                     <label
                                         class="form-check-label"
@@ -136,6 +157,7 @@ onMounted(async () => {
                                         id="category-marketing"
                                         name="category"
                                         value="Marketing"
+                                        v-model="selectedCategory"
                                     />
                                     <label
                                         class="form-check-label"
@@ -152,6 +174,7 @@ onMounted(async () => {
                                         id="category-finance"
                                         name="category"
                                         value="Finance"
+                                        v-model="selectedCategory"
                                     />
                                     <label
                                         class="form-check-label"
@@ -183,7 +206,7 @@ onMounted(async () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="event in events" :key="event.eventid">
+                                    <tr v-for="event in filteredEvents" :key="event.eventid">
                                         <td>{{ event.eventid }}</td>
                                         <td>{{ event.eventname }}</td>
                                         <td>{{ event.category }}</td>
