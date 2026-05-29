@@ -5,7 +5,7 @@ import '../assets/styles/introduction.css'
 <template>
     <section id="splash-page">
         <div class="title">
-            <div class="logo">Event Management Page</div>
+            <div class="logo">EVENT MANAGEMENT PAGE</div>
         </div>
 
         <div class="background-photo">

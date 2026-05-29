@@ -1,74 +1,246 @@
+/* ============================================================
+   eventInformation.css — Elegant Design System
+   Typography: Google Sans | Palette: #3B82F6 primary, #111827 text
+   Grid: Bootstrap 5
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@100;200;300;400;500;600&family=Anonymous+Pro&display=swap');
+
+/* ── Design Tokens ────────────────────────────────────────── */
+:root {
+    --color-primary:      #3B82F6;
+    --color-primary-d:    #2563EB;
+    --color-primary-soft: #EFF6FF;
+    --color-secondary:    #8B5CF6;
+    --color-surface:      #FFFFFF;
+    --color-text:         #111827;
+    --color-text-muted:   #6B7280;
+    --color-border:       #E5E7EB;
+    --color-bg:           #F9FAFB;
+    --color-th-bg:        #EFF6FF;
+
+    --font-primary: 'Google Sans', sans-serif;
+    --font-mono:    'Anonymous Pro', monospace;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+
+    --shadow-card: 0 2px 8px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.04);
+
+    --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Page Wrapper ─────────────────────────────────────────── */
 #event-information {
-    background: #f5f7fb;
+    background-color: var(--color-bg);
+    font-family: var(--font-primary);
+    -webkit-font-smoothing: antialiased;
 }
 
+/* ── Page Title ───────────────────────────────────────────── */
 #event-information .page-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 300;
+    color: var(--color-text);
+    letter-spacing: -0.03em;
     text-align: center;
+    margin: 0;
+    line-height: 1.2;
 }
 
+/* ── Section Title ────────────────────────────────────────── */
 #event-information .section-title {
-    font-size: 1.25rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--color-text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     margin-bottom: 1rem;
 }
 
+/* ── Cards — Bootstrap .col children ─────────────────────── */
+/* Expected markup:
+   <div class="row g-3 g-md-4">
+     <div class="col-12 col-lg-4">
+       <div class="filter-section"> … </div>
+     </div>
+     <div class="col-12 col-lg-8">
+       <div class="events-table-section"> … </div>
+     </div>
+   </div>
+*/
 #event-information .filter-section,
 #event-information .events-table-section {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-card);
+    height: 100%;
 }
 
+/* ── Filter Inputs ────────────────────────────────────────── */
 #event-information .input-group-custom {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.375rem;
 }
 
 #event-information .input-group-custom label,
 #event-information .category-label {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #374151;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text);
+    letter-spacing: 0.01em;
     margin: 0;
 }
 
 #event-information .form-control {
-    border-radius: 8px;
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    font-weight: 300;
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem 0.75rem;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    -webkit-font-smoothing: antialiased;
 }
 
+#event-information .form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    background-color: var(--color-surface);
+}
+
+#event-information .form-control::placeholder {
+    color: var(--color-text-muted);
+    font-weight: 300;
+}
+
+/* ── Radio Group ──────────────────────────────────────────── */
 #event-information .radio-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    gap: 0.5rem;
 }
 
 #event-information .radio-item {
     margin: 0;
 }
 
-#event-information #events-table thead th {
-    background: #eef2ff;
-    color: #1f2937;
-    font-weight: 600;
-    white-space: nowrap;
+/* Style radio inputs as pill toggles */
+#event-information .radio-item input[type="radio"] {
+    display: none;
 }
 
-@media (max-width: 576px) {
+#event-information .radio-item label {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all var(--transition);
+    user-select: none;
+}
+
+#event-information .radio-item input[type="radio"]:checked + label {
+    color: var(--color-primary);
+    background-color: var(--color-primary-soft);
+    border-color: rgba(59, 130, 246, 0.4);
+    font-weight: 600;
+}
+
+#event-information .radio-item label:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+/* ── Events Table ─────────────────────────────────────────── */
+#event-information #events-table {
+    font-family: var(--font-primary);
+    font-size: 0.875rem;
+    color: var(--color-text);
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#event-information #events-table thead th {
+    background-color: var(--color-th-bg);
+    color: var(--color-text);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.18);
+}
+
+#event-information #events-table thead th:first-child {
+    border-top-left-radius: var(--radius-sm);
+}
+
+#event-information #events-table thead th:last-child {
+    border-top-right-radius: var(--radius-sm);
+}
+
+#event-information #events-table tbody tr {
+    transition: background-color var(--transition);
+}
+
+#event-information #events-table tbody tr:hover {
+    background-color: var(--color-bg);
+}
+
+#event-information #events-table tbody td {
+    padding: 0.75rem 1rem;
+    color: var(--color-text);
+    font-weight: 300;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+#event-information #events-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 575.98px) {
     #event-information .page-title {
-        font-size: 1.5rem;
+        font-size: 1.375rem;
     }
 
     #event-information .filter-section,
     #event-information .events-table-section {
-        padding: 1rem;
-        border-radius: 10px;
+        padding: 1.25rem;
+        border-radius: var(--radius-md);
+    }
+
+    #event-information #events-table thead th,
+    #event-information #events-table tbody td {
+        padding: 0.625rem 0.75rem;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (min-width: 992px) {
+    #event-information .page-title {
+        font-size: 2rem;
+    }
+
+    #event-information .filter-section,
+    #event-information .events-table-section {
+        padding: 1.75rem;
     }
 }
