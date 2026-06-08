@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Number Guessing Game</title>
+        <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f0f0f0;
+                padding: 20px;
+                margin: 0;
+            }
+
+            #app {
+                background: white;
+                padding: 20px;
+                max-width: 400px;
+                margin: 0 auto;
+                border: 1px solid #ccc;
+            }
+
+            h1 {
+                text-align: center;
+                color: #333;
+            }
+
+            .game-container {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .input-section {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            label {
+                font-weight: bold;
+                color: #333;
+            }
+
+            input[type='number'] {
+                padding: 8px;
+                border: 1px solid #999;
+                font-size: 16px;
+            }
+
+            .message-section {
+                background: #f9f9f9;
+                padding: 15px;
+                text-align: center;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #ddd;
+            }
+
+            .message {
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .message.success {
+                color: green;
+            }
+
+            .message.hint {
+                color: blue;
+            }
+
+            .message.initial {
+                color: #666;
+            }
+
+            .message.revealed {
+                color: red;
+            }
+
+            .buttons-section {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 8px;
+            }
+
+            button {
+                padding: 10px;
+                border: 1px solid #999;
+                background-color: #e0e0e0;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            .info-text {
+                text-align: center;
+                color: #666;
+                font-size: 12px;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <h1>Number Guessing Game</h1>
+
+            <div class="game-container">
+                <div class="input-section">
+                    <label for="guessInput">Enter your guess (1-100):</label>
+                    <input
+                        type="number"
+                        id="guessInput"
+                        v-model.number="guess"
+                        placeholder="Enter a number"
+                        :disabled="gameOver && message.includes('got it')"
+                        @keyup.enter="checkGuess"
+                        min="1"
+                        max="100"
+                    />
+                </div>
+
+                <div class="message-section">
+                    <div class="message" :class="getMessageClass()">
+                        {{ message }}
+                    </div>
+                </div>
+
+                <div class="buttons-section">
+                    <button
+                        class="btn-check"
+                        @click="checkGuess"
+                        :disabled="!guess || (gameOver && message.includes('got it'))"
+                    >
+                        Check Guess
+                    </button>
+                    <button
+                        class="btn-giveup"
+                        @click="giveUp"
+                        :disabled="gameOver"
+                    >
+                        Give Up
+                    </button>
+                    <button class="btn-startover" @click="startOver">
+                        Start Over
+                    </button>
+                </div>
+
+                <p class="info-text">
+                    Try to guess the number I'm thinking of!
+                </p>
+            </div>
+        </div>
+
+        <script>
+            const { createApp } = Vue
+
+            createApp({
+                data() {
+                    return {
+                        numberToGuess: null,
+                        guess: null,
+                        message: 'Start guessing',
+                        gameOver: false,
+                    }
+                },
+                methods: {
+                    generateRandomNumber() {
+                        this.numberToGuess = Math.floor(Math.random() * 100) + 1
+                    },
+                    checkGuess() {
+                        if (!this.guess) {
+                            this.message = 'Please enter a number!'
+                            return
+                        }
+
+                        if (this.guess === this.numberToGuess) {
+                            this.message = 'You got it!'
+                            this.gameOver = true
+                        } else if (this.guess < this.numberToGuess) {
+                            this.message = 'Guess higher'
+                        } else {
+                            this.message = 'Guess lower'
+                        }
+                    },
+                    giveUp() {
+                        this.message = `The number was ${this.numberToGuess}`
+                        this.gameOver = true
+                    },
+                    startOver() {
+                        this.generateRandomNumber()
+                        this.guess = null
+                        this.message = 'Start guessing'
+                        this.gameOver = false
+                    },
+                    getMessageClass() {
+                        if (this.message.includes('got it')) {
+                            return 'success'
+                        } else if (
+                            this.message.includes('higher') ||
+                            this.message.includes('lower')
+                        ) {
+                            return 'hint'
+                        } else if (this.message.includes('was')) {
+                            return 'revealed'
+                        } else {
+                            return 'initial'
+                        }
+                    },
+                },
+                mounted() {
+                    this.generateRandomNumber()
+                },
+            }).mount('#app')
+        </script>
+    </body>
+</html>
