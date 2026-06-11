@@ -6,7 +6,7 @@ const events = ref([])
 
 onMounted(async () => {
     try {
-        const response = await fetch('/events.txt')
+        const response = await fetch('../../events.txt')
         const text = await response.text()
         events.value = eval(text)
     } catch (error) {
