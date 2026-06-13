@@ -27,18 +27,14 @@
     --radius-lg: 16px;
 
     --shadow-card: 0 2px 8px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.04);
-
-    --transition: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ── Page Wrapper ─────────────────────────────────────────── */
 #event-information {
     background-color: var(--color-bg);
     font-family: var(--font-primary);
     -webkit-font-smoothing: antialiased;
 }
 
-/* ── Page Title ───────────────────────────────────────────── */
 #event-information .page-title {
     font-size: 1.75rem;
     font-weight: 300;
@@ -49,7 +45,6 @@
     line-height: 1.2;
 }
 
-/* ── Section Title ────────────────────────────────────────── */
 #event-information .section-title {
     font-size: 0.8125rem;
     font-weight: 600;
@@ -59,17 +54,6 @@
     margin-bottom: 1rem;
 }
 
-/* ── Cards — Bootstrap .col children ─────────────────────── */
-/* Expected markup:
-   <div class="row g-3 g-md-4">
-     <div class="col-12 col-lg-4">
-       <div class="filter-section"> … </div>
-     </div>
-     <div class="col-12 col-lg-8">
-       <div class="events-table-section"> … </div>
-     </div>
-   </div>
-*/
 #event-information .filter-section,
 #event-information .events-table-section {
     background-color: var(--color-surface);
@@ -80,7 +64,6 @@
     height: 100%;
 }
 
-/* ── Filter Inputs ────────────────────────────────────────── */
 #event-information .input-group-custom {
     display: flex;
     flex-direction: column;
@@ -121,7 +104,6 @@
     font-weight: 300;
 }
 
-/* ── Radio Group ──────────────────────────────────────────── */
 #event-information .radio-group {
     display: flex;
     flex-wrap: wrap;
@@ -132,7 +114,6 @@
     margin: 0;
 }
 
-/* Style radio inputs as pill toggles */
 #event-information .radio-item input[type="radio"] {
     display: none;
 }
@@ -165,7 +146,6 @@
     color: var(--color-primary);
 }
 
-/* ── Events Table ─────────────────────────────────────────── */
 #event-information #events-table {
     font-family: var(--font-primary);
     font-size: 0.875rem;
@@ -215,7 +195,6 @@
     border-bottom: none;
 }
 
-/* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 575.98px) {
     #event-information .page-title {
         font-size: 1.375rem;
