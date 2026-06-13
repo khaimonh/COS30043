@@ -59,13 +59,13 @@ const canShowSummary = computed(() => {
         <div class="container py-5">
             <div class="row mb-4">
                 <div class="col-12">
-                    <h1 class="page-title">Registration Form</h1>
+                    <h2 class="page-title">Registration Form</h2>
                 </div>
             </div>
 
             <div class="row g-4">
                 <div class="col-12">
-                    <div class="form-card">
+                    <div class="form-card" aria-live="polite" aria-relevant="additions text">
                         <h2 class="section-title">User Details</h2>
 
                         <div class="row g-3 form-layout">
@@ -113,9 +113,11 @@ const canShowSummary = computed(() => {
                                             type="password"
                                             class="form-control"
                                             placeholder="Confirm password"
+                                            :aria-describedby="showPasswordMismatch ? 'password-error' : null"
                                         />
                                         <span
                                             v-if="showPasswordMismatch"
+                                            id="password-error"
                                             class="mismatch-message"
                                         >
                                             Passwords do not match.
@@ -126,27 +128,27 @@ const canShowSummary = computed(() => {
 
                             <div class="col-12">
                                 <div class="form-group">
-                                    <p class="form-label mb-2">
-                                        Event Category
-                                    </p>
-                                    <div class="category-options">
-                                        <label
-                                            v-for="category in categories"
-                                            :key="category"
-                                            class="category-option form-check form-check-inline"
-                                        >
-                                            <input
-                                                v-model="selectedCategory"
-                                                type="radio"
-                                                name="event-category"
-                                                class="form-check-input"
-                                                :value="category"
-                                            />
-                                            <span class="form-check-label">{{
-                                                category
-                                            }}</span>
-                                        </label>
-                                    </div>
+                                    <fieldset>
+                                        <legend class="form-label mb-2">Event Category</legend>
+                                        <div class="category-options">
+                                            <label
+                                                v-for="category in categories"
+                                                :key="category"
+                                                class="category-option form-check form-check-inline"
+                                            >
+                                                <input
+                                                    v-model="selectedCategory"
+                                                    type="radio"
+                                                    name="event-category"
+                                                    class="form-check-input"
+                                                    :value="category"
+                                                />
+                                                <span class="form-check-label">{{
+                                                    category
+                                                }}</span>
+                                            </label>
+                                        </div>
+                                    </fieldset>
                                 </div>
                             </div>
 

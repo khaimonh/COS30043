@@ -31,7 +31,9 @@ import '../assets/styles/introduction.css'
             <div class="row g-4">
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="feature-item">
-                        <div class="feature-icon">📅</div>
+                        <div class="feature-icon" aria-label="Easy Scheduling">
+                            📅
+                        </div>
                         <h3>Easy Scheduling</h3>
                         <p>
                             Streamline your event planning with our intuitive
@@ -41,7 +43,9 @@ import '../assets/styles/introduction.css'
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="feature-item">
-                        <div class="feature-icon">👥</div>
+                        <div class="feature-icon" aria-label="Guest Management">
+                            👥
+                        </div>
                         <h3>Guest Management</h3>
                         <p>
                             Effortlessly manage guest lists, RSVPs, and attendee
@@ -51,7 +55,9 @@ import '../assets/styles/introduction.css'
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="feature-item">
-                        <div class="feature-icon">💰</div>
+                        <div class="feature-icon" aria-label="Budget Tracking">
+                            💰
+                        </div>
                         <h3>Budget Tracking</h3>
                         <p>
                             Keep your event finances under control with
@@ -61,7 +67,12 @@ import '../assets/styles/introduction.css'
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="feature-item">
-                        <div class="feature-icon">📊</div>
+                        <div
+                            class="feature-icon"
+                            aria-label="Analytics & Reports"
+                        >
+                            📊
+                        </div>
                         <h3>Analytics & Reports</h3>
                         <p>
                             Gain valuable insights into your events with
@@ -71,7 +82,12 @@ import '../assets/styles/introduction.css'
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="feature-item">
-                        <div class="feature-icon">🔒</div>
+                        <div
+                            class="feature-icon"
+                            aria-label="Secure & Reliable"
+                        >
+                            🔒
+                        </div>
                         <h3>Secure & Reliable</h3>
                         <p>
                             Your data is protected with enterprise-grade
@@ -81,7 +97,9 @@ import '../assets/styles/introduction.css'
                 </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="feature-item">
-                        <div class="feature-icon">⚡</div>
+                        <div class="feature-icon" aria-label="24/7 Support">
+                            ⚡
+                        </div>
                         <h3>24/7 Support</h3>
                         <p>
                             Get round-the-clock customer support to help you

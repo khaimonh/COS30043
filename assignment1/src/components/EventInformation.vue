@@ -35,7 +35,7 @@ const filteredEvents = computed(() => {
         <div class="container py-5">
             <div class="row mb-4">
                 <div class="col-12">
-                    <h1 class="page-title">Event Information</h1>
+                    <h2 class="page-title">Event Information</h2>
                 </div>
             </div>
 
@@ -92,10 +92,9 @@ const filteredEvents = computed(() => {
                         </div>
 
                         <div class="filter-category mt-4">
-                            <p class="category-label mb-2">
-                                Filter by Category
-                            </p>
-                            <div class="radio-group">
+                            <fieldset>
+                                <legend class="category-label mb-2">Filter by Category</legend>
+                                <div class="radio-group">
                                 <div
                                     class="form-check form-check-inline radio-item"
                                 >
@@ -183,6 +182,7 @@ const filteredEvents = computed(() => {
                                     >
                                 </div>
                             </div>
+                            </fieldset>
                         </div>
                     </div>
                 </div>
@@ -199,10 +199,10 @@ const filteredEvents = computed(() => {
                             >
                                 <thead>
                                     <tr>
-                                        <th>Event ID</th>
-                                        <th>Event Name</th>
-                                        <th>Category</th>
-                                        <th>Duration Hours</th>
+                                        <th scope="col">Event ID</th>
+                                        <th scope="col">Event Name</th>
+                                        <th scope="col">Category</th>
+                                        <th scope="col">Duration Hours</th>
                                     </tr>
                                 </thead>
                                 <tbody>
