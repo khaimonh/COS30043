@@ -1,12 +1,5 @@
-/* ============================================================
-   eventInformation.css — Elegant Design System
-   Typography: Google Sans | Palette: #3B82F6 primary, #111827 text
-   Grid: Bootstrap 5
-   ============================================================ */
-
 @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@100;200;300;400;500;600&family=Anonymous+Pro&display=swap');
 
-/* ── Design Tokens ────────────────────────────────────────── */
 :root {
     --color-primary:      #3B82F6;
     --color-primary-d:    #2563EB;
@@ -30,7 +23,7 @@
 }
 
 #event-information {
-    background-color: var(--color-bg);
+    background: linear-gradient(135deg, #f6fbff 0%, #f5fff6 100%);
     font-family: var(--font-primary);
     -webkit-font-smoothing: antialiased;
 }
@@ -41,7 +34,11 @@
     color: var(--color-text);
     letter-spacing: -0.03em;
     text-align: center;
-    margin: 0;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, var(--color-accent-indigo) 0%, var(--color-accent-pink) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1.2;
 }
 
@@ -57,7 +54,7 @@
 #event-information .filter-section,
 #event-information .events-table-section {
     background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
+    border: 2px solid var(--color-primary);
     border-radius: var(--radius-lg);
     padding: 1.5rem;
     box-shadow: var(--shadow-card);
