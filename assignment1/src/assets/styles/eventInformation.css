@@ -156,7 +156,7 @@
 }
 
 #event-information #events-table thead th {
-    background-color: var(--color-th-bg);
+    background: linear-gradient(135deg, var(--color-primary-soft) 0%, rgba(6, 182, 212, 0.08) 100%);
     color: var(--color-text);
     font-size: 0.75rem;
     font-weight: 600;
@@ -164,7 +164,7 @@
     text-transform: uppercase;
     padding: 0.75rem 1rem;
     white-space: nowrap;
-    border-bottom: 1px solid rgba(59, 130, 246, 0.18);
+    border-bottom: 2px solid var(--color-primary);
 }
 
 #event-information #events-table thead th:first-child {
@@ -176,11 +176,13 @@
 }
 
 #event-information #events-table tbody tr {
-    transition: background-color var(--transition);
+    transition: all var(--transition);
+    border-bottom: 1px solid var(--color-border);
 }
 
 #event-information #events-table tbody tr:hover {
-    background-color: var(--color-bg);
+    background-color: rgba(6, 182, 212, 0.05);
+    border-left: 3px solid var(--color-accent-emerald);
 }
 
 #event-information #events-table tbody td {

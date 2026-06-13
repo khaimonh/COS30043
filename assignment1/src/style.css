@@ -1,0 +1,63 @@
+:root {
+    --color-primary: #3b82f6;
+    --color-primary-d: #2563eb;
+    --color-secondary: #8b5cf6;
+    --color-accent-teal: #06b6d4;
+    --color-accent-orange: #f97316;
+    --color-accent-pink: #ec4899;
+    --color-accent-amber: #f59e0b;
+    --color-accent-emerald: #10b981;
+    --color-accent-indigo: #6366f1;
+    --color-surface: #ffffff;
+    --color-text: #111827;
+    --color-text-muted: #6b7280;
+    --color-border: #e5e7eb;
+    --color-bg: #f9fafb;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-teal) 100%);
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    z-index: 100;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s ease;
+}
+
+.skip-link:focus {
+    top: 16px;
+    left: 16px;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-teal) 100%);
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--color-primary-d) 0%, var(--color-accent-emerald) 100%);
+}
+
+/* Selection */
+::selection {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-pink) 100%);
+    color: white;
+}

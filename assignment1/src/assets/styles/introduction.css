@@ -5,6 +5,12 @@
     --color-primary: #3b82f6;
     --color-primary-d: #2563eb;
     --color-secondary: #8b5cf6;
+    --color-accent-teal: #06b6d4;
+    --color-accent-orange: #f97316;
+    --color-accent-pink: #ec4899;
+    --color-accent-amber: #f59e0b;
+    --color-accent-emerald: #10b981;
+    --color-accent-indigo: #6366f1;
     --color-surface: #ffffff;
     --color-text: #111827;
     --color-text-muted: #6b7280;
@@ -143,8 +149,8 @@ body {
 
 #about-us {
     display: none; /* toggled by JS */
-    background-color: var(--color-surface);
-    border-top: 1px solid var(--color-border);
+    background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+    border-top: 4px solid var(--color-primary);
 }
 
 #about-us .container,
@@ -171,8 +177,8 @@ body {
 }
 
 #why-choose-us {
-    background-color: var(--color-bg);
-    border-top: 1px solid var(--color-border);
+    background: linear-gradient(180deg, #fafafa 0%, #f3f4f6 100%);
+    border-top: 4px solid var(--color-border);
 }
 
 #why-choose-us .container,
@@ -194,7 +200,8 @@ body {
     height: 100%;
     padding: 2rem 1.5rem;
     background-color: var(--color-surface);
-    border: 1px solid var(--color-border);
+    border: 2px solid var(--color-border);
+    border-left: 4px solid var(--color-primary);
     border-radius: var(--radius-lg);
     display: flex;
     flex-direction: column;
@@ -204,20 +211,47 @@ body {
     transition:
         transform var(--transition),
         box-shadow var(--transition),
-        border-color var(--transition);
+        border-color var(--transition),
+        border-left-color var(--transition),
+        background-color var(--transition);
+}
+
+.feature-item:nth-child(1) {
+    border-left-color: var(--color-accent-teal);
+}
+
+.feature-item:nth-child(2) {
+    border-left-color: var(--color-accent-orange);
+}
+
+.feature-item:nth-child(3) {
+    border-left-color: var(--color-accent-pink);
+}
+
+.feature-item:nth-child(4) {
+    border-left-color: var(--color-accent-amber);
+}
+
+.feature-item:nth-child(5) {
+    border-left-color: var(--color-accent-emerald);
+}
+
+.feature-item:nth-child(6) {
+    border-left-color: var(--color-accent-indigo);
 }
 
 .feature-item:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: rgba(59, 130, 246, 0.25);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    background-color: var(--color-bg);
 }
 
 .feature-icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     line-height: 1;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
     flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.05));
 }
 
 .feature-item h3 {
