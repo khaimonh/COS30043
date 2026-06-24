@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 6.1: My Registration Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+</head>
+<body class="bg-light">
+
+<div id="app" class="container mt-5 mb-5">
+    <div class="card shadow-sm max-w-lg mx-auto" style="max-width: 800px;">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Registration Form</h3>
+        </div>
+        <div class="card-body">
+            
+            <form @submit.prevent="submitForm" novalidate>
+                
+                <fieldset class="border p-3 rounded mb-4">
+                    <legend class="w-auto px-2 fs-5">Personal Details</legend>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="firstName" class="form-label">First Name *</label>
+                            <input type="text" id="firstName" v-model="form.firstName" class="form-control" :class="{'is-invalid': errors.firstName}">
+                            <div class="invalid-feedback">{{ errors.firstName }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastName" class="form-label">Last Name *</label>
+                            <input type="text" id="lastName" v-model="form.lastName" class="form-control" :class="{'is-invalid': errors.lastName}">
+                            <div class="invalid-feedback">{{ errors.lastName }}</div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 rounded mb-4">
+                    <legend class="w-auto px-2 fs-5">Account Details</legend>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username *</label>
+                        <input type="text" id="username" v-model="form.username" class="form-control" :class="{'is-invalid': errors.username}">
+                        <div class="invalid-feedback">{{ errors.username }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Password *</label>
+                            <input type="password" id="password" v-model="form.password" class="form-control" :class="{'is-invalid': errors.password}">
+                            <div class="invalid-feedback">{{ errors.password }}</div>
+                            <small class="text-muted" v-if="!errors.password">Min 8 chars, including one of: $ % ^ & *</small>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                            <input type="password" id="confirmPassword" v-model="form.confirmPassword" class="form-control" :class="{'is-invalid': errors.confirmPassword}">
+                            <div class="invalid-feedback">{{ errors.confirmPassword }}</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" id="email" v-model="form.email" class="form-control" :class="{'is-invalid': errors.email}">
+                        <div class="invalid-feedback">{{ errors.email }}</div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-3 rounded mb-4">
+                    <legend class="w-auto px-2 fs-5">Contact Details</legend>
+                    <div class="mb-3">
+                        <label for="street" class="form-label">Street Address</label>
+                        <input type="text" id="street" v-model="form.street" class="form-control" :class="{'is-invalid': errors.street}">
+                        <div class="invalid-feedback">{{ errors.street }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="suburb" class="form-label">Suburb</label>
+                            <input type="text" id="suburb" v-model="form.suburb" class="form-control" :class="{'is-invalid': errors.suburb}">
+                            <div class="invalid-feedback">{{ errors.suburb }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="postcode" class="form-label">Postcode *</label>
+                            <input type="text" id="postcode" v-model="form.postcode" class="form-control" :class="{'is-invalid': errors.postcode}">
+                            <div class="invalid-feedback">{{ errors.postcode }}</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="text" id="mobile" v-model="form.mobile" class="form-control" :class="{'is-invalid': errors.mobile}">
+                        <div class="invalid-feedback">{{ errors.mobile }}</div>
+                    </div>
+                </fieldset>
+
+                <div class="mb-4">
+                    <button type="button" class="btn btn-secondary btn-sm mb-2" @click="toggleTerms">
+                        {{ showTerms ? 'Hide' : 'Show' }} Terms and Conditions
+                    </button>
+                    <div v-show="showTerms" class="terms-box rounded">
+                        <strong>Terms and Conditions:</strong> By registering, you agree that this is a simulated form for educational purposes. All data entered remains local to your browser and is not actually sent to any external server. 
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Submit Registration</button>
+                </div>
+
+                <div v-if="submitSuccess" class="alert alert-success mt-4">
+                    Registration successful! Form data is ready to be sent to the server.
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const { createApp } = Vue;
+
+    createApp({
+        data() {
+            return {
+                form: {
+                    firstName: '',
+                    lastName: '',
+                    username: '',
+                    password: '',
+                    confirmPassword: '',
+                    email: '',
+                    street: '',
+                    suburb: '',
+                    postcode: '',
+                    mobile: ''
+                },
+                errors: {},
+                showTerms: false,
+                submitSuccess: false
+            }
+        },
+        methods: {
+            toggleTerms() {
+                this.showTerms = !this.showTerms;
+            },
+            validateForm() {
+                this.errors = {}; // Reset errors on every validation run
+
+                const lettersOnlyRegex = /^[A-Za-z]+$/;
+                if (!this.form.firstName) {
+                    this.errors.firstName = "First name is required.";
+                } else if (!lettersOnlyRegex.test(this.form.firstName)) {
+                    this.errors.firstName = "First name must contain letters only.";
+                }
+
+                if (!this.form.lastName) {
+                    this.errors.lastName = "Last name is required.";
+                } else if (!lettersOnlyRegex.test(this.form.lastName)) {
+                    this.errors.lastName = "Last name must contain letters only.";
+                }
+
+                if (!this.form.username) {
+                    this.errors.username = "Username is required.";
+                } else if (this.form.username.length < 3) {
+                    this.errors.username = "Username must be at least 3 characters long.";
+                }
+
+                const specialCharRegex = /[$%^&*]/;
+                if (!this.form.password) {
+                    this.errors.password = "Password is required.";
+                } else if (this.form.password.length < 8) {
+                    this.errors.password = "Password must be at least 8 characters.";
+                } else if (!specialCharRegex.test(this.form.password)) {
+                    this.errors.password = "Password must contain at least one special character ($, %, ^, &, *).";
+                }
+
+                if (this.form.password !== this.form.confirmPassword) {
+                    this.errors.confirmPassword = "Passwords do not match.";
+                }
+
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!this.form.email) {
+                    this.errors.email = "Email is required.";
+                } else if (!emailRegex.test(this.form.email)) {
+                    this.errors.email = "Please enter a valid email address.";
+                }
+
+                if (this.form.street && this.form.street.length > 40) {
+                    this.errors.street = "Street address cannot exceed 40 characters.";
+                }
+
+                if (this.form.suburb && this.form.suburb.length > 20) {
+                    this.errors.suburb = "Suburb cannot exceed 20 characters.";
+                }
+
+                const postcodeRegex = /^\d{4}$/;
+                if (!this.form.postcode) {
+                    this.errors.postcode = "Postcode is required.";
+                } else if (!postcodeRegex.test(this.form.postcode)) {
+                    this.errors.postcode = "Postcode must be exactly 4 numeric digits.";
+                }
+
+                const mobileRegex = /^04\d{8}$/;
+                if (this.form.mobile && !mobileRegex.test(this.form.mobile)) {
+                    this.errors.mobile = "Mobile number must be 10 digits and start with 04.";
+                }
+
+                return Object.keys(this.errors).length === 0;
+            },
+            submitForm() {
+                this.submitSuccess = false; // Reset success message
+                
+                if (this.validateForm()) {
+                    this.submitSuccess = true;
+                    console.log("Form payload to send to server:", JSON.parse(JSON.stringify(this.form)));
+                } else {
+                    console.log("Form has errors, preventing submission.");
+                }
+            }
+        }
+    }).mount('#app')
+</script>
+
+</body>
+</html>
