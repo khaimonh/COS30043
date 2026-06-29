@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import JobList from './components/JobList.vue'
 import JobDetail from './components/JobDetail.vue'
 import JobOverview from './components/JobOverview.vue'
+import Explorer from './components/Explorer.vue'
+import ToDoList from './components/ToDoList.vue'
 
 const routes = [
     {
@@ -13,12 +15,22 @@ const routes = [
         path: '/job/:id',
         name: 'JobDetail',
         component: JobDetail,
-        props: true, // Allow passing params as props
+        props: true,
     },
     {
         path: '/overview',
         name: 'JobOverview',
         component: JobOverview,
+    },
+    {
+        path: '/explorer',
+        name: 'Explorer',
+        component: Explorer,
+    },
+    {
+        path: '/todo',
+        name: 'ToDoList',
+        component: ToDoList,
     },
 ]
 
