@@ -1,48 +1,7 @@
 <template>
-  <div class="explorer-container">
-    <h2>File & Resource Explorer</h2>
-    <div class="explorer-layout">
-      <div class="sidebar">
-        <div v-for="folder in folders" :key="folder.name" class="folder">
-          <span class="folder-header" @click="toggleFolder(folder.name)">
-            📁 {{ folder.name }}
-          </span>
-          <div v-if="activeFolder === folder.name" class="files">
-            <div v-for="file in folder.files" :key="file" class="file">
-              📄 {{ file }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="preview">
-        <div v-if="selectedFile" class="file-content">
-          <h3>Viewing: {{ selectedFile }}</h3>
-          <p>Content for {{ selectedFile }} would be loaded here.</p>
-        </div>
-        <div v-else class="placeholder">
-          Select a file to preview its content.
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-
-const activeFolder = ref(null);
-const selectedFile = ref(null);
-
-const folders = [
-  { name: 'src', files: ['App.vue', 'main.js', 'router.js'] },
-  { name: 'components', files: ['JobList.vue', 'JobDetail.vue', 'Overview.vue'] },
-  { name: 'data', files: ['jobs.json'] },
-  { name: 'assets', files: ['logo.png', 'style.css'] },
-];
-
-const toggleFolder = (name) => {
-  activeFolder.value = activeFolder.value === name ? null : name;
-};
 </script>
 
 <style scoped>
