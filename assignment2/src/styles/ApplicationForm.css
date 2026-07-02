@@ -1,0 +1,69 @@
+.application-form-container {
+  padding: var(--section-padding);
+}
+
+.form-wrapper {
+  background: var(--paper-base);
+}
+
+fieldset {
+  border: 1px solid var(--ink-deep);
+  margin-bottom: 3rem;
+  padding: 2rem;
+}
+
+legend {
+  font-family: var(--font-display);
+  font-weight: bold;
+  padding: 0 0.5rem;
+}
+
+label {
+  display: block;
+  margin-top: 1.5rem;
+  font-weight: bold;
+  font-family: var(--font-utility);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  border-bottom: 1px solid var(--ink-deep);
+  background: transparent;
+  font-family: var(--font-body);
+  margin-bottom: 0.5rem;
+}
+
+input:focus {
+  outline: none;
+  background: var(--highlight);
+}
+
+.error {
+  color: var(--accent-red);
+  font-family: var(--font-utility);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+button[type="submit"] {
+  background: var(--ink-deep);
+  color: var(--paper-base);
+  border: none;
+  padding: 1rem 3rem;
+  font-family: var(--font-display);
+  cursor: pointer;
+  text-transform: uppercase;
+  margin-top: 2rem;
+}
+
+button[type="submit"]:hover {
+  background: var(--accent-red);
+}

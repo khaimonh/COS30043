@@ -4,6 +4,7 @@ import JobDetail from './components/JobDetail.vue'
 import JobOverview from './components/JobOverview.vue'
 import Explorer from './components/Explorer.vue'
 import ToDoList from './components/ToDoList.vue'
+import ApplicationForm from './components/ApplicationForm.vue'
 
 const routes = [
     {
@@ -31,6 +32,11 @@ const routes = [
         path: '/todo',
         name: 'ToDoList',
         component: ToDoList,
+    },
+    {
+        path: '/application-form',
+        name: 'ApplicationForm',
+        component: ApplicationForm,
     },
 ]
 
