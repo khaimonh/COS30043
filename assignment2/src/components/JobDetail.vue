@@ -51,7 +51,7 @@ const job = computed(() => {
 </script>
 
 <style scoped>
-.job-detail-container {
+/* .job-detail-container {
   max-width: 800px;
   margin: 2rem auto;
   font-family: sans-serif;
@@ -94,5 +94,5 @@ section {
 .error-msg {
   text-align: center;
   margin-top: 3rem;
-}
+} */
 </style>
