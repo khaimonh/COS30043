@@ -1,72 +1,61 @@
 <template>
-  <div class="job-detail-container container">
-    <div class="row">
-      <div class="col-12 col-md-10 offset-md-1">
-        <div v-if="job" class="job-card">
-          <h1 class="display-text">{{ job.job_title }}</h1>
-          <div class="row job-meta">
-            <div class="col-4">
-              <p><strong>ID:</strong> {{ job.job_id }}</p>
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10">
+        <div v-if="job" class="row g-4">
+          <!-- Main Detail Cell -->
+          <div class="col-12 col-md-8">
+            <div class="bento-cell p-4 h-100">
+              <h1 class="display-text mb-4">{{ job.job_title }}</h1>
+              <p class="lead text-muted-bento mb-5">{{ job.job_description }}</p>
+              
+              <h3 class="h5 mb-4">Technical Requirements</h3>
+              <div class="row g-3">
+                <div v-for="skill in job.required_skills" :key="skill" class="col-6 col-sm-4">
+                  <div class="p-2 rounded-3 border border-secondary text-center small bg-dark">
+                    {{ skill }}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="col-4">
-              <p><strong>Company:</strong> {{ job.company }}</p>
-            </div>
-            <div class="col-4">
-              <p><strong>Location:</strong> {{ job.location }}</p>
+          </div>
+
+          <!-- Info Sidebar Cell -->
+          <div class="col-12 col-md-4">
+            <div class="bento-cell bento-cell-alt p-4 h-100">
+              <h3 class="h6 text-dim mb-4">Role Metadata</h3>
+              
+              <div class="mb-4">
+                <label class="small text-dim d-block mb-1">Organization</label>
+                <span class="fw-bold">{{ job.company }}</span>
+              </div>
+              <div class="mb-4">
+                <label class="small text-dim d-block mb-1">Location</label>
+                <span class="fw-bold">{{ job.location }}</span>
+              </div>
+              <div class="mb-4">
+                <label class="small text-dim d-block mb-1">Expected Salary</label>
+                <span class="fw-bold">{{ job.salary_range }}</span>
+              </div>
+              <div class="mb-4">
+                <label class="small text-dim d-block mb-1">Employment Type</label>
+                <span class="fw-bold">{{ job.employment_type }}</span>
+              </div>
+              
+              <router-link to="/application-form" class="btn btn-primary w-100 mt-4">Apply Now</router-link>
             </div>
           </div>
           
-          <div class="row">
-            <div class="col-12">
-              <section>
-                <h3 class="display-text">Description</h3>
-                <p>{{ job.job_description }}</p>
-              </section>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-12">
-              <section>
-                <h3 class="display-text">Requirements</h3>
-                <ul>
-                  <li v-for="skill in job.required_skills" :key="skill">{{ skill }}</li>
-                </ul>
-              </section>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-12">
-              <section>
-                <h3 class="display-text">Additional Details</h3>
-                <div class="row">
-                  <div class="col-4">
-                    <p><strong>Salary:</strong> {{ job.salary_range }}</p>
-                  </div>
-                  <div class="col-4">
-                    <p><strong>Type:</strong> {{ job.employment_type }}</p>
-                  </div>
-                  <div class="col-4">
-                    <p><strong>Level:</strong> {{ job.job_level }}</p>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </div>
-
-          <div class="row actions">
-            <div class="col-6">
-              <router-link to="/application-form" class="apply-btn">Apply Now</router-link>
-            </div>
-            <div class="col-6 text-right">
-              <router-link to="/" class="back-btn">Back to List</router-link>
-            </div>
+          <div class="col-12 text-center mt-4">
+            <router-link to="/" class="text-muted-bento small">← Return to Registry</router-link>
           </div>
         </div>
-        <div v-else class="error-msg">
-          <p>Job not found.</p>
-          <router-link to="/">Return to Job List</router-link>
+        
+        <div v-else class="text-center py-5">
+          <div class="bento-cell p-5 mx-auto" style="max-width: 400px">
+            <p class="display-text h4">Record Not Found</p>
+            <router-link to="/" class="btn btn-primary">Back to Index</router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -83,7 +72,3 @@ const job = computed(() => {
   return jobsData.find(j => j.job_id === route.params.id);
 });
 </script>
-
-<style scoped>
-@import "../styles/JobDetail.css";
-</style>

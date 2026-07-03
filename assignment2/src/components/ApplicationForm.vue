@@ -1,230 +1,108 @@
 <template>
-  <div class="application-form-container container">
-    <div class="row">
-      <div class="col-12 col-md-8 offset-md-2">
-        <div class="form-wrapper">
-          <h2 class="display-text">Application Form</h2>
-
-          <form @submit.prevent="handleSubmit">
-            <fieldset>
-              <legend>Personal Information</legend>
-
-              <div class="row">
-                <div class="col-6">
-                  <label for="firstName">First Name:</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    required
-                    v-model="firstName"
-                    :class="{ 'error': firstNameError }"
-                    pattern="[A-Za-z]+"
-                    title="Letters only"
-                  />
-                  <span class="error" v-if="firstNameError">{{ firstNameError }}</span>
-                </div>
-                <div class="col-6">
-                  <label for="lastName">Last Name:</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    name="lastName"
-                    required
-                    v-model="lastName"
-                    :class="{ 'error': lastNameError }"
-                    pattern="[A-Za-z]+"
-                    title="Letters only"
-                  />
-                  <span class="error" v-if="lastNameError">{{ lastNameError }}</span>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="username">Username:</label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    required
-                    v-model="username"
-                    :class="{ 'error': usernameError }"
-                    minlength="3"
-                  />
-                  <span class="error" v-if="usernameError">{{ usernameError }}</span>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-6">
-                  <label for="password">Password:</label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    required
-                    v-model="password"
-                    :class="{ 'error': passwordError }"
-                    minlength="8"
-                    title="Minimum 8 characters, must include at least one special character ($ % ^ & *)"
-                  />
-                  <span class="error" v-if="passwordError">{{ passwordError }}</span>
-                </div>
-                <div class="col-6">
-                  <label for="confirmPassword">Confirm Password:</label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    required
-                    v-model="confirmPassword"
-                    :class="{ 'error': confirmPasswordError }"
-                  />
-                  <span class="error" v-if="confirmPasswordError">{{ confirmPasswordError }}</span>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="email">Email:</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    required
-                    v-model="email"
-                    :class="{ 'error': emailError }"
-                  />
-                  <span class="error" v-if="emailError">{{ emailError }}</span>
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset>
-              <legend>Address Information</legend>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="streetAddress">Street Address:</label>
-                  <input
-                    type="text"
-                    id="streetAddress"
-                    name="streetAddress"
-                    v-model="streetAddress"
-                    maxlength="40"
-                  />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-6">
-                  <label for="suburb">Suburb:</label>
-                  <input
-                    type="text"
-                    id="suburb"
-                    name="suburb"
-                    v-model="suburb"
-                    maxlength="20"
-                  />
-                </div>
-                <div class="col-6">
-                  <label for="postcode">Postcode:</label>
-                  <input
-                    type="text"
-                    id="postcode"
-                    name="postcode"
-                    required
-                    v-model="postcode"
-                    :class="{ 'error': postcodeError }"
-                    pattern="[0-9]{4}"
-                    title="Exactly 4 digits"
-                  />
-                  <span class="error" v-if="postcodeError">{{ postcodeError }}</span>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="mobileNumber">Mobile Number:</label>
-                  <input
-                    type="text"
-                    id="mobileNumber"
-                    name="mobileNumber"
-                    required
-                    v-model="mobileNumber"
-                    :class="{ 'error': mobileNumberError }"
-                    pattern="04[0-9]{6}"
-                    title="Exactly 10 digits, must start with 04"
-                  />
-                  <span class="error" v-if="mobileNumberError">{{ mobileNumberError }}</span>
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset>
-              <legend>Additional Information</legend>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="dateOfBirth">Date of Birth:</label>
-                  <input
-                    type="date"
-                    id="dateOfBirth"
-                    name="dateOfBirth"
-                    required
-                    v-model="dateOfBirth"
-                    :class="{ 'error': dateOfBirthError }"
-                  />
-                  <span class="error" v-if="dateOfBirthError">{{ dateOfBirthError }}</span>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-12">
-                  <label for="jobCategory">Preferred Job Category:</label>
-                  <select
-                    id="jobCategory"
-                    name="jobCategory"
-                    required
-                    v-model="jobCategory"
-                  >
-                    <option value="">-- Please select --</option>
-                    <option value="AI">AI</option>
-                    <option value="Data Science">Data Science</option>
-                    <option value="Web Development">Web Development</option>
-                  </select>
-                  <span class="error" v-if="jobCategoryError">{{ jobCategoryError }}</span>
-                </div>
-              </div>
-            </fieldset>
-
-            <div class="row">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-8">
+        <div class="bento-cell p-4 p-lg-5">
+          <h2 class="display-text text-center mb-5">Candidate Intake Form</h2>
+          
+          <form @submit.prevent="handleSubmit" novalidate>
+            <div class="row g-5">
+              <!-- Identity Profile -->
               <div class="col-12">
-                <label for="terms">
-                  <input
-                    type="checkbox"
-                    id="terms"
-                    name="terms"
-                    required
-                    v-model="termsAccepted"
-                  />
-                  I agree to the
-                  <a href="#" onclick="showTerms()">Terms and Conditions</a>
+                <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
+                  <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">Identity Profile</legend>
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">First Name</label>
+                      <input type="text" class="form-control" v-model="form.firstName" :class="{'is-invalid': errors.firstName}" required />
+                      <div class="invalid-feedback">{{ errors.firstName }}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Last Name</label>
+                      <input type="text" class="form-control" v-model="form.lastName" :class="{'is-invalid': errors.lastName}" required />
+                      <div class="invalid-feedback">{{ errors.lastName }}</div>
+                    </div>
+                    <div class="col-12">
+                      <label class="small text-dim d-block mb-2">Email Address</label>
+                      <input type="email" class="form-control" v-model="form.email" :class="{'is-invalid': errors.email}" required />
+                      <div class="invalid-feedback">{{ errors.email }}</div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!-- System Credentials -->
+              <div class="col-12">
+                <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
+                  <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">System Credentials</legend>
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Username</label>
+                      <input type="text" class="form-control" v-model="form.username" :class="{'is-invalid': errors.username}" required />
+                      <div class="invalid-feedback">{{ errors.username }}</div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Password</label>
+                      <input type="password" class="form-control" v-model="form.password" :class="{'is-invalid': errors.password}" required />
+                      <div class="invalid-feedback">{{ errors.password }}</div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!-- Logistics & Contact -->
+              <div class="col-12">
+                <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
+                  <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">Logistics & Contact</legend>
+                  <div class="row g-4">
+                    <div class="col-12">
+                      <label class="small text-dim d-block mb-2">Street Address</label>
+                      <input type="text" class="form-control" v-model="form.streetAddress" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Suburb</label>
+                      <input type="text" class="form-control" v-model="form.suburb" />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Postcode</label>
+                      <input type="text" class="form-control" v-model="form.postcode" :class="{'is-invalid': errors.postcode}" required />
+                      <div class="invalid-feedback">{{ errors.postcode }}</div>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+
+              <!-- Professional Classification -->
+              <div class="col-12">
+                <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
+                  <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">Professional Classification</legend>
+                  <div class="row g-4">
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Date of Birth</label>
+                      <input type="date" class="form-control" v-model="form.dateOfBirth" required />
+                    </div>
+                    <div class="col-md-6">
+                      <label class="small text-dim d-block mb-2">Preferred Category</label>
+                      <select class="form-select" v-model="form.jobCategory" required>
+                        <option value="">-- Select --</option>
+                        <option value="AI">AI</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Web Development">Web Development</option>
+                      </select>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+
+            <div class="text-center mt-5 pt-4">
+              <div class="form-check d-inline-block text-start me-4">
+                <input class="form-check-input" type="checkbox" id="terms" v-model="form.termsAccepted" required />
+                <label class="form-check-label small text-muted-bento" for="terms">
+                  I certify the accuracy of these records.
                 </label>
               </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12 text-center">
-                <button type="submit">Submit</button>
-              </div>
-            </div>
-
-            <div id="termsAndConditions" v-if="showTerms" class="row">
-              <div class="col-12">
-                <p>This is a placeholder for the Terms and Conditions. Please read carefully before submitting.</p>
-              </div>
+              <button type="submit" class="btn btn-primary px-5 py-2">Transmit Application</button>
             </div>
           </form>
         </div>
@@ -237,43 +115,80 @@
 export default {
   data() {
     return {
-      firstName: "",
-      lastName: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      email: "",
-      streetAddress: "",
-      suburb: "",
-      postcode: "",
-      mobileNumber: "",
-      dateOfBirth: "",
-      jobCategory: "",
-      termsAccepted: false,
-      firstNameError: "",
-      lastNameError: "",
-      usernameError: "",
-      passwordError: "",
-      confirmPasswordError: "",
-      emailError: "",
-      postcodeError: "",
-      mobileNumberError: "",
-      dateOfBirthError: "",
-      jobCategoryError: "",
-      showTerms: false,
+      form: {
+        firstName: "",
+        lastName: "",
+        username: "",
+        password: "",
+        email: "",
+        streetAddress: "",
+        suburb: "",
+        postcode: "",
+        dateOfBirth: "",
+        jobCategory: "",
+        termsAccepted: false,
+      },
+      errors: {}
     };
   },
   methods: {
-    handleSubmit() {
-      this.validateForm();
+    validate() {
+      this.errors = {};
+      const { firstName, lastName, username, password, email, postcode } = this.form;
+      const lettersOnly = /^[a-zA-Z\s]*$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const postCodeRegex = /^\d{4,5}$/;
+
+      // Required checks
+      if (!firstName) this.errors.firstName = "First name is required";
+      if (!lastName) this.errors.lastName = "Last name is required";
+      if (!username) this.errors.username = "Username is required";
+      if (!password) this.errors.password = "Password is required";
+      if (!email) this.errors.email = "Email is required";
+      if (!postcode) this.errors.postcode = "Postcode is required";
+
+      // Letters only
+      if (firstName && !lettersOnly.test(firstName)) this.errors.firstName = "Only letters allowed";
+      if (lastName && !lettersOnly.test(lastName)) this.errors.lastName = "Only letters allowed";
+
+      // Min/Max / Regex
+      if (username && username.length < 3) this.errors.username = "Too short (min 3 chars)";
+      if (username && username.length > 15) this.errors.username = "Too long (max 15 chars)";
+      
+      if (password && password.length < 8) this.errors.password = "Security breach: min 8 chars";
+      
+      if (email && !emailRegex.test(email)) this.errors.email = "Invalid email format";
+      
+      if (postcode && !postCodeRegex.test(postcode)) this.errors.postcode = "Invalid postcode format";
+
+      return Object.keys(this.errors).length === 0;
     },
-    validateForm() {
-      console.log(this.$data);
+    handleSubmit() {
+      if (this.validate()) {
+        console.log("Application Transmitted Successfully", this.form);
+        alert("Application Transmitted Successfully!");
+      } else {
+        console.log("Validation Failed", this.errors);
+      }
     },
   },
 };
 </script>
 
 <style scoped>
-@import "../styles/ApplicationForm.css";
+.uppercase-tracked {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+fieldset {
+  border: none !important; /* Override default browser fieldset borders */
+}
+
+legend {
+  color: var(--text-muted);
+  padding-left: 0;
+}
 </style>
