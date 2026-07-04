@@ -8,7 +8,7 @@ import ApplicationForm from './components/ApplicationForm.vue'
 
 const routes = [
     {
-        path: '/',
+        path: '/list',
         name: 'JobList',
         component: JobList,
     },
@@ -18,11 +18,11 @@ const routes = [
         component: JobOverview,
     },
     {
-        path: '/explorer',
+        path: '/',
         component: Explorer,
         children: [
             {
-                path: 'overview',
+                path: '',
                 name: 'ExplorerOverview',
                 component: JobOverview,
             },

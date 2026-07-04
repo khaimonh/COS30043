@@ -7,7 +7,7 @@
           
           <div class="nav flex-column gap-2">
             <router-link 
-              to="/explorer/overview" 
+              to="/" 
               class="nav-link p-3 rounded-3 text-main d-flex align-items-center gap-2"
               active-class="active-explorer-link"
             >

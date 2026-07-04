@@ -3,7 +3,6 @@
     <div class="row justify-content-center">
       <div class="col-12 col-lg-10">
         <div v-if="job" class="row g-4">
-          <!-- Main Detail Cell -->
           <div class="col-12 col-md-8">
             <div class="bento-cell p-4 h-100">
               <div class="d-flex justify-content-between align-items-start mb-4">
@@ -14,7 +13,6 @@
               <p class="lead text-muted-bento mb-5" style="line-height: 1.6;">{{ job.job_description }}</p>
               
               <div class="row g-4">
-                <!-- Required Skills -->
                 <div class="col-12">
                   <h3 class="h5 mb-3">Technical Requirements</h3>
                   <div class="row g-2">
@@ -26,7 +24,6 @@
                   </div>
                 </div>
 
-                <!-- Preferred Qualifications -->
                 <div class="col-12">
                   <h3 class="h5 mb-3">Preferred Qualifications</h3>
                   <div class="row g-2">
@@ -38,7 +35,6 @@
                   </div>
                 </div>
 
-                <!-- Tags -->
                 <div class="col-12">
                   <div class="d-flex flex-wrap gap-2 mt-3">
                     <span v-for="tag in job.tags" :key="tag" class="badge rounded-pill bg-surface border border-secondary text-dim small">

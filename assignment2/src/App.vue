@@ -7,7 +7,7 @@
           <span class="brand-text">JobPortal</span>
         </div>
         <div class="nav-links">
-          <router-link to="/" class="nav-item">
+          <router-link to="/list" class="nav-item">
             <span class="nav-label">Jobs</span>
             <div class="nav-indicator"></div>
           </router-link> 
@@ -15,7 +15,7 @@
             <span class="nav-label">Overview</span>
             <div class="nav-indicator"></div>
           </router-link> 
-          <router-link to="/explorer" class="nav-item">
+          <router-link to="/" class="nav-item">
             <span class="nav-label">Explorer</span>
             <div class="nav-indicator"></div>
           </router-link> 
