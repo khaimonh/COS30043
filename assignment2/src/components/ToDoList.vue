@@ -6,7 +6,7 @@
           <div class="d-flex justify-content-between align-items-center mb-5">
             <h2 class="display-text mb-0">Application Pipeline</h2>
             <div class="text-dim small">
-              {{ tasks.filter(t => !t.done).length }} Pending Tasks
+              {{ pendingCount }} Pending Tasks
             </div>
           </div>
           
@@ -26,13 +26,13 @@
           </div>
           
           <ul class="todo-list p-0 list-unstyled">
-            <li v-for="(task, index) in tasks" :key="index" class="todo-item d-flex align-items-center p-3 mb-3">
+            <li v-for="(task, index) in sortedTasks" :key="task.id" class="todo-item d-flex align-items-center p-3 mb-3">
               <div class="form-check">
                 <input 
                   class="form-check-input" 
                   type="checkbox" 
                   v-model="task.done" 
-                  :id="'task-' + index"
+                  :id="'task-' + task.id"
                 />
               </div>
               <div class="flex-grow-1 ms-3 d-flex align-items-center justify-content-between">
@@ -41,20 +41,16 @@
                 </span>
                 
                 <div class="d-flex align-items-center gap-2">
-                  <div class="priority-badge" :class="task.priority.toLowerCase()">
-                    {{ task.priority }}
-                  </div>
-                  <select 
-                    v-model="task.priority" 
-                    class="form-select form-select-sm py-0 px-2 text-main" 
-                    style="width: auto; font-size: 0.7rem; background: transparent; border-color: var(--border-subtle);"
+                  <button 
+                    @click="togglePriority(task)" 
+                    class="priority-toggle-btn" 
+                    :class="task.priority.toLowerCase()"
                   >
-                    <option value="Low">Low</option>
-                    <option value="High">High</option>
-                  </select>
+                    <span class="priority-label">{{ task.priority }}</span>
+                  </button>
                 </div>
               </div>
-              <button @click="removeTask(index)" class="btn btn-link text-danger p-0 ms-3 text-decoration-none fw-bold" title="Delete Task">×</button>
+              <button @click="removeTask(task.id)" class="btn btn-link text-danger p-0 ms-3 text-decoration-none fw-bold" title="Delete Task">×</button>
             </li>
           </ul>
 
@@ -69,18 +65,35 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const newItem = ref('');
 const tasks = ref([
-  { text: 'Optimize Portfolio', done: false, priority: 'High' },
-  { text: 'Refine Resume', done: false, priority: 'Low' },
-  { text: 'Mock Interview Prep', done: false, priority: 'High' },
+  { id: 1, text: 'Optimize Portfolio', done: false, priority: 'High' },
+  { id: 2, text: 'Refine Resume', done: false, priority: 'Low' },
+  { id: 3, text: 'Mock Interview Prep', done: false, priority: 'High' },
 ]);
+
+const pendingCount = computed(() => tasks.value.filter(t => !t.done).length);
+
+const sortedTasks = computed(() => {
+  return [...tasks.value].sort((a, b) => {
+    // 1. Completed tasks go to the bottom
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    
+    // 2. High priority tasks go to the top
+    if (a.priority !== b.priority) {
+      return a.priority === 'High' ? -1 : 1;
+    }
+    
+    return 0;
+  });
+});
 
 const addItem = () => {
   if (newItem.value.trim()) {
     tasks.value.push({ 
+      id: Date.now(),
       text: newItem.value, 
       done: false, 
       priority: 'Low' 
@@ -89,8 +102,12 @@ const addItem = () => {
   }
 };
 
-const removeTask = (index) => {
-  tasks.value.splice(index, 1);
+const removeTask = (id) => {
+  tasks.value = tasks.value.filter(t => t.id !== id);
+};
+
+const togglePriority = (task) => {
+  task.priority = task.priority === 'High' ? 'Low' : 'High';
 };
 </script>
 
@@ -114,29 +131,43 @@ const removeTask = (index) => {
   opacity: 0.5;
 }
 
-.priority-badge {
+.priority-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.65rem;
   font-weight: 700;
   text-transform: uppercase;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
   letter-spacing: 0.05em;
+  cursor: pointer;
   transition: all 0.2s ease;
+  border: 1px solid transparent;
+  outline: none;
 }
 
-.priority-badge.high {
-  background: oklch(0.6 0.15 20); /* Soft Red */
+.priority-toggle-btn.high {
+  background: oklch(0.6 0.15 20); 
   color: oklch(0.9 0.05 20);
-  border: 1px solid oklch(0.5 0.15 20);
+  border-color: oklch(0.5 0.15 20);
 }
 
-.priority-badge.low {
-  background: oklch(0.3 0.05 250); /* Deep Slate */
+.priority-toggle-btn.low {
+  background: oklch(0.3 0.05 250); 
   color: var(--text-muted);
-  border: 1px solid var(--border-subtle);
+  border-color: var(--border-subtle);
 }
 
-/* Custom scrollbar for long lists */
+.priority-toggle-btn:hover {
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+.priority-label {
+  line-height: 1;
+}
+
 .todo-list {
   max-height: 60vh;
   overflow-y: auto;
