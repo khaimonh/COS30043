@@ -13,20 +13,32 @@ const routes = [
         component: JobList,
     },
     {
-        path: '/job/:id',
-        name: 'JobDetail',
-        component: JobDetail,
-        props: true,
-    },
-    {
         path: '/overview',
         name: 'JobOverview',
         component: JobOverview,
     },
     {
         path: '/explorer',
-        name: 'Explorer',
         component: Explorer,
+        children: [
+            {
+                path: 'overview',
+                name: 'ExplorerOverview',
+                component: JobOverview,
+            },
+            {
+                path: 'job/:id',
+                name: 'ExplorerJobDetail',
+                component: JobDetail,
+                props: true,
+            },
+        ]
+    },
+    {
+        path: '/job/:id',
+        name: 'JobDetail',
+        component: JobDetail,
+        props: true,
     },
     {
         path: '/todo',
