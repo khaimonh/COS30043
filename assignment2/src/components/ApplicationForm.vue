@@ -157,15 +157,38 @@ export default {
       return Object.keys(this.errors).length === 0;
     },
     handleSubmit() {
-      if (this.validate()) {
-        console.log("Application Transmitted Successfully", this.form);
-        alert("Application Transmitted Successfully!");
-      } else {
-        console.log("Validation Failed", this.errors);
-      }
-    },
-  },
-};
+      const handleSubmit = async (event) => {
+        // event.preventDefault(); 
+
+        const payload = {
+          username: username,
+          email: email
+        };
+
+        try {
+          const response = await fetch('http://mercury.swin.edu.au/it000000/formtest.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const result = await response.json();
+          console.log('Success:', result);
+
+        } catch (error) {
+          console.error('Error submitting form:', error);
+        }
+      };
+
+          },
+        },
+      };
 </script>
 
 <style scoped>
