@@ -1,7 +1,6 @@
 <template>
   <div class="container py-5">
     <div class="row g-4">
-      <!-- Main Hero: Asymmetric Anchor -->
       <div class="col-12 col-lg-8">
         <div class="bento-cell bento-cell-alt p-lg-5">
           <div class="flex-grow-1">
@@ -13,14 +12,13 @@
           </div>
           <div class="mt-5 pt-4 border-top border-secondary border-opacity-25">
             <div class="d-flex align-items-center gap-2">
-              <span class="badge rounded-pill bg-dark border border-secondary text-muted px-3 py-2">V 2.0.4 Stable</span>
+              <span class="badge rounded-pill bg-dark border border-secondary text-dim px-3 py-2">V 2.0.4 Stable</span>
               <span class="text-dim small">Latest build: 2026-07-03</span>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Stats Stack: High-density metrics -->
       <div class="col-12 col-lg-4">
         <div class="row g-4 h-100">
           <div class="col-12">
@@ -44,7 +42,6 @@
         </div>
       </div>
       
-      <!-- System Notification: Wide grounding element -->
       <div class="col-12">
         <div class="bento-cell p-4">
           <div class="row align-items-center">
@@ -53,9 +50,6 @@
               <p class="text-muted-bento mb-0" style="font-size: 0.95rem;">
                 Our matching algorithm is now prioritizing candidates based on skill-set alignment and portfolio quality.
               </p>
-            </div>
-            <div class="col-md-4 text-end d-none d-md-block">
-              <div class="text-dim small">Synchronized 2m ago</div>
             </div>
           </div>
         </div>

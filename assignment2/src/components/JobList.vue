@@ -2,7 +2,6 @@
   <div class="container py-5">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-10">
-        <!-- Header Section: Balanced and purposeful -->
         <div class="row align-items-end mb-5">
           <div class="col-12 col-lg-8">
             <h1 class="display-text">Opportunities</h1>
@@ -27,7 +26,6 @@
           </div>
         </div>
         
-        <!-- Jobs Grid: Moving from simple list to a cohesive Bento collection -->
         <div class="row g-4">
           <div v-for="job in jobs" :key="job.job_id" class="col-12 col-xl-6">
             <div class="bento-cell job-card group">
@@ -75,7 +73,6 @@
           </div>
         </div>
         
-        <!-- Empty State -->
         <div v-if="jobs.length === 0" class="bento-cell text-center py-5 mt-4">
           <p class="text-muted-bento">No openings found in the database.</p>
           <router-link to="/overview" class="btn btn-primary w-auto mt-3">Return to Hub</router-link>

@@ -1,13 +1,11 @@
 <template>
   <div class="container-fluid py-5">
     <div class="row g-4">
-      <!-- Left Sidebar: Navigation -->
       <div class="col-12 col-md-3 col-lg-3">
         <div class="bento-cell p-3 h-100">
           <h3 class="h6 text-muted-bento mb-4 uppercase-tracked">Registry Explorer</h3>
           
           <div class="nav flex-column gap-2">
-            <!-- Overview Link -->
             <router-link 
               to="/explorer/overview" 
               class="nav-link p-3 rounded-3 text-main d-flex align-items-center gap-2"
@@ -22,7 +20,6 @@
             
             <hr class="my-3 border-secondary opacity-25" />
             
-            <!-- Job ID Links -->
             <div class="d-flex flex-column gap-2">
               <router-link 
                 v-for="job in jobs" 
@@ -41,7 +38,6 @@
         </div>
       </div>
       
-      <!-- Right Content: Viewport -->
       <div class="col-12 col-md-9 col-lg-9">
         <div class="bento-cell h-100">
           <router-view />

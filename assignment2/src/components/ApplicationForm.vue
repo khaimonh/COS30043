@@ -7,7 +7,6 @@
           
           <form @submit.prevent="handleSubmit" novalidate>
             <div class="row g-5">
-              <!-- Identity Profile -->
               <div class="col-12">
                 <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
                   <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">Identity Profile</legend>
@@ -31,7 +30,6 @@
                 </fieldset>
               </div>
 
-              <!-- System Credentials -->
               <div class="col-12">
                 <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
                   <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">System Credentials</legend>
@@ -50,7 +48,6 @@
                 </fieldset>
               </div>
 
-              <!-- Logistics & Contact -->
               <div class="col-12">
                 <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
                   <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">Logistics & Contact</legend>
@@ -72,7 +69,6 @@
                 </fieldset>
               </div>
 
-              <!-- Professional Classification -->
               <div class="col-12">
                 <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
                   <legend class="h6 mb-4 text-muted-bento uppercase-tracked float-none w-auto px-3">Professional Classification</legend>
@@ -139,7 +135,6 @@ export default {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const postCodeRegex = /^\d{4,5}$/;
 
-      // Required checks
       if (!firstName) this.errors.firstName = "First name is required";
       if (!lastName) this.errors.lastName = "Last name is required";
       if (!username) this.errors.username = "Username is required";
@@ -147,11 +142,9 @@ export default {
       if (!email) this.errors.email = "Email is required";
       if (!postcode) this.errors.postcode = "Postcode is required";
 
-      // Letters only
       if (firstName && !lettersOnly.test(firstName)) this.errors.firstName = "Only letters allowed";
       if (lastName && !lettersOnly.test(lastName)) this.errors.lastName = "Only letters allowed";
 
-      // Min/Max / Regex
       if (username && username.length < 3) this.errors.username = "Too short (min 3 chars)";
       if (username && username.length > 15) this.errors.username = "Too long (max 15 chars)";
       
@@ -184,7 +177,7 @@ export default {
 }
 
 fieldset {
-  border: none !important; /* Override default browser fieldset borders */
+  border: none !important;
 }
 
 legend {

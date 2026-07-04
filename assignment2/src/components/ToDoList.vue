@@ -58,7 +58,6 @@
             </li>
           </ul>
 
-          <!-- Empty State -->
           <div v-if="tasks.length === 0" class="text-center py-5">
             <div class="text-dim mb-3">Pipeline is currently empty</div>
             <p class="small text-dim">Add a new milestone to get started.</p>
