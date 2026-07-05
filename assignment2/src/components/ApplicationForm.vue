@@ -101,7 +101,7 @@
                 </label>
               </div>
               <button type="submit" class="btn btn-primary px-5 py-2">Transmit Application</button>
-            </div>
+              </div>
           </form>
         </div>
       </div>
@@ -158,39 +158,46 @@ export default {
 
       return Object.keys(this.errors).length === 0;
     },
-    handleSubmit() {
-      const handleSubmit = async (event) => {
-        // event.preventDefault(); 
+    async handleSubmit() {
+      if (!this.validate()) return;
 
-        const payload = {
-          username: username,
-          email: email
-        };
-
-        try {
-          const response = await fetch('http://mercury.swin.edu.au/it000000/formtest.php', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const result = await response.json();
-          console.log('Success:', result);
-
-        } catch (error) {
-          console.error('Error submitting form:', error);
-        }
+      const url = 'http://mercury.swin.edu.au/it000000/formtest.php';
+      const payload = {
+        firstName: this.form.firstName,
+        lastName: this.form.lastName,
+        username: this.form.username,
+        email: this.form.email,
+        streetAddress: this.form.streetAddress,
+        suburb: this.form.suburb,
+        postcode: this.form.postcode,
+        dateOfBirth: this.form.dateOfBirth,
+        jobCategory: this.form.jobCategory,
+        termsAccepted: this.form.termsAccepted,
       };
 
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        },
-      };
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: \${response.status}\`);
+        }
+
+        console.log('Success:', await response.json());
+        window.open(url, '_blank');
+
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while submitting the form. Please try again.');
+      }
+    }
+  },
+};
 </script>
 
 <style scoped>
