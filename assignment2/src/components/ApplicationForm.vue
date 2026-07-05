@@ -84,6 +84,8 @@
                         <option value="AI">AI</option>
                         <option value="Data Science">Data Science</option>
                         <option value="Web Development">Web Development</option>
+                        <option value="Cybersecurity">Cybersecurity</option>
+                        <option value="DevOps">DevOps</option>
                       </select>
                     </div>
                   </div>
