@@ -7,7 +7,7 @@
             <div class="bento-cell p-4 h-100">
               <div class="d-flex justify-content-between align-items-start mb-4">
                 <h1 class="display-text mb-0">{{ job.job_title }}</h1>
-                <span class="badge rounded-pill bg-dark border border-secondary text-muted px-3 py-2">#{{ job.job_id }}</span>
+                <span class="badge rounded-pill bg-dark border border-secondary text-muted-bento px-3 py-2">#{{ job.job_id }}</span>
               </div>
               
               <p class="lead text-muted-bento mb-5" style="line-height: 1.6;">{{ job.job_description }}</p>

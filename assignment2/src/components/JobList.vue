@@ -40,7 +40,7 @@
                       <span class="text-dim small">{{ job.company }}</span>
                     </div>
                   </div>
-                  <span class="badge rounded-pill bg-dark border border-secondary text-muted px-2 py-1 small">
+                  <span class="badge rounded-pill bg-dark border border-secondary text-dim px-2 py-1 small">
                     #{{ job.job_id }}
                   </span>
                 </div>
