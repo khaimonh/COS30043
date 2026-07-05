@@ -5,7 +5,7 @@
         <div class="bento-cell p-4 p-lg-5">
           <h2 class="display-text text-center mb-5">Candidate Intake Form</h2>
           
-          <form @submit.prevent="handleSubmit" novalidate>
+          <form method="post" action="http://mercury.swin.edu.au/it000000/formtest.php" target="_blank" @submit="handleFormSubmit">
             <div class="row g-5">
               <div class="col-12">
                 <fieldset class="p-4 rounded-4 border border-secondary border-opacity-25 bg-dark bg-opacity-50">
@@ -13,17 +13,17 @@
                   <div class="row g-4">
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">First Name</label>
-                      <input type="text" class="form-control" v-model="form.firstName" :class="{'is-invalid': errors.firstName}" required />
+                      <input type="text" name="firstName" class="form-control" v-model="form.firstName" :class="{'is-invalid': errors.firstName}" required />
                       <div class="invalid-feedback">{{ errors.firstName }}</div>
                     </div>
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Last Name</label>
-                      <input type="text" class="form-control" v-model="form.lastName" :class="{'is-invalid': errors.lastName}" required />
+                      <input type="text" name="lastName" class="form-control" v-model="form.lastName" :class="{'is-invalid': errors.lastName}" required />
                       <div class="invalid-feedback">{{ errors.lastName }}</div>
                     </div>
                     <div class="col-12">
                       <label class="small text-dim d-block mb-2">Email Address</label>
-                      <input type="email" class="form-control" v-model="form.email" :class="{'is-invalid': errors.email}" required />
+                      <input type="email" name="email" class="form-control" v-model="form.email" :class="{'is-invalid': errors.email}" required />
                       <div class="invalid-feedback">{{ errors.email }}</div>
                     </div>
                   </div>
@@ -36,12 +36,12 @@
                   <div class="row g-4">
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Username</label>
-                      <input type="text" class="form-control" v-model="form.username" :class="{'is-invalid': errors.username}" required />
+                      <input type="text" name="username" class="form-control" v-model="form.username" :class="{'is-invalid': errors.username}" required />
                       <div class="invalid-feedback">{{ errors.username }}</div>
                     </div>
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Password</label>
-                      <input type="password" class="form-control" v-model="form.password" :class="{'is-invalid': errors.password}" required />
+                      <input type="password" name="password" class="form-control" v-model="form.password" :class="{'is-invalid': errors.password}" required />
                       <div class="invalid-feedback">{{ errors.password }}</div>
                     </div>
                   </div>
@@ -54,15 +54,15 @@
                   <div class="row g-4">
                     <div class="col-12">
                       <label class="small text-dim d-block mb-2">Street Address</label>
-                      <input type="text" class="form-control" v-model="form.streetAddress" />
+                      <input type="text" name="streetAddress" class="form-control" v-model="form.streetAddress" />
                     </div>
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Suburb</label>
-                      <input type="text" class="form-control" v-model="form.suburb" />
+                      <input type="text" name="suburb" class="form-control" v-model="form.suburb" />
                     </div>
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Postcode</label>
-                      <input type="text" class="form-control" v-model="form.postcode" :class="{'is-invalid': errors.postcode}" required />
+                      <input type="text" name="postcode" class="form-control" v-model="form.postcode" :class="{'is-invalid': errors.postcode}" required />
                       <div class="invalid-feedback">{{ errors.postcode }}</div>
                     </div>
                   </div>
@@ -75,11 +75,11 @@
                   <div class="row g-4">
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Date of Birth</label>
-                      <input type="date" class="form-control" v-model="form.dateOfBirth" required />
+                      <input type="date" name="dateOfBirth" class="form-control" v-model="form.dateOfBirth" required />
                     </div>
                     <div class="col-md-6">
                       <label class="small text-dim d-block mb-2">Preferred Category</label>
-                      <select class="form-select" v-model="form.jobCategory" required>
+                      <select name="jobCategory" class="form-select" v-model="form.jobCategory" required>
                         <option value="">-- Select --</option>
                         <option value="AI">AI</option>
                         <option value="Data Science">Data Science</option>
@@ -95,13 +95,13 @@
 
             <div class="text-center mt-5 pt-4">
               <div class="form-check d-inline-block text-start me-4">
-                <input class="form-check-input" type="checkbox" id="terms" v-model="form.termsAccepted" required />
+                <input class="form-check-input" type="checkbox" name="termsAccepted" id="terms" v-model="form.termsAccepted" required />
                 <label class="form-check-label small text-muted-bento" for="terms">
                   I certify the accuracy of these records.
                 </label>
               </div>
               <button type="submit" class="btn btn-primary px-5 py-2">Transmit Application</button>
-              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -158,42 +158,9 @@ export default {
 
       return Object.keys(this.errors).length === 0;
     },
-    async handleSubmit() {
-      if (!this.validate()) return;
-
-      const url = 'http://mercury.swin.edu.au/it000000/formtest.php';
-      const payload = {
-        firstName: this.form.firstName,
-        lastName: this.form.lastName,
-        username: this.form.username,
-        email: this.form.email,
-        streetAddress: this.form.streetAddress,
-        suburb: this.form.suburb,
-        postcode: this.form.postcode,
-        dateOfBirth: this.form.dateOfBirth,
-        jobCategory: this.form.jobCategory,
-        termsAccepted: this.form.termsAccepted,
-      };
-
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          throw new Error("HTTP error! Status: \${response.status}\$");
-        }
-
-        console.log('Success:', await response.json());
-        window.open(url, '_blank');
-
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('An error occurred while submitting the form. Please try again.');
+    handleFormSubmit(event) {
+      if (!this.validate()) {
+        event.preventDefault();
       }
     }
   },
