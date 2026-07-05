@@ -185,7 +185,7 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: \${response.status}\`);
+          throw new Error("HTTP error! Status: \${response.status}\$");
         }
 
         console.log('Success:', await response.json());
