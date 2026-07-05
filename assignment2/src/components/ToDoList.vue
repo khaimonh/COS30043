@@ -78,10 +78,8 @@ const pendingCount = computed(() => tasks.value.filter(t => !t.done).length);
 
 const sortedTasks = computed(() => {
   return [...tasks.value].sort((a, b) => {
-    // 1. Completed tasks go to the bottom
     if (a.done !== b.done) return a.done ? 1 : -1;
     
-    // 2. High priority tasks go to the top
     if (a.priority !== b.priority) {
       return a.priority === 'High' ? -1 : 1;
     }
