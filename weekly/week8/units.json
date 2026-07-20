@@ -1,0 +1,6 @@
+[
+  {"id": 1, "name": "Unit 1: Introduction to Vue", "credits": 3},
+  {"id": 2, "name": "Unit 2: Vue Directives", "credits": 3},
+  {"id": 3, "name": "Unit 3: Component Architecture", "credits": 4},
+  {"id": 4, "name": "Unit 4: State Management", "credits": 3}
+]

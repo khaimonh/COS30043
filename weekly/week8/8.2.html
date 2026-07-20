@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Units Display</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+</head>
+<body>
+    <div id="app">
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Credits</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="unit in units" :key="unit.id">
+                    <td>{{ unit.id }}</td>
+                    <td>{{ unit.name }}</td>
+                    <td>{{ unit.credits }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                units: []
+            },
+            mounted() {
+                fetch('units.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        this.units = data;
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        });
+    </script>
+</body>
+</html>
