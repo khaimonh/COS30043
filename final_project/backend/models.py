@@ -47,6 +47,7 @@ class User(Base):
     
     portfolios: Mapped[list["Portfolio"]] = relationship(back_populates="user")
 
+#every user will have these
 class Portfolio(Base):
     __tablename__= "portfolio"
 
@@ -56,5 +57,10 @@ class Portfolio(Base):
     cash_balance: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
     version: Mapped[int] = mapped_column(int)
     
-    
+class BankAccount(Base):
+    __tablename__=  "bank_account"
+
+    bank_account_id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.user_id"))
+    account_number: Mapped
 
