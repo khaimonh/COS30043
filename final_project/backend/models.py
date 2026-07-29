@@ -43,12 +43,12 @@ class User(Base):
     __tablename__ = "users"
     __table_args__ = (
         UniqueConstraint("email", name="uq_email"),
-        UniqueConstraint("username", name="uq_username"),
     )
 
     user_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
     role_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("roles.role_id"))
-    username: Mapped[str] = mapped_column(String(255))
+    first_name: Mapped[str] = mapped_column(String(255))
+    last_name: Mapped[str] = mapped_column(String(255))
     password_hash: Mapped[str] = mapped_column(String(255))
     email: Mapped[str] = mapped_column(String(255))
     status: Mapped[UserStatus] = mapped_column(
