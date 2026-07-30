@@ -7,7 +7,7 @@ import os
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 
-from api.deps import db_dependency, hash_password, verify_password
+from api.deps import db_dependency, hash_password, verify_password, user_dependency, oauth2_pwform
 
 from api.models import User, Role
 load_dotenv()
@@ -20,9 +20,7 @@ router = APIRouter(
 
 SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
 ALGORITHM = os.getenv("AUTH_ALGORITHM")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(
-    os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60")
-)
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
 class UserCreateRequest(BaseModel):
     first_name: str
@@ -31,15 +29,23 @@ class UserCreateRequest(BaseModel):
     phone_number: str
     password: str
 
-def authenticate_user(email: str, password: str, db):
-    user = db.query(User).filter(User.email == email).first()
+class UserLoginRequest(BaseModel):
+    email: EmailStr
+    password:str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    
+def authenticate_user(email: str, password: str, db) -> User | None:
+    user = db.scalar(select(User).where(User.email == email))
     if not user:
-        return False
-    if not verify_password(password, user.password):
-        return False
+        return None
+    if not verify_password(password, user.password_hash):
+        return None
     return user
 
-def create_access_token(user: User, expires_delta: timedelta = ACCESS_TOKEN_EXPIRE_MINUTES):
+def create_access_token(user: User, expires_delta: timedelta = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
     payload = {
         "sub": str(user.user_id),
         "name": str(user.first_name),
@@ -97,3 +103,31 @@ async def create_admin(create_user_request: UserCreateRequest, db: db_dependency
     db.add(create_user_model)
     db.commit()
     db.refresh(create_user_model)
+
+@router.post('/token', response_model=Token)
+async def login_for_access_token(login_request: oauth2_pwform, db: db_dependency):
+    user = authenticate_user(login_request.username, login_request.password, db)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
+    token = create_access_token(user, timedelta(hours=10))
+    
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@router.get('/me')
+async def get_current_user_info(
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    user = db.scalar(select(User).where(User.user_id == current_user.user_id))    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    return {
+        "user_id": str(user.user_id),
+        "email": user.email,
+        "full_name": user.first_name + ' ' + user.last_name,
+        "role": user.role.role_name,
+    }

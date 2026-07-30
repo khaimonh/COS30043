@@ -1,11 +1,12 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, UUID
 from api.database import SessionLocal
 import bcrypt
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt, JWTError
+import uuid
 
 from api.models import User
 
@@ -35,6 +36,7 @@ def verify_password(plain: str, hashed: str) -> bool:
         return False
 
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
+oauth2_pwform = Annotated[OAuth2PasswordRequestForm, Depends()]
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db: db_dependency) -> User:
     credentials_exception = HTTPException(
@@ -45,7 +47,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db: db
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        user_id: int = payload.get("sub")
+        user_id: UUID = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
@@ -58,3 +60,4 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db: db
 
     return user
 user_dependency = Annotated[User, Depends(get_current_user)]
+
