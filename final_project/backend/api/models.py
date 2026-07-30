@@ -19,13 +19,13 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID as PgUUID
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from database import Base
+from api.database import Base
 
 
 class Role(Base):
     __tablename__ = "roles"
 
-    role_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    role_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
     role_name: Mapped[str] = mapped_column(String(30))
 
     users: Mapped[list["User"]] = relationship(back_populates="role")
@@ -45,7 +45,7 @@ class User(Base):
         UniqueConstraint("email", name="uq_email"),
     )
 
-    user_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    user_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
     role_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("roles.role_id"))
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
@@ -67,7 +67,7 @@ class User(Base):
 class Portfolio(Base):
     __tablename__ = "portfolio"
 
-    portfolio_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    portfolio_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
     name: Mapped[str] = mapped_column(String(255))
     cash_balance: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
@@ -82,7 +82,7 @@ class Portfolio(Base):
 class BankAccount(Base):
     __tablename__ = "bank_account"
 
-    bank_account_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    bank_account_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.user_id"))
     account_number_encrypted: Mapped[str] = mapped_column(EncryptedString())
     account_number_masked: Mapped[str] = mapped_column(String(255))
@@ -103,7 +103,7 @@ class CashTransaction(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
-        default=uuid.uuid4(),
+        default=uuid.uuid4 ,
     )
 
     portfolio_id: Mapped[uuid.UUID] = mapped_column(
@@ -134,7 +134,7 @@ class Stock(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
-        default=uuid.uuid4(),
+        default=uuid.uuid4 ,
     )
 
     ticker: Mapped[str] = mapped_column(
@@ -174,7 +174,7 @@ class PriceHistory(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
-        default=uuid.uuid4(),
+        default=uuid.uuid4 ,
     )
 
     stock_id: Mapped[uuid.UUID] = mapped_column(
@@ -214,7 +214,7 @@ class Holding(Base):
         CheckConstraint("purchase_price >= 0", name="ck_holding_purchase_price_nonneg"),
     )
 
-    holding_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    holding_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
 
     portfolio_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("portfolio.portfolio_id", ondelete="CASCADE"),
@@ -268,7 +268,7 @@ class Order(Base):
         ),
     )
 
-    order_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    order_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.user_id", ondelete="CASCADE"),
@@ -316,7 +316,7 @@ class Trade(Base):
         CheckConstraint("execution_price >= 0", name="ck_trade_execution_price_nonneg"),
     )
 
-    trade_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    trade_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
 
     order_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("orders.order_id", ondelete="CASCADE"),
@@ -344,7 +344,7 @@ class HoldingAllocation(Base):
         CheckConstraint("quantity_consumed > 0", name="ck_allocation_qty_pos"),
     )
 
-    allocation_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    allocation_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
 
     trade_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("trades.trade_id", ondelete="CASCADE"),
@@ -374,7 +374,7 @@ class Watchlist(Base):
         ),
     )
 
-    watchlist_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4())
+    watchlist_id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4 )
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.user_id", ondelete="CASCADE"),

@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from database import SessionLocal
-from passlib.context import CryptContext
+from api.database import SessionLocal
+import bcrypt
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 
-from models import User
+from api.models import User
 
 import os
 from dotenv import load_dotenv
@@ -25,7 +25,15 @@ def get_db():
         db.close()
 db_dependency = Annotated[Session, Depends(get_db)]
 
-bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def hash_password(plain: str) -> str:
+      return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+
+def verify_password(plain: str, hashed: str) -> bool:
+    try:
+        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+    except ValueError:
+        return False
+
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db: db_dependency) -> User:
