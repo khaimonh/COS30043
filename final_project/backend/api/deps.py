@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import select, UUID
 from api.database import SessionLocal
 import bcrypt
@@ -53,11 +53,18 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)], db: db
     except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user")
 
-    user = db.scalar(select(User).where(User.user_id == user_id))
-
+    user = db.scalar(
+        select(User).options(joinedload(User.role)).where(User.user_id == user_id)
+    )
     if user is None:
         raise credentials_exception
 
     return user
 user_dependency = Annotated[User, Depends(get_current_user)]
 
+def require_admin(current_user: user_dependency) -> User:
+    if current_user.role is None or current_user.role.role_name != "Admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin only")
+    return current_user
+
+admin_dependency = Annotated[User, Depends(require_admin)]

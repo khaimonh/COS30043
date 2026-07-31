@@ -159,6 +159,13 @@ class Stock(Base):
         nullable=False,
     )
 
+    listing_date: Mapped[Optional[DateTime]] = mapped_column(
+          DateTime(timezone=True), nullable=True
+      )
+    
+    listed: Mapped[bool] = mapped_column(
+        nullable=False, default=True, server_default="true"
+    )
     # Relationships
     holdings: Mapped[list["Holding"]] = relationship(back_populates="stock")
     orders: Mapped[list["Order"]] = relationship(back_populates="stock")
