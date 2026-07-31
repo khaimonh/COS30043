@@ -1,5 +1,5 @@
 from sqlalchemy import select
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 from dotenv import load_dotenv
 from pydantic import BaseModel, EmailStr
 

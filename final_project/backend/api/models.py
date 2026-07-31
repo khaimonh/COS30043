@@ -101,7 +101,7 @@ class CashTransactionType(enum.Enum):
 class CashTransaction(Base):
     __tablename__ = "cash_transactions"
 
-    id: Mapped[uuid.UUID] = mapped_column(
+    transaction_id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
         default=uuid.uuid4 ,
     )
@@ -132,7 +132,7 @@ class CashTransaction(Base):
 class Stock(Base):
     __tablename__ = "stocks"
 
-    id: Mapped[uuid.UUID] = mapped_column(
+    stock_id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
         default=uuid.uuid4 ,
     )
@@ -172,13 +172,13 @@ class Stock(Base):
 class PriceHistory(Base):
     __tablename__ = "price_history"
 
-    id: Mapped[uuid.UUID] = mapped_column(
+    history_id: Mapped[uuid.UUID] = mapped_column(
         primary_key=True,
         default=uuid.uuid4 ,
     )
 
     stock_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("stocks.id", ondelete="CASCADE"),
+        ForeignKey("stocks.stock_id", ondelete="CASCADE"),
         nullable=False,
     )
 
@@ -222,7 +222,7 @@ class Holding(Base):
     )
 
     stock_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("stocks.id", ondelete="RESTRICT"),
+        ForeignKey("stocks.stock_id", ondelete="RESTRICT"),
         nullable=False,
     )
 
@@ -279,7 +279,7 @@ class Order(Base):
         nullable=False,
     )
     stock_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("stocks.id", ondelete="RESTRICT"),
+        ForeignKey("stocks.stock_id", ondelete="RESTRICT"),
         nullable=False,
     )
 
@@ -382,7 +382,7 @@ class Watchlist(Base):
         index=True,
     )
     stock_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("stocks.id", ondelete="CASCADE"),
+        ForeignKey("stocks.stock_id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
