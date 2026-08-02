@@ -92,6 +92,14 @@ async def get_portfolio(portfolio_id: str, db: db_dependency, current_user: user
     }
 
 
+@router.delete('/{portfolio_id}', status_code=status.HTTP_200_OK)
+async def delete_portfolio(portfolio_id: str, db: db_dependency, current_user: user_dependency):
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
+    db.delete(portfolio)
+    db.commit()
+    return {"detail": "Portfolio deleted"}
+
+
 @router.get('/{portfolio_id}/transactions')
 async def get_transactions(portfolio_id: str, db: db_dependency, current_user: user_dependency):
     portfolio = db.scalar(
@@ -149,6 +157,33 @@ async def withdraw(cash_request: CashRequest, db: db_dependency, current_user: u
         type=CashTransactionType.WITHDRAWAL,
         amount=cash_request.amount,
     ))
+    db.commit()
+    return {"cash_balance": str(portfolio.cash_balance)}
+
+
+@router.delete('/{portfolio_id}/transactions/{transaction_id}', status_code=status.HTTP_200_OK)
+async def delete_transaction(
+    portfolio_id: str,
+    transaction_id: str,
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
+    transaction = db.scalar(
+        select(CashTransaction).where(
+            CashTransaction.transaction_id == transaction_id,
+            CashTransaction.portfolio_id == portfolio_id,
+        )
+    )
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+
+    if transaction.type == CashTransactionType.DEPOSIT:
+        portfolio.cash_balance -= transaction.amount
+    else:
+        portfolio.cash_balance += transaction.amount
+
+    db.delete(transaction)
     db.commit()
     return {"cash_balance": str(portfolio.cash_balance)}
 

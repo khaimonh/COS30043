@@ -55,8 +55,7 @@ def create_access_token(user: User, expires_delta: timedelta = timedelta(minutes
     payload.update({'exp': expires})
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
-async def create_user(create_user_request: UserCreateRequest, db: db_dependency):
+def _create_user(create_user_request: UserCreateRequest, role_name: str, db):
     existing_user = db.scalar(select(User).where(User.email == create_user_request.email))
 
     if existing_user:
@@ -64,10 +63,10 @@ async def create_user(create_user_request: UserCreateRequest, db: db_dependency)
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    
-    user_role = db.scalar(select(Role).where(Role.role_name == "User"))    
+
+    user_role = db.scalar(select(Role).where(Role.role_name == role_name))
     if not user_role:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User role not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{role_name} role not found")
     create_user_model = User(
         first_name=create_user_request.first_name,
         last_name=create_user_request.last_name,
@@ -78,31 +77,17 @@ async def create_user(create_user_request: UserCreateRequest, db: db_dependency)
     db.add(create_user_model)
     db.commit()
     db.refresh(create_user_model)
+
+
+@router.post('/', status_code=status.HTTP_201_CREATED)
+async def create_user(create_user_request: UserCreateRequest, db: db_dependency):
+    _create_user(create_user_request, "User", db)
 
 
 @router.post('/admin_create', status_code=status.HTTP_201_CREATED)
 async def create_admin(create_user_request: UserCreateRequest, db: db_dependency):
-    existing_user = db.scalar(select(User).where(User.email == create_user_request.email))
+    _create_user(create_user_request, "Admin", db)
 
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
-        )
-    
-    user_role = db.scalar(select(Role).where(Role.role_name == "Admin"))    
-    if not user_role:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User role not found")
-    create_user_model = User(
-        first_name=create_user_request.first_name,
-        last_name=create_user_request.last_name,
-        email=create_user_request.email,
-        password_hash=hash_password(create_user_request.password),
-        role_id=user_role.role_id
-    )
-    db.add(create_user_model)
-    db.commit()
-    db.refresh(create_user_model)
 
 @router.post('/token', response_model=Token)
 async def login_for_access_token(login_request: oauth2_pwform, db: db_dependency):
