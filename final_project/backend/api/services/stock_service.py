@@ -6,6 +6,7 @@ os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from vnstock.explorer.vci.listing import Listing
+from vnstock.ui.market import Market
 
 from api.database import SessionLocal
 from api.models import Stock
@@ -48,3 +49,10 @@ def get_all_stocks(db: Session) -> list[Stock]:
 
 def get_stock_by_ticker(db: Session, ticker: str) -> Stock | None:
     return db.scalar(select(Stock).where(Stock.ticker == ticker))
+
+
+def get_market_snapshot(ticker: str) -> dict:
+    df = Market().equity(ticker).quote()
+    if df.empty:
+        return {}
+    return df.iloc[0].to_dict()

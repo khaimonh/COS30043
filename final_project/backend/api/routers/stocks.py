@@ -9,6 +9,7 @@ from api.deps import db_dependency, admin_dependency
 
 from api.services.stock_service import (
     upsert_stocks, fetch_stocks_from_vnstock, get_all_stocks, get_stock_by_ticker,
+    get_market_snapshot,
 )
 
 load_dotenv()
@@ -63,6 +64,14 @@ async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: Upload
 
     n = upsert_stocks(db, rows)
     return {"imported": n, "source": "csv"}
+
+
+@router.get('/{ticker}/quote', status_code=status.HTTP_200_OK)
+async def get_quote(ticker: str):
+    q = get_market_snapshot(ticker)
+    if not q:
+        raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
+    return q
 
 
 @router.get('/{ticker}', status_code=status.HTTP_200_OK)
