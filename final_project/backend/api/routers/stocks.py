@@ -24,6 +24,25 @@ router = APIRouter(
 REQUIRED_COLS = {"ticker", "company_name", "exchange", "sector"}
 
 
+def _build_rows(df: pd.DataFrame) -> list[dict]:
+    rows = []
+    for r in df.to_dict(orient="records"):
+        row = {
+            "ticker": r["ticker"],
+            "company_name": r["company_name"],
+            "exchange": r.get("exchange", ""),
+            "sector": r["sector"],
+            "listed": True,
+        }
+        if r.get("listing_date"):
+            try:
+                row["listing_date"] = pd.to_datetime(r["listing_date"]).tz_localize("UTC").floor("us").to_pydatetime()
+            except Exception:
+                row["listing_date"] = None
+        rows.append(row)
+    return rows
+
+
 @router.post('/import', status_code=status.HTTP_201_CREATED)
 async def import_stocks(db: db_dependency, _: admin_dependency):
     rows = fetch_stocks_from_vnstock()
@@ -46,25 +65,7 @@ async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: Upload
     if missing:
         raise HTTPException(status_code=400, detail=f"missing columns: {sorted(missing)}")
 
-    rows = []
-    for r in df.to_dict(orient="records"):
-        row = {
-            "ticker": r["ticker"],
-            "company_name": r["company_name"],
-            "exchange": r.get("exchange", ""),
-            "sector": r["sector"],
-            "listed": True,
-        }
-        if "listing_date" in r and r["listing_date"]:
-            raw_date = r["listing_date"]
-            if raw_date:
-                try:
-                    row["listing_date"] = pd.to_datetime(raw_date).tz_localize("UTC").floor("us").to_pydatetime()
-                except Exception:
-                    row["listing_date"] = None
-        rows.append(row)
-
-    n = upsert_stocks(db, rows)
+    n = upsert_stocks(db, _build_rows(df))
     return {"imported": n, "source": "csv"}
 
 
