@@ -194,6 +194,11 @@ class PriceHistory(Base):
         nullable=False,
     )
 
+    open_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(18, 2), nullable=True)
+    high_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(18, 2), nullable=True)
+    low_price: Mapped[Optional[Decimal]] = mapped_column(Numeric(18, 2), nullable=True)
+    volume: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+
     recorded_at: Mapped[DateTime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

@@ -1,9 +1,21 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import auth, stocks
+from api.routers import auth, stocks, portfolios, bank_accounts
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+from api.services.price_poller import PricePoller
+
+poller = PricePoller()
+
+@asynccontextmanager
+async def lifespan(app):
+    await poller.start()
+    yield
+    await poller.stop()
+
+# app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +27,8 @@ app.add_middleware(
 
 app.include_router(auth.router)
 app.include_router(stocks.router)
+app.include_router(portfolios.router)
+app.include_router(bank_accounts.router)
 
 @app.get("/")
 def health_check():

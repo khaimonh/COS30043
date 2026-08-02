@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
+import json
 import pandas as pd
 import io
 from fastapi import APIRouter, status, HTTPException, File, UploadFile
@@ -11,6 +12,7 @@ from api.services.stock_service import (
     upsert_stocks, fetch_stocks_from_vnstock, get_all_stocks, get_stock_by_ticker,
     get_market_snapshot,
 )
+from api.services.redis_service import get_redis
 
 load_dotenv()
 
@@ -68,6 +70,12 @@ async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: Upload
 
 @router.get('/{ticker}/quote', status_code=status.HTTP_200_OK)
 async def get_quote(ticker: str):
+    try:
+        cached = await get_redis().get(f"price:{ticker}")
+    except Exception:
+        cached = None
+    if cached:
+        return json.loads(cached)
     q = get_market_snapshot(ticker)
     if not q:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")

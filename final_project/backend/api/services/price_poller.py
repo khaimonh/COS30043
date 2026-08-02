@@ -1,8 +1,8 @@
-import asyncio, logging, os
+import asyncio, json, logging, os
 import httpx
-from sqlalchemy import select
+from sqlalchemy import select, exists
 from api.database import AsyncSessionLocal, async_engine
-from api.models import Stock, PriceHistory
+from api.models import Stock, PriceHistory, Watchlist, Holding
 from api.services.redis_service import get_redis
 
 logger = logging.getLogger("price_poller")
@@ -22,7 +22,7 @@ class PricePoller:
         self.redis_client=get_redis()
 
     async def start(self):
-        self._task = asyncio.create_task(self._loop(), name="price-poller")
+        self._task = asyncio.create_task(self._run_forever(), name="price-poller")
 
     async def stop(self):
         if self._task:
@@ -32,9 +32,28 @@ class PricePoller:
             except asyncio.CancelledError:
                 pass
 
+    async def _run_forever(self):
+        while True:
+            try:
+                await self.run_once()
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("poll cycle failed")
+            await asyncio.sleep(POLL_INTERVAL_SECONDS)
+
     async def run_once(self):
         async with AsyncSessionLocal() as session:
-            rows = (await session.execute(select(Stock.stock_id, Stock.ticker).where(Stock.listed == True))).all()
+            rows = (
+                await session.execute(
+                    select(Stock.stock_id, Stock.ticker)
+                    .where(Stock.listed == True)
+                    .where(
+                        exists(select(1).where(Watchlist.stock_id == Stock.stock_id))
+                        | exists(select(1).where(Holding.stock_id == Stock.stock_id))
+                    )
+                )
+            ).all()
             for stock_id, ticker in rows:
                 try:
                     async with httpx.AsyncClient(timeout=PRICE_API_TIMEOUT) as client:
@@ -51,10 +70,18 @@ class PricePoller:
                     continue
 
                 try:
-                    await self.redis_client.set(f"price:{ticker}", str(close_price), ex=PRICE_TTL_SECONDS)
+                    await self.redis_client.set(f"price:{ticker}", json.dumps(r.json()), ex=PRICE_TTL_SECONDS)
                 except Exception as e:
                     logger.warning("redis set failed for %s: %s", ticker, e)
-                session.add(PriceHistory(stock_id=stock_id, price=close_price))
+                data = r.json()
+                session.add(PriceHistory(
+                    stock_id=stock_id,
+                    price=data.get("close_price"),
+                    open_price=data.get("open_price"),
+                    high_price=data.get("high_price"),
+                    low_price=data.get("low_price"),
+                    volume=data.get("volume_accumulated"),
+                ))
                 await asyncio.sleep(QUOTE_DELAY_SECONDS)
             try:
                 await session.commit()
