@@ -24,6 +24,13 @@ router = APIRouter(
 REQUIRED_COLS = {"ticker", "company_name", "exchange", "sector"}
 
 
+class StockUpdateRequest(BaseModel):
+    company_name: str | None = None
+    exchange: str | None = None
+    sector: str | None = None
+    listed: bool | None = None
+
+
 def _build_rows(df: pd.DataFrame) -> list[dict]:
     rows = []
     for r in df.to_dict(orient="records"):
@@ -97,6 +104,27 @@ async def get_stock(ticker: str, db: db_dependency):
         "listing_date": s.listing_date.isoformat() if s.listing_date else None,
         "listed": s.listed,
     }
+
+
+@router.put('/{ticker}', status_code=status.HTTP_200_OK)
+async def update_stock(ticker: str, payload: StockUpdateRequest, db: db_dependency, _: admin_dependency):
+    s = get_stock_by_ticker(db, ticker)
+    if s is None:
+        raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(s, field, value)
+    db.commit()
+    return {"detail": f"Stock '{ticker}' updated"}
+
+
+@router.delete('/{ticker}', status_code=status.HTTP_200_OK)
+async def delist_stock(ticker: str, db: db_dependency, _: admin_dependency):
+    s = get_stock_by_ticker(db, ticker)
+    if s is None:
+        raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
+    s.listed = False
+    db.commit()
+    return {"detail": f"Stock '{ticker}' delisted"}
 
 
 @router.get('/', status_code=status.HTTP_200_OK)

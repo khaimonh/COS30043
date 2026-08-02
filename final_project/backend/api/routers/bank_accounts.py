@@ -43,6 +43,21 @@ async def create_bank_account(
     }
 
 
+@router.delete('/{bank_account_id}', status_code=status.HTTP_200_OK)
+async def delete_bank_account(bank_account_id: str, db: db_dependency, current_user: user_dependency):
+    account = db.scalar(
+        select(BankAccount).where(
+            BankAccount.bank_account_id == bank_account_id,
+            BankAccount.user_id == current_user.user_id,
+        )
+    )
+    if not account:
+        raise HTTPException(status_code=404, detail="Bank account not found")
+    db.delete(account)
+    db.commit()
+    return {"detail": "Bank account deleted"}
+
+
 @router.get('/')
 async def get_bank_accounts(db: db_dependency, current_user: user_dependency):
     accounts = db.scalars(

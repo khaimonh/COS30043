@@ -92,6 +92,33 @@ async def get_portfolio(portfolio_id: str, db: db_dependency, current_user: user
     }
 
 
+@router.put('/{portfolio_id}', status_code=status.HTTP_200_OK)
+async def rename_portfolio(
+    portfolio_id: str,
+    create_request: PortfolioCreateRequest,
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
+
+    duplicate = db.scalar(
+        select(Portfolio).where(
+            Portfolio.user_id == current_user.user_id,
+            Portfolio.name == create_request.name,
+            Portfolio.portfolio_id != portfolio_id,
+        )
+    )
+    if duplicate:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Portfolio name already exists",
+        )
+
+    portfolio.name = create_request.name
+    db.commit()
+    return {"portfolio_id": str(portfolio.portfolio_id), "name": portfolio.name}
+
+
 @router.delete('/{portfolio_id}', status_code=status.HTTP_200_OK)
 async def delete_portfolio(portfolio_id: str, db: db_dependency, current_user: user_dependency):
     portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
