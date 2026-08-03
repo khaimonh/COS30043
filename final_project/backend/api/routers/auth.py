@@ -101,18 +101,11 @@ async def login_for_access_token(login_request: oauth2_pwform, db: db_dependency
 
 @router.get('/me')
 async def get_current_user_info(
-    db: db_dependency,
     current_user: user_dependency,
 ):
-    user = db.scalar(select(User).where(User.user_id == current_user.user_id))    
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found",
-        )
     return {
-        "user_id": str(user.user_id),
-        "email": user.email,
-        "full_name": user.first_name + ' ' + user.last_name,
-        "role": user.role.role_name,
+        "user_id": str(current_user.user_id),
+        "email": current_user.email,
+        "full_name": current_user.first_name + ' ' + current_user.last_name,
+        "role": current_user.role.role_name,
     }
