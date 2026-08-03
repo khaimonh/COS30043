@@ -73,6 +73,8 @@ class Portfolio(Base):
     cash_balance: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
     version: Mapped[int] = mapped_column(Integer, default=0)
 
+    __mapper_args__ = {"version_id_col": version}
+
     user: Mapped["User"] = relationship(back_populates="portfolios")
     cash_transactions: Mapped[list["CashTransaction"]] = relationship(back_populates="portfolio")
     holdings: Mapped[list["Holding"]] = relationship(back_populates="portfolio")
@@ -245,6 +247,8 @@ class Holding(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    __mapper_args__ = {"version_id_col": version}
 
     portfolio: Mapped["Portfolio"] = relationship(back_populates="holdings")
     stock: Mapped["Stock"] = relationship(back_populates="holdings")
