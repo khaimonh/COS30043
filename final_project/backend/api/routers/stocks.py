@@ -76,6 +76,21 @@ async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: Upload
     return {"imported": n, "source": "csv"}
 
 
+@router.get('/quotes', status_code=status.HTTP_200_OK)
+async def get_all_quotes(db: db_dependency):
+    tickers = [s.ticker for s in get_all_stocks(db)]
+    if not tickers:
+        return {}
+    try:
+        cached = await get_redis().mget(*[f"price:{t}" for t in tickers])
+    except Exception:
+        cached = [None] * len(tickers)
+    result = {}
+    for ticker, raw in zip(tickers, cached):
+        result[ticker] = json.loads(raw) if raw else None
+    return result
+
+
 @router.get('/{ticker}/quote', status_code=status.HTTP_200_OK)
 async def get_quote(ticker: str):
     try:

@@ -9,7 +9,7 @@ from jose import jwt
 
 from api.deps import db_dependency, hash_password, verify_password, user_dependency, oauth2_pwform
 
-from api.models import User, Role
+from api.models import User, Role, UserStatus
 load_dotenv()
 
 router = APIRouter(
@@ -42,6 +42,8 @@ def authenticate_user(email: str, password: str, db) -> User | None:
     if not user:
         return None
     if not verify_password(password, user.password_hash):
+        return None
+    if user.status == UserStatus.SUSPENDED:
         return None
     return user
 
