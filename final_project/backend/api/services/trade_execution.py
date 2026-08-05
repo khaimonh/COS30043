@@ -74,7 +74,7 @@ def _resolve_price(db: Session, order: Order) -> Decimal | None:
     except Exception:
         quote = None
 
-    if quote is None:
+    if not quote:
         try:
             snapshot = get_market_snapshot(order.stock.ticker)
             quote = snapshot.get("close_price") if snapshot else None
@@ -82,7 +82,7 @@ def _resolve_price(db: Session, order: Order) -> Decimal | None:
             logger.exception("price fallback failed for %s", order.stock.ticker)
             quote = None
 
-    if quote is None:
+    if not quote:
         return None
     quote = Decimal(str(quote))
 

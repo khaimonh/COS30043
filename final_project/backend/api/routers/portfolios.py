@@ -1,3 +1,4 @@
+import json
 from decimal import Decimal
 
 from fastapi import APIRouter, HTTPException, status
@@ -6,7 +7,19 @@ from pydantic import BaseModel, Field
 from sqlalchemy import select, func
 
 from api.deps import db_dependency, user_dependency
-from api.models import Portfolio, BankAccount, CashTransaction, CashTransactionType
+from api.models import (
+    Portfolio,
+    BankAccount,
+    CashTransaction,
+    CashTransactionType,
+    Holding,
+    HoldingAllocation,
+    Stock,
+    Trade,
+    Order,
+    OrderType,
+)
+from api.services.redis_service import get_redis
 
 router = APIRouter(
     prefix='/portfolios',
@@ -41,17 +54,7 @@ async def create_portfolio(
             detail=f"Maximum {MAX_PORTFOLIOS_PER_USER} portfolios per user",
         )
 
-    duplicate = db.scalar(
-        select(Portfolio).where(
-            Portfolio.user_id == current_user.user_id,
-            Portfolio.name == create_request.name,
-        )
-    )
-    if duplicate:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Portfolio name already exists",
-        )
+    _check_duplicate_name(db, current_user, create_request.name)
 
     portfolio = Portfolio(user_id=current_user.user_id, name=create_request.name)
     db.add(portfolio)
@@ -92,6 +95,164 @@ async def get_portfolio(portfolio_id: str, db: db_dependency, current_user: user
     }
 
 
+@router.get('/{portfolio_id}/holdings')
+async def get_holdings(portfolio_id: str, db: db_dependency, current_user: user_dependency):
+    _get_owned_portfolio(db, current_user, portfolio_id)
+    lots = db.scalars(
+        select(Holding)
+        .where(Holding.portfolio_id == portfolio_id, Holding.remaining_quantity > 0)
+        .order_by(Holding.purchase_date)
+    ).all()
+
+    by_stock: dict[str, dict] = {}
+    for lot in lots:
+        row = by_stock.setdefault(str(lot.stock_id), {
+            "ticker": lot.stock.ticker,
+            "company_name": lot.stock.company_name,
+            "quantity": 0,
+            "avg_cost": Decimal(0),
+            "lots": 0,
+        })
+        row["quantity"] += lot.remaining_quantity
+        row["avg_cost"] = (
+            row["avg_cost"] * (row["quantity"] - lot.remaining_quantity)
+            + lot.purchase_price * lot.remaining_quantity
+        ) / row["quantity"]
+        row["lots"] += 1
+
+    redis = get_redis()
+    holdings = []
+    for stock_id, row in by_stock.items():
+        quote = None
+        try:
+            cached = await redis.get(f"price:{row['ticker']}")
+            if cached:
+                quote = json.loads(cached).get("close_price")
+        except Exception:
+            quote = None
+        current_price = Decimal(str(quote)) if quote is not None else None
+        market_value = current_price * row["quantity"] if current_price is not None else None
+        cost_basis = row["avg_cost"] * row["quantity"]
+        holdings.append({
+            "stock_id": stock_id,
+            "ticker": row["ticker"],
+            "company_name": row["company_name"],
+            "quantity": row["quantity"],
+            "lots": row["lots"],
+            "avg_cost": str(row["avg_cost"]),
+            "current_price": str(current_price) if current_price is not None else None,
+            "market_value": str(market_value) if market_value is not None else None,
+            "cost_basis": str(cost_basis),
+            "unrealized_pnl": str(market_value - cost_basis) if market_value is not None else None,
+        })
+    return holdings
+
+
+@router.get('/{portfolio_id}/summary')
+async def get_portfolio_summary(
+    portfolio_id: str, db: db_dependency, current_user: user_dependency
+):
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
+
+    cash_balance = portfolio.cash_balance
+
+    lots = db.scalars(
+        select(Holding)
+        .where(Holding.portfolio_id == portfolio_id, Holding.remaining_quantity > 0)
+    ).all()
+    redis = get_redis()
+
+    holdings_value = Decimal(0)
+    per_stock = {}
+    for lot in lots:
+        cached = None
+        try:
+            cached = await redis.get(f"price:{lot.stock.ticker}")
+        except Exception:
+            cached = None
+        price = None
+        if cached:
+            price = Decimal(str(json.loads(cached).get("close_price")))
+        value = price * lot.remaining_quantity if price is not None else Decimal(0)
+        row = per_stock.setdefault(str(lot.stock_id), {
+            "ticker": lot.stock.ticker,
+            "quantity": 0,
+            "value": Decimal(0),
+            "priced": price is not None,
+        })
+        row["quantity"] += lot.remaining_quantity
+        row["value"] += value
+        holdings_value += value
+
+    total_value = cash_balance + holdings_value
+
+    realized = db.scalars(
+        select(HoldingAllocation)
+        .join(Trade, Trade.trade_id == HoldingAllocation.trade_id)
+        .join(Order, Order.order_id == Trade.order_id)
+        .where(Order.portfolio_id == portfolio_id)
+    ).all()
+    realized_pnl = Decimal(0)
+    for alloc in realized:
+        realized_pnl += (alloc.trade.execution_price - alloc.holding.purchase_price) * alloc.quantity_consumed
+
+    return {
+        "portfolio_id": str(portfolio.portfolio_id),
+        "name": portfolio.name,
+        "cash_balance": str(cash_balance),
+        "holdings_value": str(holdings_value),
+        "total_value": str(total_value),
+        "realized_pnl": str(realized_pnl),
+        "allocations": [
+            {
+                "ticker": r["ticker"],
+                "quantity": r["quantity"],
+                "value": str(r["value"]),
+                "weight_pct": round(r["value"] / total_value * 100, 2) if total_value else 0,
+                "priced": r["priced"],
+            }
+            for r in per_stock.values()
+        ],
+    }
+
+
+@router.get('/{portfolio_id}/activity')
+async def get_activity(portfolio_id: str, db: db_dependency, current_user: user_dependency):
+    _get_owned_portfolio(db, current_user, portfolio_id)
+
+    cash = db.scalars(
+        select(CashTransaction)
+        .where(CashTransaction.portfolio_id == portfolio_id)
+        .order_by(CashTransaction.created_at)
+    ).all()
+    trades = db.scalars(
+        select(Trade).join(Order).where(Order.portfolio_id == portfolio_id)
+        .order_by(Trade.executed_at)
+    ).all()
+
+    events = []
+    for t in cash:
+        events.append({
+            "type": t.type.value,
+            "amount": str(t.amount),
+            "ticker": None,
+            "quantity": None,
+            "price": None,
+            "created_at": t.created_at.isoformat() if t.created_at else None,
+        })
+    for tr in trades:
+        events.append({
+            "type": tr.order.order_type.value,
+            "amount": str(tr.execution_price * tr.executed_quantity),
+            "ticker": tr.order.stock.ticker,
+            "quantity": tr.executed_quantity,
+            "price": str(tr.execution_price),
+            "created_at": tr.executed_at.isoformat() if tr.executed_at else None,
+        })
+    events.sort(key=lambda e: e["created_at"], reverse=True)
+    return events
+
+
 @router.put('/{portfolio_id}', status_code=status.HTTP_200_OK)
 async def rename_portfolio(
     portfolio_id: str,
@@ -101,18 +262,7 @@ async def rename_portfolio(
 ):
     portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
 
-    duplicate = db.scalar(
-        select(Portfolio).where(
-            Portfolio.user_id == current_user.user_id,
-            Portfolio.name == create_request.name,
-            Portfolio.portfolio_id != portfolio_id,
-        )
-    )
-    if duplicate:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Portfolio name already exists",
-        )
+    _check_duplicate_name(db, current_user, create_request.name, exclude_id=portfolio_id)
 
     portfolio.name = create_request.name
     db.commit()
@@ -213,6 +363,20 @@ async def delete_transaction(
     db.delete(transaction)
     db.commit()
     return {"cash_balance": str(portfolio.cash_balance)}
+
+
+def _check_duplicate_name(db, current_user, name: str, exclude_id: str | None = None) -> None:
+    q = select(Portfolio).where(
+        Portfolio.user_id == current_user.user_id,
+        Portfolio.name == name,
+    )
+    if exclude_id is not None:
+        q = q.where(Portfolio.portfolio_id != exclude_id)
+    if db.scalar(q) is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Portfolio name already exists",
+        )
 
 
 def _get_owned_portfolio(db, current_user, portfolio_id: str) -> Portfolio:
