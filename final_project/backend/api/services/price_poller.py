@@ -1,16 +1,14 @@
 import asyncio, json, logging, os
-import httpx
 from sqlalchemy import select, exists
 from api.database import AsyncSessionLocal
 from api.models import Stock, PriceHistory, Watchlist, Holding
 from api.services.redis_service import get_redis
+from api.services.stock_service import get_market_snapshot
 
 logger = logging.getLogger("price_poller")
 
 POLL_INTERVAL_SECONDS = float(os.getenv("POLL_INTERVAL_SECONDS", "10"))
 PRICE_TTL_SECONDS = int(os.getenv("PRICE_TTL_SECONDS", "15"))
-PRICE_API_BASE_URL = os.getenv("PRICE_API_BASE_URL", "http://localhost:8000")
-PRICE_API_TIMEOUT = float(os.getenv("PRICE_API_TIMEOUT", "10"))
 
 QUOTE_DELAY_SECONDS = 3.1
 
@@ -54,12 +52,9 @@ class PricePoller:
             ).all()
             for stock_id, ticker in rows:
                 try:
-                    async with httpx.AsyncClient(timeout=PRICE_API_TIMEOUT) as client:
-                        r = await client.get(f"{PRICE_API_BASE_URL}/stocks/{ticker}/quote")
-                        r.raise_for_status()
-                        data = r.json()
-                        close_price = data.get("close_price")
-                except (httpx.HTTPError, ValueError) as e:
+                    data = await asyncio.to_thread(get_market_snapshot, ticker)
+                    close_price = data.get("close_price")
+                except Exception as e:
                     logger.warning("quote fetch failed for %s: %s", ticker, e)
                     await asyncio.sleep(QUOTE_DELAY_SECONDS)
                     continue

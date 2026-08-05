@@ -7,7 +7,15 @@ import os
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 
-from api.deps import db_dependency, hash_password, verify_password, user_dependency, oauth2_pwform
+from api.deps import (
+    db_dependency,
+    hash_password,
+    verify_password,
+    user_dependency,
+    oauth2_pwform,
+    SECRET_KEY,
+    ALGORITHM,
+)
 
 from api.models import User, Role, UserStatus
 load_dotenv()
@@ -18,20 +26,13 @@ router = APIRouter(
 )
 
 
-SECRET_KEY = os.getenv("AUTH_SECRET_KEY")
-ALGORITHM = os.getenv("AUTH_ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
 class UserCreateRequest(BaseModel):
     first_name: str
     last_name: str
     email: EmailStr
-    phone_number: str
     password: str
-
-class UserLoginRequest(BaseModel):
-    email: EmailStr
-    password:str
 
 class Token(BaseModel):
     access_token: str

@@ -1,4 +1,3 @@
-import json
 from decimal import Decimal
 
 from fastapi import APIRouter, HTTPException, status
@@ -14,12 +13,10 @@ from api.models import (
     CashTransactionType,
     Holding,
     HoldingAllocation,
-    Stock,
     Trade,
     Order,
-    OrderType,
 )
-from api.services.redis_service import get_redis
+from api.services.redis_service import get_cached_quote
 
 router = APIRouter(
     prefix='/portfolios',
@@ -34,7 +31,6 @@ class PortfolioCreateRequest(BaseModel):
 
 
 class CashRequest(BaseModel):
-    portfolio_id: str
     bank_account_id: str | None = None
     amount: Decimal = Field(gt=0)
 
@@ -80,14 +76,7 @@ async def get_portfolios(db: db_dependency, current_user: user_dependency):
 
 @router.get('/{portfolio_id}')
 async def get_portfolio(portfolio_id: str, db: db_dependency, current_user: user_dependency):
-    portfolio = db.scalar(
-        select(Portfolio).where(
-            Portfolio.portfolio_id == portfolio_id,
-            Portfolio.user_id == current_user.user_id,
-        )
-    )
-    if not portfolio:
-        raise HTTPException(status_code=404, detail="Portfolio not found")
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
     return {
         "portfolio_id": str(portfolio.portfolio_id),
         "name": portfolio.name,
@@ -120,17 +109,11 @@ async def get_holdings(portfolio_id: str, db: db_dependency, current_user: user_
         ) / row["quantity"]
         row["lots"] += 1
 
-    redis = get_redis()
     holdings = []
     for stock_id, row in by_stock.items():
-        quote = None
-        try:
-            cached = await redis.get(f"price:{row['ticker']}")
-            if cached:
-                quote = json.loads(cached).get("close_price")
-        except Exception:
-            quote = None
-        current_price = Decimal(str(quote)) if quote is not None else None
+        quote = await get_cached_quote(row["ticker"])
+        close = quote.get("close_price") if quote else None
+        current_price = Decimal(str(close)) if close else None
         market_value = current_price * row["quantity"] if current_price is not None else None
         cost_basis = row["avg_cost"] * row["quantity"]
         holdings.append({
@@ -160,19 +143,12 @@ async def get_portfolio_summary(
         select(Holding)
         .where(Holding.portfolio_id == portfolio_id, Holding.remaining_quantity > 0)
     ).all()
-    redis = get_redis()
-
     holdings_value = Decimal(0)
     per_stock = {}
     for lot in lots:
-        cached = None
-        try:
-            cached = await redis.get(f"price:{lot.stock.ticker}")
-        except Exception:
-            cached = None
-        price = None
-        if cached:
-            price = Decimal(str(json.loads(cached).get("close_price")))
+        cached = await get_cached_quote(lot.stock.ticker)
+        close = cached.get("close_price") if cached else None
+        price = Decimal(str(close)) if close else None
         value = price * lot.remaining_quantity if price is not None else Decimal(0)
         row = per_stock.setdefault(str(lot.stock_id), {
             "ticker": lot.stock.ticker,
@@ -279,14 +255,7 @@ async def delete_portfolio(portfolio_id: str, db: db_dependency, current_user: u
 
 @router.get('/{portfolio_id}/transactions')
 async def get_transactions(portfolio_id: str, db: db_dependency, current_user: user_dependency):
-    portfolio = db.scalar(
-        select(Portfolio).where(
-            Portfolio.portfolio_id == portfolio_id,
-            Portfolio.user_id == current_user.user_id,
-        )
-    )
-    if not portfolio:
-        raise HTTPException(status_code=404, detail="Portfolio not found")
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
     transactions = db.scalars(
         select(CashTransaction)
         .where(CashTransaction.portfolio_id == portfolio_id)
@@ -304,8 +273,13 @@ async def get_transactions(portfolio_id: str, db: db_dependency, current_user: u
 
 
 @router.post('/{portfolio_id}/deposit', status_code=status.HTTP_200_OK)
-async def deposit(cash_request: CashRequest, db: db_dependency, current_user: user_dependency):
-    portfolio = _get_owned_portfolio(db, current_user, cash_request.portfolio_id)
+async def deposit(
+    portfolio_id: str,
+    cash_request: CashRequest,
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
     _check_bank_account(db, current_user, cash_request.bank_account_id)
 
     portfolio.cash_balance += cash_request.amount
@@ -320,8 +294,13 @@ async def deposit(cash_request: CashRequest, db: db_dependency, current_user: us
 
 
 @router.post('/{portfolio_id}/withdraw', status_code=status.HTTP_200_OK)
-async def withdraw(cash_request: CashRequest, db: db_dependency, current_user: user_dependency):
-    portfolio = _get_owned_portfolio(db, current_user, cash_request.portfolio_id)
+async def withdraw(
+    portfolio_id: str,
+    cash_request: CashRequest,
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    portfolio = _get_owned_portfolio(db, current_user, portfolio_id)
     _check_bank_account(db, current_user, cash_request.bank_account_id)
 
     if portfolio.cash_balance < cash_request.amount:

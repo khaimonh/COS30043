@@ -1,4 +1,3 @@
-import json
 from decimal import Decimal
 
 from fastapi import APIRouter, HTTPException, status
@@ -8,8 +7,7 @@ from sqlalchemy import select
 
 from api.deps import db_dependency, user_dependency
 from api.models import Watchlist, Stock
-from api.services.stock_service import get_stock_by_ticker
-from api.services.redis_service import get_redis
+from api.services.redis_service import get_cached_quote
 
 router = APIRouter(
     prefix='/watchlist',
@@ -43,16 +41,10 @@ async def get_watchlist(db: db_dependency, current_user: user_dependency):
     entries = db.scalars(
         select(Watchlist).where(Watchlist.user_id == current_user.user_id)
     ).all()
-    redis = get_redis()
     result = []
     for entry in entries:
-        current_price = None
-        try:
-            cached = await redis.get(f"price:{entry.stock.ticker}")
-            if cached:
-                current_price = json.loads(cached).get("close_price")
-        except Exception:
-            current_price = None
+        quote = await get_cached_quote(entry.stock.ticker)
+        current_price = quote.get("close_price") if quote else None
         result.append({
             "watchlist_id": str(entry.watchlist_id),
             "stock_id": str(entry.stock.stock_id),
@@ -73,7 +65,7 @@ async def add_to_watchlist(
     db: db_dependency,
     current_user: user_dependency,
 ):
-    stock = get_stock_by_ticker(db, add_request.ticker)
+    stock = db.scalar(select(Stock).where(Stock.ticker == add_request.ticker))
     if stock is None or not stock.listed:
         raise HTTPException(status_code=404, detail=f"ticker '{add_request.ticker}' not found")
 

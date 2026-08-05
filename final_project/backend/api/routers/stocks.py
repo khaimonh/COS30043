@@ -4,15 +4,16 @@ from pydantic import BaseModel
 import json
 import pandas as pd
 import io
-from fastapi import APIRouter, status, HTTPException, File, UploadFile
+from fastapi import APIRouter, status, HTTPException, File, UploadFile, Query
+from sqlalchemy import select
 
 from api.deps import db_dependency, admin_dependency
 
 from api.services.stock_service import (
-    upsert_stocks, fetch_stocks_from_vnstock, get_all_stocks, get_stock_by_ticker,
-    get_market_snapshot,
+    upsert_stocks, fetch_stocks_from_vnstock, get_market_snapshot,
 )
 from api.services.redis_service import get_redis
+from api.models import Stock, PriceHistory
 
 load_dotenv()
 
@@ -78,7 +79,7 @@ async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: Upload
 
 @router.get('/quotes', status_code=status.HTTP_200_OK)
 async def get_all_quotes(db: db_dependency):
-    tickers = [s.ticker for s in get_all_stocks(db)]
+    tickers = [s.ticker for s in db.scalars(select(Stock)).all()]
     if not tickers:
         return {}
     try:
@@ -105,9 +106,37 @@ async def get_quote(ticker: str):
     return q
 
 
+@router.get('/{ticker}/history', status_code=status.HTTP_200_OK)
+async def get_price_history(
+    ticker: str,
+    db: db_dependency,
+    limit: int = Query(100, ge=1, le=500),
+):
+    stock = db.scalar(select(Stock).where(Stock.ticker == ticker))
+    if stock is None:
+        raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
+    rows = db.scalars(
+        select(PriceHistory)
+        .where(PriceHistory.stock_id == stock.stock_id)
+        .order_by(PriceHistory.recorded_at.desc())
+        .limit(limit)
+    ).all()
+    points = []
+    for r in reversed(rows):
+        points.append({
+            "time": r.recorded_at.isoformat() if r.recorded_at else None,
+            "open": str(r.open_price) if r.open_price is not None else None,
+            "high": str(r.high_price) if r.high_price is not None else None,
+            "low": str(r.low_price) if r.low_price is not None else None,
+            "close": str(r.price) if r.price is not None else None,
+            "volume": r.volume,
+        })
+    return {"ticker": ticker, "points": points}
+
+
 @router.get('/{ticker}', status_code=status.HTTP_200_OK)
 async def get_stock(ticker: str, db: db_dependency):
-    s = get_stock_by_ticker(db, ticker)
+    s = db.scalar(select(Stock).where(Stock.ticker == ticker))
     if s is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
     return {
@@ -123,7 +152,7 @@ async def get_stock(ticker: str, db: db_dependency):
 
 @router.put('/{ticker}', status_code=status.HTTP_200_OK)
 async def update_stock(ticker: str, payload: StockUpdateRequest, db: db_dependency, _: admin_dependency):
-    s = get_stock_by_ticker(db, ticker)
+    s = db.scalar(select(Stock).where(Stock.ticker == ticker))
     if s is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
     for field, value in payload.model_dump(exclude_unset=True).items():
@@ -134,7 +163,7 @@ async def update_stock(ticker: str, payload: StockUpdateRequest, db: db_dependen
 
 @router.delete('/{ticker}', status_code=status.HTTP_200_OK)
 async def delist_stock(ticker: str, db: db_dependency, _: admin_dependency):
-    s = get_stock_by_ticker(db, ticker)
+    s = db.scalar(select(Stock).where(Stock.ticker == ticker))
     if s is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
     s.listed = False
@@ -154,5 +183,5 @@ async def get_stocks(db: db_dependency):
             "listing_date": s.listing_date.isoformat() if s.listing_date else None,
             "listed": s.listed,
         }
-        for s in get_all_stocks(db)
+        for s in db.scalars(select(Stock)).all()
     ]

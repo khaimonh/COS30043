@@ -76,9 +76,9 @@ class Portfolio(Base):
     __mapper_args__ = {"version_id_col": version}
 
     user: Mapped["User"] = relationship(back_populates="portfolios")
-    cash_transactions: Mapped[list["CashTransaction"]] = relationship(back_populates="portfolio")
-    holdings: Mapped[list["Holding"]] = relationship(back_populates="portfolio")
-    orders: Mapped[list["Order"]] = relationship(back_populates="portfolio")
+    cash_transactions: Mapped[list["CashTransaction"]] = relationship(back_populates="portfolio", passive_deletes=True)
+    holdings: Mapped[list["Holding"]] = relationship(back_populates="portfolio", passive_deletes=True)
+    orders: Mapped[list["Order"]] = relationship(back_populates="portfolio", passive_deletes=True)
 
 
 class BankAccount(Base):
@@ -268,7 +268,6 @@ class OrderStyle(enum.Enum):
 class OrderStatus(enum.Enum):
     PENDING = "Pending"
     FILLED = "Filled"
-    PARTIALLY_FILLED = "Partially Filled"
     CANCELLED = "Cancelled"
     REJECTED = "Rejected"
 
@@ -369,7 +368,7 @@ class HoldingAllocation(Base):
     )
 
     holding_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("holdings.holding_id", ondelete="RESTRICT"),
+        ForeignKey("holdings.holding_id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )

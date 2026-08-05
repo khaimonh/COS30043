@@ -1,3 +1,4 @@
+import json
 import os
 import redis
 import redis.asyncio as aioredis
@@ -24,3 +25,16 @@ def get_redis_sync() -> redis.Redis:
             decode_responses=True,
         )
     return _sync_client
+
+
+async def get_cached_quote(ticker: str) -> dict | None:
+    try:
+        cached = await get_redis().get(f"price:{ticker}")
+    except Exception:
+        return None
+    if not cached:
+        return None
+    try:
+        return json.loads(cached)
+    except Exception:
+        return None

@@ -12,8 +12,8 @@ from api.database import SessionLocal
 from api.models import Stock
 
 
-def fetch_stocks_from_vnstock(lang: str = "en") -> list[dict]:
-    df = Listing().symbols_by_industries(lang=lang)
+def fetch_stocks_from_vnstock() -> list[dict]:
+    df = Listing().symbols_by_industries(lang="en")
     df = df.rename(columns={
         "symbol": "ticker",
         "organ_name": "company_name",
@@ -41,14 +41,6 @@ def upsert_stocks(db: Session, rows: list[dict]) -> int:
         count += 1
     db.commit()
     return count
-
-
-def get_all_stocks(db: Session) -> list[Stock]:
-    return list(db.scalars(select(Stock)).all())
-
-
-def get_stock_by_ticker(db: Session, ticker: str) -> Stock | None:
-    return db.scalar(select(Stock).where(Stock.ticker == ticker))
 
 
 def get_market_snapshot(ticker: str) -> dict:
