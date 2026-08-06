@@ -19,7 +19,7 @@ function onSubmit(): void {
   <form class="space-y-5" noValidate @submit.prevent="onSubmit">
     <div class="grid gap-4 sm:grid-cols-2">
       <label class="block">
-        <span class="mb-1.5 block text-sm font-medium text-foreground">
+        <span class="mb-1.5 block text-sm font-medium text-ink">
           {{ t("about.firstNameLabel") }}
         </span>
         <Input
@@ -30,7 +30,7 @@ function onSubmit(): void {
         />
       </label>
       <label class="block">
-        <span class="mb-1.5 block text-sm font-medium text-foreground">
+        <span class="mb-1.5 block text-sm font-medium text-ink">
           {{ t("about.lastNameLabel") }}
         </span>
         <Input
@@ -42,7 +42,7 @@ function onSubmit(): void {
       </label>
     </div>
     <Button type="submit">{{ t("about.greetButton") }}</Button>
-    <p v-if="name !== null" class="text-lg font-semibold tracking-tight text-accent-hover">
+    <p v-if="name !== null" class="text-lg font-semibold tracking-tight text-up">
       {{ tf("about.welcome", { name }) }}
     </p>
   </form>

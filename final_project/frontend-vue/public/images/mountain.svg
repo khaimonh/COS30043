@@ -1,44 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500" role="img" aria-label="Mountain landscape at dusk">
-  <defs>
-    <linearGradient id="mnt-sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0e1638"/>
-      <stop offset="0.55" stop-color="#223060"/>
-      <stop offset="1" stop-color="#3a4a8f"/>
-    </linearGradient>
-    <linearGradient id="mnt-far" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#4a5a9e"/>
-      <stop offset="1" stop-color="#2f3c78"/>
-    </linearGradient>
-    <linearGradient id="mnt-near" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#23294f"/>
-      <stop offset="1" stop-color="#141830"/>
-    </linearGradient>
-    <linearGradient id="mnt-ground" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0d1122"/>
-      <stop offset="1" stop-color="#06070f"/>
-    </linearGradient>
-    <radialGradient id="mnt-sun" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#8fb1ff"/>
-      <stop offset="1" stop-color="#8fb1ff" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-
-  <rect width="800" height="500" fill="url(#mnt-sky)"/>
-  <circle cx="640" cy="150" r="90" fill="url(#mnt-sun)"/>
-  <circle cx="640" cy="150" r="38" fill="#cdd9ff" opacity="0.9"/>
-  <circle cx="640" cy="150" r="26" fill="#eef2ff"/>
-
-  <path d="M0 500 L0 320 L120 210 L240 320 L360 250 L500 350 L500 500 Z" fill="url(#mnt-far)"/>
-  <path d="M0 500 L0 320 L120 210 L240 320 Z" fill="url(#mnt-far)"/>
-  <path d="M360 250 L500 350 L500 500 L360 500 Z" fill="url(#mnt-far)"/>
-  <path d="M150 244 L120 210 L90 244 Z" fill="#dfe7ff" opacity="0.85"/>
-  <path d="M420 292 L360 250 L330 288 L420 292 Z" fill="#dfe7ff" opacity="0.85"/>
-
-  <path d="M0 500 L0 380 L150 300 L290 380 L410 330 L560 410 L560 500 Z" fill="url(#mnt-near)"/>
-  <path d="M0 500 L0 380 L150 300 L290 380 Z" fill="url(#mnt-near)"/>
-  <path d="M410 330 L560 410 L560 500 L410 500 Z" fill="url(#mnt-near)"/>
-  <path d="M190 326 L150 300 L120 334 L190 326 Z" fill="#eef2ff" opacity="0.9"/>
-  <path d="M455 362 L410 330 L398 368 L455 362 Z" fill="#eef2ff" opacity="0.9"/>
-
-  <path d="M0 500 L0 420 L240 350 L520 440 L800 380 L800 500 Z" fill="url(#mnt-ground)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="A mountain printed as sleeve art">
+  <rect width="800" height="500" fill="#f1eadb"/>
+  <circle cx="620" cy="120" r="46" fill="#23306e"/>
+  <path d="M0 500 L0 330 L190 140 L320 300 L470 180 L620 330 L800 210 L800 500 Z" fill="#d8ccb2"/>
+  <path d="M0 500 L0 380 L190 210 L340 360 L500 250 L640 380 L800 300 L800 500 Z" fill="#1a1510"/>
+  <path d="M0 500 L0 430 L190 300 L360 430 L560 330 L720 440 L800 400 L800 500 Z" fill="#23306e"/>
+  <rect x="0" y="0" width="14" height="500" fill="#23306e"/>
+  <rect x="786" y="0" width="14" height="500" fill="#23306e"/>
+  <rect x="0" y="0" width="800" height="14" fill="#23306e"/>
+  <rect x="0" y="486" width="800" height="14" fill="#23306e"/>
 </svg>

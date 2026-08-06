@@ -1,172 +1,28 @@
 {
   "items": [
-    {
-      "id": 1,
-      "date": "2026-08-05",
-      "title": "VN-Index closes higher as banks lead the rally",
-      "content": "The benchmark VN-Index gained 1.2% on Tuesday, powered by banking heavyweights and foreign inflows into large caps.",
-      "category": "Market"
-    },
-    {
-      "id": 2,
-      "date": "2026-08-05",
-      "title": "Inflation cools to a nine-month low in July",
-      "content": "Consumer prices rose 2.1% year on year in July, giving the central bank room to keep policy supportive through year-end.",
-      "category": "Economy"
-    },
-    {
-      "id": 3,
-      "date": "2026-08-04",
-      "title": "FPT signs AI partnership with regional cloud provider",
-      "content": "FPT Corporation announced a cooperation agreement to deploy AI workloads across Southeast Asia, lifting its technology services outlook.",
-      "category": "Companies"
-    },
-    {
-      "id": 4,
-      "date": "2026-08-04",
-      "title": "VN-Index drops on profit-taking after five-day rally",
-      "content": "The index retreated 0.8% as traders locked in gains, though turnover remained above the 20-day average.",
-      "category": "Market"
-    },
-    {
-      "id": 5,
-      "date": "2026-08-03",
-      "title": "State bank holds policy rate steady at 4.5%",
-      "content": "The State Bank of Vietnam kept its refinancing rate unchanged, citing stable inflation and adequate liquidity in the banking system.",
-      "category": "Economy"
-    },
-    {
-      "id": 6,
-      "date": "2026-08-03",
-      "title": "Vinfast reports record quarterly EV deliveries",
-      "content": "Vinfast delivered more than 32,000 electric vehicles in the quarter, up 45% from the previous period, beating market estimates.",
-      "category": "Companies"
-    },
-    {
-      "id": 7,
-      "date": "2026-08-02",
-      "title": "Foreign investors turn net buyers for third straight week",
-      "content": "Overseas funds poured $180 million into HoSE-listed shares this week, the strongest inflow streak since March.",
-      "category": "Market"
-    },
-    {
-      "id": 8,
-      "date": "2026-08-02",
-      "title": "Vietnam's manufacturing PMI edges back into expansion",
-      "content": "The S&P Global PMI rose to 50.6 in July, signalling renewed growth in output and new export orders.",
-      "category": "Economy"
-    },
-    {
-      "id": 9,
-      "date": "2026-08-01",
-      "title": "Blockchain firm partners with two Hanoi banks for KYC",
-      "content": "A local fintech will provide digital identity and KYC services to two commercial banks, expanding its enterprise pipeline.",
-      "category": "Technology"
-    },
-    {
-      "id": 10,
-      "date": "2026-08-01",
-      "title": "Regulator tightens disclosure rules for listed firms",
-      "content": "The new circular requires companies to publish quarterly reports within 20 days, up from 30, starting October 2026.",
-      "category": "Regulation"
-    },
-    {
-      "id": 11,
-      "date": "2026-07-31",
-      "title": "Real estate stocks rally on housing loan stimulus",
-      "content": "Developers and homebuilders advanced after a new credit package lowered mortgage rates for first-time buyers.",
-      "category": "Market"
-    },
-    {
-      "id": 12,
-      "date": "2026-07-31",
-      "title": "Export growth accelerates as electronics rebound",
-      "content": "Shipments rose 11.4% in July, led by smartphones and semiconductor assembly, easing pressure on the trade balance.",
-      "category": "Economy"
-    },
-    {
-      "id": 13,
-      "date": "2026-07-30",
-      "title": "Pharmaceutical firm wins tender for 10 provinces",
-      "content": "A leading pharma manufacturer secured a government procurement contract valued at over VND 800 billion.",
-      "category": "Companies"
-    },
-    {
-      "id": 14,
-      "date": "2026-07-30",
-      "title": "Viettel launches 5G standalone network commercially",
-      "content": "The telco switched on nationwide 5G SA coverage, claiming peak speeds of 1.4 Gbps and new enterprise use cases.",
-      "category": "Technology"
-    },
-    {
-      "id": 15,
-      "date": "2026-07-29",
-      "title": "VN-Index reclaims 1,300 points on steel and cement gains",
-      "content": "Construction materials rallied on infrastructure spending headlines, lifting the benchmark back above the key level.",
-      "category": "Market"
-    },
-    {
-      "id": 16,
-      "date": "2026-07-29",
-      "title": "FDI pledges reach $18 billion in the first seven months",
-      "content": "Registered foreign direct investment rose 8% year on year, with manufacturing and energy drawing the largest shares.",
-      "category": "Economy"
-    },
-    {
-      "id": 17,
-      "date": "2026-07-28",
-      "title": "Exchange sets new daily turnover record of VND 35 trillion",
-      "content": "HoSE recorded its busiest session ever as retail participation surged, pushing liquidity past previous highs.",
-      "category": "Market"
-    },
-    {
-      "id": 18,
-      "date": "2026-07-28",
-      "title": "Fintech startup raises $25 million Series B",
-      "content": "The Hanoi-based payments company will use the funds to expand buy-now-pay-later services across the region.",
-      "category": "Technology"
-    },
-    {
-      "id": 19,
-      "date": "2026-07-27",
-      "title": "FLC Aviation agrees to order 20 regional jets",
-      "content": "The charter carrier signed a memorandum of understanding for 20 aircraft, renewing its domestic expansion plans.",
-      "category": "Companies"
-    },
-    {
-      "id": 20,
-      "date": "2026-07-27",
-      "title": "Securities watchdog fines three brokers for order routing",
-      "content": "Regulators imposed penalties totalling VND 4 billion for failures in order execution and client reporting systems.",
-      "category": "Regulation"
-    },
-    {
-      "id": 21,
-      "date": "2026-07-24",
-      "title": "Retail sales climb 9% as tourism season peaks",
-      "content": "Strong domestic demand and record international arrivals boosted consumer spending across the summer months.",
-      "category": "Economy"
-    },
-    {
-      "id": 22,
-      "date": "2026-07-24",
-      "title": "Steel maker expands plant to meet export demand",
-      "content": "The company announced a new rolling line with capacity of 1.2 million tonnes, targeting the ASEAN market.",
-      "category": "Companies"
-    },
-    {
-      "id": 23,
-      "date": "2026-07-23",
-      "title": "Insurers launch digital claims processing platform",
-      "content": "Three major insurers rolled out AI-assisted claims review, cutting average payout time from days to hours.",
-      "category": "Technology"
-    },
-    {
-      "id": 24,
-      "date": "2026-07-23",
-      "title": "New derivatives products expected to debut next quarter",
-      "content": "The exchange is preparing index futures on new benchmarks, subject to final approval from the securities commission.",
-      "category": "Regulation"
-    }
+    { "id": 1, "date": "2026-08-06", "title": "Vn-Index closes at a fresh 2026 high on foreign buying", "content": "The index added 1.4% as foreign institutions turned net buyers for the eighth consecutive session, led by banks and steel.", "category": "Equities" },
+    { "id": 2, "date": "2026-08-05", "title": "State bank keeps refinancing rate unchanged for a third month", "content": "Policymakers held the rate steady, citing anchored inflation and a stable đồng, leaving room to act if exports soften.", "category": "Policy" },
+    { "id": 3, "date": "2026-08-04", "title": "Vinamilk posts a 12% rise in first-half dairy exports", "content": "The dairy giant shipped more than 900 million tonnes across Southeast Asia, aided by stronger demand from the Philippines.", "category": "Equities" },
+    { "id": 4, "date": "2026-08-03", "title": "Rubber prices ease as the rainy season eases supply", "content": "Natural rubber futures slipped 2% on the week as southern plantations resumed full tapping after weeks of heavy rain.", "category": "Commodities" },
+    { "id": 5, "date": "2026-08-02", "title": "Dong holds steady against the dollar through July", "content": "The central bank's daily fixing stayed within a narrow band all month, a sign of calm in currency markets.", "category": "FX" },
+    { "id": 6, "date": "2026-08-01", "title": "Bank lenders extend credit growth guidance for the half", "content": "Regulators signalled another 2 percentage points of room for lending growth, buoying the big four's share prices.", "category": "Policy" },
+    { "id": 7, "date": "2026-07-31", "title": "Steel exports to the EU climb as quotas wind down", "content": "Mills shipped 14% more tonnage in Q2, the last full quarter before softer quotas take effect next year.", "category": "Commodities" },
+    { "id": 8, "date": "2026-07-30", "title": "Tech names lead HOSE turnover to a six-month high", "content": "Retail participation lifted daily turnover above VNĐ 22 trillion as investors rotated into software and chips.", "category": "Equities" },
+    { "id": 9, "date": "2026-07-29", "title": "Seafood sector shakes off red-tape delays", "content": "Export approvals normalised after a port backlog cleared, restoring shrimp shipments to pre-year pace.", "category": "Commodities" },
+    { "id": 10, "date": "2026-07-28", "title": "Inflation prints 2.1%, within the state target band", "content": "The July reading stayed comfortably under the 4% ceiling, keeping rate expectations flat into the autumn.", "category": "Macro" },
+    { "id": 11, "date": "2026-07-27", "title": "Logistics stocks rally on new north-south rail tender", "content": "Shippers rose after the transport ministry opened the first package of the long-awaited corridor to bidding.", "category": "Equities" },
+    { "id": 12, "date": "2026-07-26", "title": "Coffee futures firm as arabica stocks tighten", "content": "Inventories at monitored warehouses fell for the fourth week, underpinning prices at harvest-adjacent levels.", "category": "Commodities" },
+    { "id": 13, "date": "2026-07-25", "title": "Retail sales hold up despite the heat of the quarter", "content": "Monthly spending rose 0.9%, with e-commerce continuing to take share from physical shelves.", "category": "Macro" },
+    { "id": 14, "date": "2026-07-24", "title": "Private lenders rush to list structured deposits", "content": "Three mid-tier banks brought certificate products to market this month, chasing savers' renewed appetite.", "category": "Policy" },
+    { "id": 15, "date": "2026-07-23", "title": "Property developers stabilise as interest costs plateau", "content": "Major listed builders reported their first quarter without rising financing charges since 2023.", "category": "Equities" },
+    { "id": 16, "date": "2026-07-22", "title": "Rice export prices edge lower on regional harvest", "content": "Thai and Vietnamese cargoes eased in tandem as the summer crop reached buyers earlier than expected.", "category": "Commodities" },
+    { "id": 17, "date": "2026-07-21", "title": "Manufacturing PMI slips but stays in expansion", "content": "The July reading eased to 50.4 as new export orders cooled, though employment and output both rose.", "category": "Macro" },
+    { "id": 18, "date": "2026-07-20", "title": "Green bonds debut on the local corporate market", "content": "The first certified green issuance priced at a 12-point discount to ordinary paper, drawing fund demand.", "category": "Policy" },
+    { "id": 19, "date": "2026-07-19", "title": "Airlines hedge fuel into the busy travel window", "content": "Carriers locked in jet fuel at July levels, shielding summer-fare margins from a firmer crude tape.", "category": "Equities" },
+    { "id": 20, "date": "2026-07-18", "title": "Cement volumes recover on resumed public works", "content": "Infrastructure spending re-accelerated after the rainy season, lifting domestic dispatches for a third month.", "category": "Commodities" },
+    { "id": 21, "date": "2026-07-17", "title": "Pharma majors clear a vaccine re-registration hurdle", "content": "Two listed producers won renewed import licences, ending months of clearance uncertainty for their pipelines.", "category": "Equities" },
+    { "id": 22, "date": "2026-07-16", "title": "Savings rates tick up as banks compete for deposits", "content": "One-year deposit quotes inched 15 basis points higher at the top lenders, a modest nudge to the bond curve.", "category": "Macro" },
+    { "id": 23, "date": "2026-07-15", "title": "UPCOM listings double as SMEs test the public market", "content": "A dozen companies joined the unlisted board this quarter, more than in all of last year combined.", "category": "Equities" },
+    { "id": 24, "date": "2026-07-14", "title": "Garment orders shift back toward Vietnam", "content": "Buyers returned to the country's mills as a rival supplier's capacity tightened, lifting order books into Q4.", "category": "Commodities" }
   ]
 }

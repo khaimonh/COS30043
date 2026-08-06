@@ -9,7 +9,7 @@ defineEmits<{ (e: "update:modelValue", value: string): void }>();
   <div class="relative">
     <select
       v-bind="$attrs"
-      class="w-full appearance-none rounded-lg border border-border bg-surface px-3.5 py-2 pr-9 text-sm text-foreground transition-colors duration-150 hover:border-muted/50 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
+      class="w-full appearance-none rounded-lg border border-rule bg-paper-2 px-3.5 py-2 pr-9 text-sm text-ink transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
       :value="modelValue"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
     >

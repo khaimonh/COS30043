@@ -38,13 +38,14 @@ const visible = computed(() =>
 <template>
   <div class="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
     <header class="pb-10">
-      <p class="font-mono text-xs uppercase tracking-[0.14em] text-accent-hover">
+      <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">
         {{ t("brand.name") }}
       </p>
-      <h1 class="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+      <h1 class="mt-3 font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-4xl">
         {{ t("news.title") }}
       </h1>
       <p class="mt-3 max-w-[65ch] text-muted">{{ t("news.subtitle") }}</p>
+      <p class="mt-1.5 font-mono text-[11px] tracking-[0.15em] text-muted/70">{{ t("news.demoNote") }}</p>
     </header>
 
     <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

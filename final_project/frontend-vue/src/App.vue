@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
-import Navbar from "./components/layout/Navbar.vue";
+import ObiBand from "./components/layout/ObiBand.vue";
 import Footer from "./components/layout/Footer.vue";
 </script>
 
+<!-- Direction contract lives in index.html (survives the production build); this file's job is the shell. -->
 <template>
-  <Navbar />
-  <main class="pt-20 sm:pt-24">
+  <ObiBand />
+  <main class="min-h-screen pb-24">
     <RouterView />
   </main>
   <Footer />

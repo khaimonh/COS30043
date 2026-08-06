@@ -24,7 +24,7 @@ const selected = computed(() => scenes.find((s) => s.key === scene.value) ?? sce
           :value="s.key"
           class="peer sr-only"
         />
-        <span class="mr-4 inline-block py-1 font-mono text-sm text-muted underline decoration-border decoration-1 underline-offset-8 transition-colors duration-150 hover:text-foreground peer-checked:text-foreground peer-checked:decoration-accent">
+        <span class="mr-4 inline-block py-1 font-mono text-sm text-muted underline decoration-rule decoration-1 underline-offset-8 transition-colors duration-150 hover:text-ink peer-checked:text-ink peer-checked:decoration-band">
           {{ t(s.label) }}
         </span>
       </label>
@@ -33,7 +33,7 @@ const selected = computed(() => scenes.find((s) => s.key === scene.value) ?? sce
       <img
         :src="selected.src"
         :alt="t(selected.alt)"
-        class="w-full rounded-2xl border border-border"
+        class="w-full rounded-2xl border border-rule"
       />
     </div>
   </div>

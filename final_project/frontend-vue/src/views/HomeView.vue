@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import HeroSection from "../components/home/HeroSection.vue";
-import StatsBand from "../components/home/StatsBand.vue";
-import SpecSheet from "../components/home/SpecSheet.vue";
-import PreviewBand from "../components/home/PreviewBand.vue";
+import SecondaryBlock from "../components/home/SecondaryBlock.vue";
+import CreditBand from "../components/home/CreditBand.vue";
 </script>
 
 <template>
   <HeroSection />
-  <StatsBand />
-  <SpecSheet />
-  <PreviewBand />
+  <SecondaryBlock />
+  <CreditBand />
 </template>

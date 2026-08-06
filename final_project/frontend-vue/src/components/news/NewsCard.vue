@@ -14,7 +14,7 @@ defineProps<{ item: NewsItem }>();
       </time>
       <Badge>{{ item.category }}</Badge>
     </div>
-    <h3 class="mt-2.5 text-lg font-semibold leading-snug tracking-tight">
+    <h3 class="mt-2.5 text-lg font-semibold leading-snug tracking-tight text-ink">
       {{ item.title }}
     </h3>
     <p class="mt-2 max-w-[70ch] text-sm leading-relaxed text-muted">

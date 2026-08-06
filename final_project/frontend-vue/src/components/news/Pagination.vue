@@ -11,7 +11,7 @@ const emit = defineEmits<{ (e: "page", value: number): void }>();
 <template>
   <nav
     v-if="totalPages > 1"
-    class="flex items-center justify-between gap-4 border-t border-border pt-5"
+    class="flex items-center justify-between gap-4 border-t border-rule pt-5"
     aria-label="pagination"
   >
     <Button variant="ghost" size="sm" :disabled="page <= 1" @click="emit('page', page - 1)">

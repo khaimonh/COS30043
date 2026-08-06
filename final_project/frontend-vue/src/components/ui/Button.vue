@@ -16,9 +16,9 @@ const classes = computed(() => {
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus " +
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55 active:scale-[0.98]";
   const variants: Record<Variant, string> = {
-    primary: "bg-accent text-white hover:bg-accent-hover",
-    outline: "border border-border text-foreground hover:border-accent/60 hover:text-accent-hover",
-    ghost: "text-muted hover:text-foreground",
+    primary: "bg-band text-band-ink hover:bg-band-2",
+    outline: "border border-ink text-ink hover:bg-ink hover:text-paper",
+    ghost: "text-muted hover:text-ink",
   };
   const sizes: Record<Size, string> = {
     sm: "px-4 py-2 text-sm",
