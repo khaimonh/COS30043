@@ -18,7 +18,7 @@ export function GreetingForm() {
   };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    <form onSubmit={onSubmit} className="space-y-5" noValidate>
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1.5 block text-sm font-medium text-foreground">
@@ -47,7 +47,7 @@ export function GreetingForm() {
       </div>
       <Button type="submit">{t("about.greetButton")}</Button>
       {name !== null ? (
-        <p className="rounded-lg border border-accent/40 bg-accent-soft px-4 py-3 text-base font-semibold text-accent-hover">
+        <p className="text-lg font-semibold tracking-tight text-accent-hover">
           {tf("about.welcome", { name })}
         </p>
       ) : null}

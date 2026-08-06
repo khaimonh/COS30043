@@ -13,12 +13,12 @@ export function PageHeader({
   return (
     <Section className="pt-12 pb-8 sm:pt-16">
       {eyebrow ? (
-        <div className="mb-3 text-sm font-medium uppercase tracking-widest text-accent-hover">
+        <div className="mb-3 font-mono text-xs uppercase tracking-[0.14em] text-accent-hover">
           {eyebrow}
         </div>
       ) : null}
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
-      {subtitle ? <p className="mt-3 max-w-2xl text-muted">{subtitle}</p> : null}
+      <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
+      {subtitle ? <p className="mt-3 max-w-[65ch] text-muted">{subtitle}</p> : null}
     </Section>
   );
 }

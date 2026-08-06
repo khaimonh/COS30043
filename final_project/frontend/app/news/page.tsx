@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLang } from "@/lib/i18n";
-import { Section } from "@/components/ui/Section";
-import { PageHeader } from "@/components/ui/PageHeader";
 import { NewsList } from "@/components/news/NewsList";
 import { NewsSearch } from "@/components/news/NewsSearch";
 import { Pagination } from "@/components/news/Pagination";
@@ -43,49 +41,50 @@ export default function News() {
   const visible = filtered.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
   return (
-    <main className="flex-1">
-      <PageHeader
-        eyebrow={t("brand.name")}
-        title={t("news.title")}
-        subtitle={t("news.subtitle")}
-      />
-      <Section className="pb-16 sm:pb-20">
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="max-w-xl flex-1">
-            <NewsSearch
-              query={query}
-              onQueryChange={(value) => {
-                setQuery(value);
-                setPage(1);
-              }}
-              category={category}
-              onCategoryChange={(value) => {
-                setCategory(value);
-                setPage(1);
-              }}
-              categories={categories}
-            />
-          </div>
-          <p className="text-sm text-muted">
-            {tf("news.results", { n: String(filtered.length) })}
-          </p>
-        </div>
+    <div className="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
+      <header className="pb-10">
+        <p className="font-mono text-xs uppercase tracking-[0.14em] text-accent-hover">
+          {t("brand.name")}
+        </p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+          {t("news.title")}
+        </h1>
+        <p className="mt-3 max-w-[65ch] text-muted">{t("news.subtitle")}</p>
+      </header>
 
-        {items === null ? (
-          <p className="text-muted">{t("news.loading")}</p>
-        ) : visible.length === 0 ? (
-          <p className="rounded-xl border border-border bg-surface px-5 py-10 text-center text-muted">
-            {t("news.empty")}
-          </p>
-        ) : (
-          <>
-            <NewsList items={visible} />
-            <div className="mt-10">
-              <Pagination page={current} totalPages={totalPages} onPage={setPage} />
-            </div>
-          </>
-        )}
-      </Section>
-    </main>
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="max-w-xl flex-1">
+          <NewsSearch
+            query={query}
+            onQueryChange={(value) => {
+              setQuery(value);
+              setPage(1);
+            }}
+            category={category}
+            onCategoryChange={(value) => {
+              setCategory(value);
+              setPage(1);
+            }}
+            categories={categories}
+          />
+        </div>
+        <p className="font-mono text-xs text-muted">
+          {tf("news.results", { n: String(filtered.length) })}
+        </p>
+      </div>
+
+      {items === null ? (
+        <p className="text-muted">{t("news.loading")}</p>
+      ) : visible.length === 0 ? (
+        <p className="text-muted">{t("news.empty")}</p>
+      ) : (
+        <>
+          <NewsList items={visible} />
+          <div className="mt-10">
+            <Pagination page={current} totalPages={totalPages} onPage={setPage} />
+          </div>
+        </>
+      )}
+    </div>
   );
 }

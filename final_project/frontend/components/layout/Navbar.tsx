@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useLang } from "@/lib/i18n";
+import { ButtonLink } from "@/components/ui/Button";
 import { LangToggle } from "./LangToggle";
 
 const links = [
@@ -16,14 +17,16 @@ const links = [
 function Brand() {
   return (
     <Link href="/" className="flex items-center gap-2.5">
-      <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent">
-        <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 text-white" aria-hidden>
+      <span className="grid h-7 w-7 place-items-center rounded-full bg-accent">
+        <svg viewBox="0 0 24 24" className="h-4 w-4 text-white" aria-hidden>
           <rect x="4" y="9" width="3" height="9" rx="0.5" fill="currentColor" />
           <rect x="10.5" y="4" width="3" height="14" rx="0.5" fill="currentColor" />
           <rect x="17" y="7" width="3" height="11" rx="0.5" fill="currentColor" />
         </svg>
       </span>
-      <span className="text-lg font-semibold tracking-tight">Fluxus</span>
+      <span className="font-mono text-base font-medium tracking-tight text-foreground">
+        Fluxus
+      </span>
     </Link>
   );
 }
@@ -37,16 +40,16 @@ export function Navbar() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+    <header className="fixed inset-x-0 top-4 z-[300] flex justify-center px-4">
+      <div className="flex max-w-[720px] items-center gap-1 rounded-full border border-border bg-background/75 py-1.5 pl-2.5 pr-1.5 shadow-float backdrop-blur-xl">
         <Brand />
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Main">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition-colors duration-150 ${
                 isActive(link.href)
                   ? "bg-surface-2 text-foreground"
                   : "text-muted hover:text-foreground"
@@ -57,11 +60,18 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 pl-1">
           <LangToggle />
+          <ButtonLink
+            href="/news"
+            size="sm"
+            className="hidden lg:inline-flex"
+          >
+            {t("nav.explore")}
+          </ButtonLink>
           <button
             type="button"
-            className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted hover:text-foreground md:hidden"
+            className="grid h-9 w-9 place-items-center rounded-full text-muted transition-colors duration-150 hover:text-foreground lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
             aria-label="Toggle menu"
@@ -78,13 +88,16 @@ export function Navbar() {
       </div>
 
       {open ? (
-        <nav className="border-t border-border px-4 py-2 md:hidden" aria-label="Mobile">
+        <nav
+          className="absolute top-full mt-2 w-full max-w-[220px] rounded-2xl border border-border bg-background/90 p-2 shadow-float backdrop-blur-xl lg:hidden"
+          aria-label="Mobile"
+        >
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className={`block rounded-lg px-3 py-2.5 text-sm font-medium ${
+              className={`block rounded-full px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${
                 isActive(link.href)
                   ? "bg-surface-2 text-foreground"
                   : "text-muted hover:text-foreground"

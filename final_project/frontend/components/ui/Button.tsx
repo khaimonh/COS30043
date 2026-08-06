@@ -12,20 +12,21 @@ type BaseProps = {
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent " +
-  "disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-full font-medium " +
+  "transition-[color,background-color,border-color,transform] duration-150 ease-out " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus " +
+  "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55 active:scale-[0.98]";
 
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-white hover:bg-accent-hover",
-  outline: "border border-border text-foreground hover:bg-surface-2",
-  ghost: "text-muted hover:bg-surface-2 hover:text-foreground",
+  outline: "border border-border text-foreground hover:border-accent/60 hover:text-accent-hover",
+  ghost: "text-muted hover:text-foreground",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
+  sm: "px-4 py-2 text-sm",
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-7 py-3.5 text-base",
 };
 
 function classes(variant: Variant, size: Size, className?: string) {

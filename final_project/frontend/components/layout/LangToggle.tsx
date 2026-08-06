@@ -12,7 +12,7 @@ export function LangToggle() {
 
   return (
     <div
-      className="inline-flex items-center rounded-lg border border-border bg-surface p-0.5"
+      className="inline-flex items-center rounded-full border border-border bg-surface p-0.5"
       role="group"
       aria-label="Language"
     >
@@ -22,7 +22,7 @@ export function LangToggle() {
           type="button"
           onClick={() => setLang(opt.code)}
           aria-pressed={lang === opt.code}
-          className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+          className={`rounded-full px-3 py-1 font-mono text-xs font-medium transition-colors duration-150 ${
             lang === opt.code
               ? "bg-accent text-white"
               : "text-muted hover:text-foreground"

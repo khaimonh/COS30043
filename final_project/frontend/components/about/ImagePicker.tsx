@@ -16,7 +16,7 @@ export function ImagePicker() {
 
   return (
     <div>
-      <div className="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label={t("about.sceneTitle")}>
+      <div role="radiogroup" aria-label={t("about.sceneTitle")}>
         {scenes.map((s) => (
           <label key={s.key} className="cursor-pointer">
             <input
@@ -27,19 +27,19 @@ export function ImagePicker() {
               onChange={() => setScene(s.key)}
               className="peer sr-only"
             />
-            <span className="block rounded-xl border border-border bg-surface px-4 py-3 text-sm font-medium text-muted transition-colors peer-checked:border-accent peer-checked:bg-accent-soft peer-checked:text-accent-hover">
+            <span className="mr-4 inline-block py-1 font-mono text-sm text-muted underline decoration-border decoration-1 underline-offset-8 transition-colors duration-150 hover:text-foreground peer-checked:text-foreground peer-checked:decoration-accent">
               {t(s.label)}
             </span>
           </label>
         ))}
       </div>
-      <div className="mt-6">
+      <div className="mt-8">
         <Image
           src={selected.src}
           alt={t(selected.alt)}
           width={800}
           height={500}
-          className="w-full rounded-xl border border-border"
+          className="w-full rounded-2xl border border-border"
         />
       </div>
     </div>

@@ -17,20 +17,23 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <nav className="flex items-center justify-between gap-4" aria-label="pagination">
+    <nav
+      className="flex items-center justify-between gap-4 border-t border-border pt-5"
+      aria-label="pagination"
+    >
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={() => onPage(page - 1)}
         disabled={page <= 1}
       >
         {t("news.prev")}
       </Button>
-      <span className="text-sm text-muted">
+      <span className="font-mono text-xs text-muted">
         {tf("news.pageOf", { page: String(page), total: String(totalPages) })}
       </span>
       <Button
-        variant="outline"
+        variant="ghost"
         size="sm"
         onClick={() => onPage(page + 1)}
         disabled={page >= totalPages}
