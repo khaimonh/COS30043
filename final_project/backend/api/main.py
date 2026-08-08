@@ -41,7 +41,7 @@ app.include_router(watchlist.router)
 app.include_router(admin.router)
 app.include_router(ws_quotes.router)
 
-@app.get("/")
+@app.get("/health")
 def health_check():
     return "Health check complete"
 
