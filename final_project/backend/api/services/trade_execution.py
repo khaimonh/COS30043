@@ -16,6 +16,7 @@ from api.models import (
     OrderStatus,
     OrderStyle,
     Portfolio,
+    PriceHistory,
     Trade,
 )
 from api.services.redis_service import get_redis_sync
@@ -67,6 +68,23 @@ def _execute_once(db: Session, order_id: str) -> None:
         _execute_sell(db, order, price)
 
 
+def _history_fallback(db: Session, stock_id) -> tuple[Decimal | None, int | None]:
+    """Latest persisted (price, timestamp_ms) from PriceHistory, or (None, None)."""
+    try:
+        row = db.execute(
+            select(PriceHistory.price, PriceHistory.recorded_at)
+            .where(PriceHistory.stock_id == stock_id)
+            .order_by(PriceHistory.recorded_at.desc())
+            .limit(1)
+        ).first()
+    except Exception:
+        return None, None
+    if row is None:
+        return None, None
+    ts_ms = int(row.recorded_at.timestamp() * 1000) if row.recorded_at else None
+    return row.price, ts_ms
+
+
 def _resolve_price(db: Session, order: Order) -> Decimal | None:
     quote = None
     try:
@@ -83,7 +101,12 @@ def _resolve_price(db: Session, order: Order) -> Decimal | None:
         quote = None
 
     if not quote:
-        return None  # no cold-cache fallback; reject
+        history_price, history_ts = _history_fallback(db, order.stock_id)
+        if history_ts is not None and int(time.time() * 1000) - history_ts <= STALE_QUOTE_MS:
+            quote = history_price
+
+    if not quote:
+        return None  # no fresh price in Redis or history; reject
     quote = Decimal(str(quote))
 
     if order.order_style == OrderStyle.LIMIT and order.limit_price is not None:
