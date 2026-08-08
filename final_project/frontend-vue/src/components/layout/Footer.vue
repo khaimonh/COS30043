@@ -43,14 +43,14 @@ function fmtChg(n: number): string {
   <footer class="relative bg-paper">
     <div aria-hidden="true" class="mx-auto h-1 w-full max-w-6xl bg-rule" />
 
-    <div class="mx-auto w-full max-w-6xl px-4 pt-16 pb-32 sm:px-6 sm:pt-20 sm:pb-40">
+    <div class="mx-auto w-full max-w-6xl px-4 pt-16 pb-28 sm:px-6 sm:pt-20 sm:pb-32">
       <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
         <div class="lg:col-span-7">
           <p class="font-mono text-xs tracking-[0.25em] text-muted">
             {{ t("footer.kicker").toUpperCase() }}
           </p>
           <p
-            class="mt-5 max-w-[18ch] text-[clamp(2.5rem,7vw,5rem)] font-display font-bold leading-[1.02] tracking-[-0.03em]"
+            class="mt-5 max-w-[26ch] text-[clamp(1.75rem,3.25vw,2.75rem)] font-display font-bold leading-[1.05] tracking-[-0.03em]"
           >
             {{ t("footer.statement") }}
           </p>
