@@ -111,7 +111,7 @@ async def get_holdings(portfolio_id: str, db: db_dependency, current_user: user_
 
     holdings = []
     for stock_id, row in by_stock.items():
-        quote = await get_cached_quote(row["ticker"])
+        quote = await get_cached_quote(row["ticker"], db, stock_id)
         close = quote.get("close_price") if quote else None
         current_price = Decimal(str(close)) if close else None
         market_value = current_price * row["quantity"] if current_price is not None else None
@@ -146,7 +146,7 @@ async def get_portfolio_summary(
     holdings_value = Decimal(0)
     per_stock = {}
     for lot in lots:
-        cached = await get_cached_quote(lot.stock.ticker)
+        cached = await get_cached_quote(lot.stock.ticker, db, lot.stock.stock_id)
         close = cached.get("close_price") if cached else None
         price = Decimal(str(close)) if close else None
         value = price * lot.remaining_quantity if price is not None else Decimal(0)
