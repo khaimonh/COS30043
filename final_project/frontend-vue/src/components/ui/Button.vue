@@ -5,8 +5,8 @@ type Variant = "primary" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";
 
 const props = withDefaults(
-  defineProps<{ variant?: Variant; size?: Size }>(),
-  { variant: "primary", size: "md" }
+  defineProps<{ variant?: Variant; size?: Size; type?: "button" | "submit" }>(),
+  { variant: "primary", size: "md", type: "submit" }
 );
 
 const classes = computed(() => {
@@ -30,5 +30,5 @@ const classes = computed(() => {
 </script>
 
 <template>
-  <button :class="classes"><slot /></button>
+  <button :type="type" :class="classes"><slot /></button>
 </template>

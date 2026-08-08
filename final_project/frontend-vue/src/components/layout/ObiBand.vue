@@ -1,18 +1,35 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useRoute } from "vue-router";
+import { computed, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useI18n, type Lang } from "../../i18n";
+import type { Dict } from "../../i18n/en";
 import { quotes } from "../../lib/ticker";
+import { token, user, isAdmin, logout } from "../../lib/session";
 
 const { t, lang, setLang } = useI18n();
 const route = useRoute();
+const router = useRouter();
 const open = ref(false);
 
-const links = [
+type NavLink = { href: string; key: keyof Dict; auth?: boolean; admin?: boolean };
+
+const allLinks: NavLink[] = [
   { href: "/", key: "nav.home" },
-  { href: "/about", key: "nav.about" },
+  { href: "/market", key: "nav.market" },
+  { href: "/portfolio", key: "nav.portfolio", auth: true },
+  { href: "/watchlist", key: "nav.watchlist", auth: true },
+  { href: "/orders", key: "nav.orders", auth: true },
+  { href: "/bank-accounts", key: "nav.bank", auth: true },
+  { href: "/admin", key: "nav.admin", auth: true, admin: true },
   { href: "/news", key: "nav.news" },
-] as const;
+  { href: "/about", key: "nav.about" },
+];
+
+const links = computed(() =>
+  allLinks.filter(
+    (l) => (!l.auth || token.value) && (!l.admin || isAdmin())
+  )
+);
 
 const langs: Lang[] = ["en", "vi"];
 
@@ -26,12 +43,18 @@ const credits = [
 function isActive(href: string): boolean {
   return href === "/" ? route.path === "/" : route.path.startsWith(href);
 }
+
+function signOut() {
+  open.value = false;
+  logout();
+  router.replace("/");
+}
 </script>
 
 <template>
   <header class="fixed inset-x-0 bottom-0 z-50">
     <div class="border-t-4 border-band bg-band text-band-ink shadow-float">
-      <div class="mx-auto flex h-16 max-w-6xl items-center gap-5 px-4 sm:px-6">
+      <div class="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
         <div class="min-w-0 flex-1 overflow-hidden" role="marquee" aria-label="Live quotes">
           <div class="ticker-marquee flex w-max items-center gap-9 whitespace-nowrap py-1 font-mono text-[13px]">
             <template v-for="dup in 2" :key="dup">
@@ -46,13 +69,13 @@ function isActive(href: string): boolean {
           </div>
         </div>
 
-        <nav class="hidden items-center gap-1 md:flex" aria-label="Main">
+        <nav class="hidden items-center gap-1 lg:flex" aria-label="Main">
           <RouterLink
             v-for="link in links"
             :key="link.href"
             :to="link.href"
             :class="[
-              'rounded-full px-4 py-1.5 font-mono text-sm tracking-wide transition-colors duration-150',
+              'rounded-full px-3 py-1.5 font-mono text-sm tracking-wide transition-colors duration-150',
               isActive(link.href) ? 'bg-paper text-ink' : 'text-band-ink hover:bg-band-2',
             ]"
           >
@@ -60,7 +83,28 @@ function isActive(href: string): boolean {
           </RouterLink>
         </nav>
 
-        <div class="hidden items-center gap-0.5 rounded-full border border-band-ink/30 p-0.5 md:flex">
+        <div class="hidden items-center gap-2 lg:flex">
+          <div v-if="user" class="hidden xl:block">
+            <span class="max-w-[10rem] truncate font-mono text-xs text-band-muted">{{ user.full_name }}</span>
+          </div>
+          <button
+            v-if="user"
+            type="button"
+            class="rounded-full border border-band-ink/30 px-3 py-1 font-mono text-xs text-band-ink transition-colors duration-150 hover:bg-band-2"
+            @click="signOut"
+          >
+            {{ t("nav.signOut") }}
+          </button>
+          <RouterLink
+            v-else
+            to="/login"
+            class="rounded-full border border-band-ink/30 px-3 py-1 font-mono text-xs text-band-ink transition-colors duration-150 hover:bg-band-2"
+          >
+            {{ t("nav.login") }}
+          </RouterLink>
+        </div>
+
+        <div class="hidden items-center gap-0.5 rounded-full border border-band-ink/30 p-0.5 lg:flex">
           <button
             v-for="l in langs"
             :key="l"
@@ -76,7 +120,7 @@ function isActive(href: string): boolean {
           </button>
         </div>
 
-        <div class="hidden h-10 items-stretch gap-6 lg:flex" aria-hidden="true">
+        <div class="hidden h-10 items-stretch gap-6 2xl:flex" aria-hidden="true">
           <span
             v-for="line in credits"
             :key="line"
@@ -89,7 +133,7 @@ function isActive(href: string): boolean {
 
         <button
           type="button"
-          class="grid h-9 w-9 place-items-center rounded-full text-band-ink transition-colors duration-150 hover:bg-band-2 md:hidden"
+          class="grid h-9 w-9 place-items-center rounded-full text-band-ink transition-colors duration-150 hover:bg-band-2 lg:hidden"
           :aria-expanded="open"
           aria-label="Toggle menu"
           @click="open = !open"
@@ -104,7 +148,7 @@ function isActive(href: string): boolean {
 
     <nav
       v-if="open"
-      class="absolute bottom-full left-4 right-4 rounded-t-lg border-4 border-b-0 border-band bg-paper p-3 shadow-float md:hidden"
+      class="absolute bottom-full left-4 right-4 rounded-t-lg border-4 border-b-0 border-band bg-paper p-3 shadow-float lg:hidden"
       aria-label="Mobile"
     >
       <div class="flex flex-col gap-1">
@@ -119,17 +163,35 @@ function isActive(href: string): boolean {
           {{ t(link.key) }}
         </RouterLink>
       </div>
-      <div class="mt-3 flex items-center gap-0.5 border-t border-rule pt-3">
+      <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-rule pt-3">
+        <div class="flex items-center gap-0.5 rounded-full border border-rule p-0.5">
+          <button
+            v-for="l in langs"
+            :key="l"
+            type="button"
+            class="rounded-full px-4 py-2 font-mono text-sm"
+            :class="lang === l ? 'bg-band text-band-ink' : 'text-muted'"
+            @click="setLang(l)"
+          >
+            {{ l.toUpperCase() }}
+          </button>
+        </div>
         <button
-          v-for="l in langs"
-          :key="l"
+          v-if="user"
           type="button"
-          class="rounded-full px-4 py-2 font-mono text-sm"
-          :class="lang === l ? 'bg-band text-band-ink' : 'text-muted'"
-          @click="setLang(l)"
+          class="rounded-full border border-rule px-4 py-2 font-mono text-sm text-muted"
+          @click="signOut"
         >
-          {{ l.toUpperCase() }}
+          {{ t("nav.signOut") }}
         </button>
+        <RouterLink
+          v-else
+          to="/login"
+          class="rounded-full border border-rule px-4 py-2 font-mono text-sm text-muted"
+          @click="open = false"
+        >
+          {{ t("nav.login") }}
+        </RouterLink>
       </div>
     </nav>
   </header>

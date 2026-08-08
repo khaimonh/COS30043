@@ -1,0 +1,87 @@
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { createChart, CandlestickSeries, ColorType, type IChartApi, type Time } from "lightweight-charts";
+import type { HistoryPoint } from "../../lib/types";
+
+const props = defineProps<{ points: HistoryPoint[] }>();
+
+const el = ref<HTMLDivElement | null>(null);
+let chart: IChartApi | null = null;
+let series: ReturnType<IChartApi["addSeries"]> | null = null;
+
+type Candle = { time: Time; open: number; high: number; low: number; close: number };
+
+function buildData(): Candle[] {
+  return props.points
+    .filter((p) => p.close !== null && p.close !== undefined && p.time)
+    .map((p) => ({
+      time: Math.floor(new Date(p.time as string).getTime() / 1000) as Time,
+      open: Number(p.open) || 0,
+      high: Number(p.high) || 0,
+      low: Number(p.low) || 0,
+      close: Number(p.close) || 0,
+    }));
+}
+
+onMounted(() => {
+  if (!el.value) return;
+  chart = createChart(el.value, {
+    autoSize: true,
+    layout: {
+      background: { type: ColorType.Solid, color: "transparent" },
+      textColor: "oklch(45% 0.03 60)",
+      fontFamily: "Martian Mono, ui-monospace, monospace",
+      fontSize: 11,
+    },
+    grid: {
+      vertLines: { color: "oklch(77% 0.03 85 / 0.5)" },
+      horzLines: { color: "oklch(77% 0.03 85 / 0.5)" },
+    },
+    rightPriceScale: {
+      borderColor: "oklch(77% 0.03 85)",
+      scaleMargins: { top: 0.12, bottom: 0.12 },
+    },
+    timeScale: {
+      borderColor: "oklch(77% 0.03 85)",
+      timeVisible: true,
+    },
+    crosshair: {
+      vertLine: { color: "oklch(28% 0.09 274 / 0.6)", labelBackgroundColor: "oklch(28% 0.09 274)" },
+      horzLine: { color: "oklch(28% 0.09 274 / 0.6)", labelBackgroundColor: "oklch(28% 0.09 274)" },
+    },
+  });
+  series = chart.addSeries(CandlestickSeries, {
+    upColor: "oklch(48% 0.12 150)",
+    downColor: "oklch(48% 0.15 25)",
+    borderUpColor: "oklch(48% 0.12 150)",
+    borderDownColor: "oklch(48% 0.15 25)",
+    wickUpColor: "oklch(48% 0.12 150)",
+    wickDownColor: "oklch(48% 0.15 25)",
+    priceLineColor: "oklch(28% 0.09 274)",
+    priceLineStyle: 2,
+  });
+  const data = buildData();
+  if (data.length) series.setData(data);
+  chart.timeScale().fitContent();
+});
+
+watch(
+  () => props.points,
+  () => {
+    if (!series || !chart) return;
+    const data = buildData();
+    if (!data.length) return;
+    series.setData(data);
+    chart.timeScale().fitContent();
+  }
+);
+onBeforeUnmount(() => {
+  chart?.remove();
+  chart = null;
+  series = null;
+});
+</script>
+
+<template>
+  <div ref="el" class="h-72 w-full sm:h-80" role="img" :aria-label="`${points.length} historical candles`" />
+</template>

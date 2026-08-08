@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { useI18n } from "../../i18n";
 import GreetingForm from "./GreetingForm.vue";
+import ImagePicker from "./ImagePicker.vue";
 
 const { t } = useI18n();
 
-const facts = [
-  { key: "about.fact.founded", value: "2001" },
-  { key: "about.fact.employees", value: "89" },
-  { key: "about.fact.asset", value: "₫ 12.4 bn" },
-  { key: "about.fact.cto", value: "Hà Nội" },
+const specs = [
+  { key: "footer.spec.exchanges", value: "HOSE · HNX · UPCOM" },
+  { key: "footer.spec.coverage", value: "500+ securities" },
+  { key: "footer.spec.engine", value: "FIFO · RabbitMQ" },
+  { key: "footer.spec.settlement", value: "VND · T+2" },
+  { key: "footer.spec.calendar", value: "Mon–Fri · 09:00–15:00" },
 ] as const;
 </script>
 
@@ -26,22 +28,27 @@ const facts = [
 
       <div class="flex flex-col gap-5 lg:col-span-5">
         <div class="rounded-2xl border border-rule bg-paper-2 p-6">
-          <p class="font-mono text-xs tracking-[0.25em] text-muted">{{ t("about.factsTitle").toUpperCase() }}</p>
-          <p class="mt-1 font-mono text-[10px] tracking-[0.15em] text-muted/70">{{ t("about.demoNote") }}</p>
+          <div class="flex items-baseline justify-between gap-3">
+            <p class="font-mono text-xs tracking-[0.25em] text-muted">
+              {{ t("footer.specTitle").toUpperCase() }}
+            </p>
+            <p class="font-mono text-[10px] tracking-[0.2em] text-muted/70">
+              {{ t("footer.demoNote") }}
+            </p>
+          </div>
           <dl class="mt-4 space-y-3 font-mono text-sm">
-            <div v-for="f in facts" :key="f.key" class="flex justify-between border-b border-rule pb-3 last:border-0 last:pb-0">
-              <dt class="text-muted">{{ t(f.key) }}</dt>
-              <dd class="text-ink">{{ f.value }}</dd>
+            <div
+              v-for="row in specs"
+              :key="row.key"
+              class="flex items-baseline justify-between gap-4 border-b border-rule pb-3 last:border-0 last:pb-0"
+            >
+              <dt class="text-muted">{{ t(row.key) }}</dt>
+              <dd class="text-right text-ink">{{ row.value }}</dd>
             </div>
           </dl>
         </div>
 
-        <figure>
-          <div class="grid grid-cols-2 gap-3">
-            <img src="/images/ocean.svg" alt="Ocean scene" class="rounded-2xl border border-rule" width="420" height="280" />
-            <img src="/images/mountain.svg" alt="Mountain scene" class="rounded-2xl border border-rule" width="420" height="280" />
-          </div>
-        </figure>
+        <ImagePicker />
 
         <div class="rounded-2xl border border-rule p-6">
           <p class="mb-4 font-mono text-xs tracking-[0.25em] text-muted">{{ t("about.visitTitle").toUpperCase() }}</p>
