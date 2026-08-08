@@ -2,7 +2,6 @@ bcrypt==5.0.0
 cryptography==49.0.0
 email-validator==2.3.0
 fastapi==0.139.2
-httpx==0.28.1
 pandas==2.3.3
 pika==1.4.2
 psycopg2==2.9.12

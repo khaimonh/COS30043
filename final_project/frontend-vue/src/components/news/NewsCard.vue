@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NewsItem } from "../../lib/news";
-import { formatDate } from "../../lib/news";
+import { fmtShortDate } from "../../lib/format";
 import Badge from "../ui/Badge.vue";
 
 defineProps<{ item: NewsItem }>();
@@ -10,7 +10,7 @@ defineProps<{ item: NewsItem }>();
   <article class="py-5">
     <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
       <time class="font-mono text-xs text-muted" :datetime="item.date">
-        {{ formatDate(item.date) }}
+        {{ fmtShortDate(item.date) }}
       </time>
       <Badge>{{ item.category }}</Badge>
     </div>

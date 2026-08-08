@@ -2,10 +2,8 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 
 import json
-import pandas as pd
-import io
 import time
-from fastapi import APIRouter, status, HTTPException, File, UploadFile, Query
+from fastapi import APIRouter, status, HTTPException, Query
 from sqlalchemy import select
 
 from api.deps import db_dependency_async, admin_dependency
@@ -23,8 +21,6 @@ router = APIRouter(
     tags=['stocks']
 )
 
-REQUIRED_COLS = {"ticker", "company_name", "exchange", "sector"}
-
 
 class StockUpdateRequest(BaseModel):
     company_name: str | None = None
@@ -33,49 +29,11 @@ class StockUpdateRequest(BaseModel):
     listed: bool | None = None
 
 
-def _build_rows(df: pd.DataFrame) -> list[dict]:
-    rows = []
-    for r in df.to_dict(orient="records"):
-        row = {
-            "ticker": r["ticker"],
-            "company_name": r["company_name"],
-            "exchange": r.get("exchange", ""),
-            "sector": r["sector"],
-            "listed": True,
-        }
-        if r.get("listing_date"):
-            try:
-                row["listing_date"] = pd.to_datetime(r["listing_date"]).tz_localize("UTC").floor("us").to_pydatetime()
-            except Exception:
-                row["listing_date"] = None
-        rows.append(row)
-    return rows
-
-
 @router.post('/import', status_code=status.HTTP_201_CREATED)
 async def import_stocks(db: db_dependency_async, _: admin_dependency):
     rows = fetch_stocks_from_vnstock()
     n = await db.run_sync(upsert_stocks, rows)
     return {"imported": n}
-
-
-@router.post('/import-csv', status_code=status.HTTP_201_CREATED)
-async def import_stocks_csv(db: db_dependency_async, _: admin_dependency, file: UploadFile = File(...)):
-    raw = await file.read()
-    try:
-        df = pd.read_csv(io.BytesIO(raw), dtype=str).fillna("")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"bad csv: {e}")
-
-    RENAME_MAP = {"symbol": "ticker", "organ_name": "company_name"}
-    df = df.rename(columns=RENAME_MAP)
-
-    missing = REQUIRED_COLS - set(df.columns)
-    if missing:
-        raise HTTPException(status_code=400, detail=f"missing columns: {sorted(missing)}")
-
-    n = await db.run_sync(upsert_stocks, _build_rows(df))
-    return {"imported": n, "source": "csv"}
 
 
 @router.get('/quotes', status_code=status.HTTP_200_OK)

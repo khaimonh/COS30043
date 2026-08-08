@@ -17,7 +17,12 @@ export type Quote = {
   change?: string | number | null;
   change_price?: string | number | null;
   pct_change?: string | number | null;
+  price_change?: string | number | null;
+  percent_change?: string | number | null;
   previous_price?: string | number | null;
+  timestamp?: number | null;
+  age_ms?: number | null;
+  fallback?: string | null;
 };
 
 export type WatchlistEntry = {

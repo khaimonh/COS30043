@@ -18,13 +18,3 @@ export function matchesSearch(item: NewsItem, query: string): boolean {
     item.category.toLowerCase().includes(q)
   );
 }
-
-export function formatDate(date: string): string {
-  const d = new Date(`${date}T00:00:00`);
-  if (Number.isNaN(d.getTime())) return date;
-  return d.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
