@@ -1,5 +1,5 @@
 .env
-.DS_STORE*
+.DS_*
 *.cpython-*
 *.md
 *.csv
@@ -7,3 +7,4 @@ equity_list.py
 
 .hallmark
 .impeccable
+.codex/*
