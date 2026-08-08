@@ -1,5 +1,6 @@
 import json
 import os
+import time
 import redis
 import redis.asyncio as aioredis
 
@@ -38,3 +39,26 @@ async def get_cached_quote(ticker: str) -> dict | None:
         return json.loads(cached)
     except Exception:
         return None
+
+async def get_quote_with_timestamp(redis, ticker: str) -> tuple[float | None, int | None]:
+    pipe = redis.pipeline()
+    pipe.get(f"price:{ticker}")
+    pipe.get(f"quote_timestamp:{ticker}")
+    price_raw, timestamp_raw = await pipe.execute()
+    if price_raw is None:
+        return None, None
+    price = float(price_raw)
+    timestamp_ms = int(timestamp_raw) if timestamp_raw is not None else None
+    return price, timestamp_ms
+
+async def set_quote_with_timestamp(redis, ticker: str, price: float) -> int:
+    timestamp_ms = int(time.time() * 1000)
+    pipe = redis.pipeline()
+    pipe.set(f"price:{ticker}", price)
+    pipe.set(f"quote_timestamp:{ticker}", timestamp_ms)
+    await pipe.execute()
+    return timestamp_ms
+
+async def publish_quote(redis, ticker: str, price: float, timestamp_ms: int) -> None:
+    payload = json.dumps({"symbol": ticker, "price": price, "timestamp": timestamp_ms})
+    await redis.publish(f"quotes:{ticker}", payload)
