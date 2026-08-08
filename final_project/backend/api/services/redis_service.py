@@ -40,16 +40,27 @@ async def get_cached_quote(ticker: str) -> dict | None:
     except Exception:
         return None
 
-async def get_quote_with_timestamp(redis, ticker: str) -> tuple[float | None, int | None]:
+async def get_quote_with_timestamp(redis, ticker: str) -> tuple[dict | None, int | None]:
+    """Read the cached quote JSON and the write timestamp.
+
+    Returns (payload, timestamp_ms). Both are None on a true cache miss.
+    payload is the parsed JSON dict written by the price poller.
+    timestamp_ms is epoch milliseconds, or None if the poller hasn't
+    written a timestamp key yet (e.g. before set_quote_with_timestamp
+    is wired up).
+    """
     pipe = redis.pipeline()
     pipe.get(f"price:{ticker}")
     pipe.get(f"quote_timestamp:{ticker}")
     price_raw, timestamp_raw = await pipe.execute()
     if price_raw is None:
         return None, None
-    price = float(price_raw)
+    try:
+        payload = json.loads(price_raw)
+    except (TypeError, ValueError):
+        return None, None
     timestamp_ms = int(timestamp_raw) if timestamp_raw is not None else None
-    return price, timestamp_ms
+    return payload, timestamp_ms
 
 async def set_quote_with_timestamp(redis, ticker: str, price: float) -> int:
     timestamp_ms = int(time.time() * 1000)
