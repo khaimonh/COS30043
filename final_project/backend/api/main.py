@@ -6,13 +6,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routers import auth, stocks, portfolios, bank_accounts, orders, watchlist, admin, ws_quotes
 
 from contextlib import asynccontextmanager
+import threading
+
 from api.services.price_poller import PricePoller
+from api.services.order_queue import start_consumer
+from api.services.trade_execution import execute_order
 
 poller = PricePoller()
 
 @asynccontextmanager
 async def lifespan(app):
     await poller.start()
+    consumer = threading.Thread(target=start_consumer, args=(execute_order,), daemon=True)
+    consumer.start()
     yield
     await poller.stop()
 

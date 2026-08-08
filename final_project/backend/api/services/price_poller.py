@@ -14,7 +14,7 @@ from api.services.redis_service import (
     publish_quote,
     get_latest_history_batch,
 )
-from api.services.stock_service import get_market_snapshot, fetch_quotes_bulk
+from api.services.stock_service import fetch_quotes_bulk
 
 logger = logging.getLogger("price_poller")
 
@@ -22,8 +22,6 @@ POLL_INTERVAL_SECONDS = float(os.getenv("POLL_INTERVAL_SECONDS", "10"))
 PRICE_TTL_SECONDS = int(os.getenv("PRICE_TTL_SECONDS", "15"))
 COLD_POLL_INTERVAL_SECONDS = float(os.getenv("COLD_POLL_INTERVAL_SECONDS", "300"))
 COLD_TTL_SECONDS = int(os.getenv("COLD_TTL_SECONDS", "900"))
-
-QUOTE_DELAY_SECONDS = 3.1
 
 class PricePoller:
     def __init__(self):
@@ -139,18 +137,21 @@ class PricePoller:
                     )
                 )
             ).all()
+            tickers = [ticker for _, ticker in rows]
+            if not tickers:
+                return
+            try:
+                quotes = await asyncio.to_thread(fetch_quotes_bulk, tickers)
+            except (Exception, SystemExit) as e:
+                logger.warning("bulk quote fetch failed: %s", e)
+                return
             for stock_id, ticker in rows:
-                try:
-                    data = await asyncio.to_thread(get_market_snapshot, ticker)
-                    close_price = data.get("close_price")
-                except (Exception, SystemExit) as e:
-                    # vnstock raises SystemExit on rate limit; don't let it kill the API process
-                    logger.warning("quote fetch failed for %s: %s", ticker, e)
-                    await asyncio.sleep(QUOTE_DELAY_SECONDS)
+                data = quotes.get(ticker)
+                if not data:
                     continue
+                close_price = data.get("close_price")
                 if not close_price:
                     logger.warning("no close_price for %s", ticker)
-                    await asyncio.sleep(QUOTE_DELAY_SECONDS)
                     continue
 
                 try:
@@ -166,7 +167,6 @@ class PricePoller:
                     low_price=data.get("low_price"),
                     volume=data.get("volume_accumulated"),
                 ))
-                await asyncio.sleep(QUOTE_DELAY_SECONDS)
             try:
                 await session.commit()
             except Exception:
