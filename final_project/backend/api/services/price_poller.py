@@ -1,4 +1,10 @@
-import asyncio, logging, os
+import asyncio
+import logging
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
 from sqlalchemy import select, exists
 from api.database import AsyncSessionLocal
 from api.models import Stock, PriceHistory, Watchlist, Holding
@@ -166,3 +172,29 @@ class PricePoller:
             except Exception:
                 logger.exception("price_history commit failed")
                 await session.rollback()
+
+
+async def main():
+    """Run the poller standalone (same tasks as the API lifespan)."""
+    poller = PricePoller()
+    await poller.start()
+    logger.info("price poller started")
+    try:
+        while True:
+            await asyncio.sleep(3600)
+    except asyncio.CancelledError:
+        pass
+    finally:
+        await poller.stop()
+        logger.info("price poller stopped")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        pass

@@ -14,7 +14,7 @@ from api.models import (
     Portfolio,
     Stock,
 )
-from api.services.queue import publish_order
+from api.services.order_queue import publish_order
 
 router = APIRouter(
     prefix='/orders',

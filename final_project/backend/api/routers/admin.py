@@ -5,7 +5,7 @@ from sqlalchemy import select, func
 
 from api.deps import db_dependency, admin_dependency
 from api.models import User, Role, UserStatus, Order, OrderStatus, Trade, Stock
-from api.services.queue import ORDER_QUEUE_NAME, ORDER_DLQ_NAME, _connect
+from api.services.order_queue import ORDER_QUEUE_NAME, ORDER_DLQ_NAME, _connect
 
 router = APIRouter(
     prefix='/admin',

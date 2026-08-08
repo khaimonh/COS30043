@@ -9,7 +9,7 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 
-from api.services.queue import start_consumer
+from api.services.order_queue import start_consumer
 from api.services.trade_execution import execute_order
 
 if __name__ == "__main__":
