@@ -13,7 +13,7 @@ from api.deps import db_dependency_async, admin_dependency
 from api.services.stock_service import (
     upsert_stocks, fetch_stocks_from_vnstock,
 )
-from api.services.redis_service import get_redis
+from api.services.redis_service import get_redis, get_latest_history, get_latest_history_batch
 from api.models import Stock, PriceHistory
 
 load_dotenv()
@@ -80,48 +80,76 @@ async def import_stocks_csv(db: db_dependency_async, _: admin_dependency, file: 
 
 @router.get('/quotes', status_code=status.HTTP_200_OK)
 async def get_all_quotes(db: db_dependency_async):
-    tickers = [s.ticker for s in (await db.scalars(select(Stock))).all()]
-    if not tickers:
+    stocks = (await db.scalars(select(Stock.ticker, Stock.stock_id))).all()
+    if not stocks:
         return {}
     redis = get_redis()
     try:
         pipe = redis.pipeline()
-        for ticker in tickers:
+        for ticker, _ in stocks:
             pipe.get(f"price:{ticker}")
         raw_values = await pipe.execute()
     except Exception:
-        return {ticker: None for ticker in tickers}
+        raw_values = [None] * len(stocks)
     result = {}
-    for ticker, raw in zip(tickers, raw_values):
-        if raw is None:
-            result[ticker] = None
-            continue
-        try:
-            payload = json.loads(raw)
-        except (TypeError, ValueError):
-            result[ticker] = None
-            continue
-        timestamp = payload.get("timestamp")
-        age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
-        result[ticker] = {**payload, "age_ms": age_ms}
+    missing = []
+    for (ticker, stock_id), raw in zip(stocks, raw_values):
+        if raw is not None:
+            try:
+                payload = json.loads(raw)
+                timestamp = payload.get("timestamp")
+                age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
+                result[ticker] = {**payload, "age_ms": age_ms}
+                continue
+            except (TypeError, ValueError):
+                pass
+        missing.append(stock_id)
+        result[ticker] = None
+    if missing:
+        latest = await db.run_sync(get_latest_history_batch, missing)
+        for (ticker, stock_id), raw in zip(stocks, raw_values):
+            if result[ticker] is None and stock_id in latest:
+                price, recorded_at = latest[stock_id]
+                timestamp_ms = int(recorded_at.timestamp() * 1000) if recorded_at else None
+                age_ms = (int(time.time() * 1000) - timestamp_ms) if timestamp_ms else None
+                result[ticker] = {
+                    "close_price": str(price),
+                    "timestamp": timestamp_ms,
+                    "age_ms": age_ms,
+                    "fallback": "history",
+                }
     return result
 
 
 @router.get('/{ticker}/quote', status_code=status.HTTP_200_OK)
-async def get_quote(ticker: str):
+async def get_quote(ticker: str, db: db_dependency_async):
     try:
         cached = await get_redis().get(f"price:{ticker}")
     except Exception:
         cached = None
-    if not cached:
+    if cached:
+        try:
+            payload = json.loads(cached)
+        except (TypeError, ValueError):
+            payload = None
+        if payload:
+            timestamp = payload.get("timestamp")
+            age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
+            return {**payload, "age_ms": age_ms}
+    stock_id = await db.scalar(select(Stock.stock_id).where(Stock.ticker == ticker))
+    if stock_id is None:
         return None
-    try:
-        payload = json.loads(cached)
-    except (TypeError, ValueError):
+    price, recorded_at = await db.run_sync(get_latest_history, stock_id)
+    if price is None:
         return None
-    ts = payload.get("timestamp")
-    age_ms = (int(time.time() * 1000) - ts) if ts else None
-    return {**payload, "age_ms": age_ms}
+    timestamp_ms = int(recorded_at.timestamp() * 1000) if recorded_at else None
+    age_ms = (int(time.time() * 1000) - timestamp_ms) if timestamp_ms else None
+    return {
+        "close_price": str(price),
+        "timestamp": timestamp_ms,
+        "age_ms": age_ms,
+        "fallback": "history",
+    }
 
 
 @router.get('/{ticker}/history', status_code=status.HTTP_200_OK)
