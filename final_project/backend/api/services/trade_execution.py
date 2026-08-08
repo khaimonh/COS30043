@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+import time
 from decimal import Decimal
 
 from sqlalchemy import select
@@ -17,11 +19,11 @@ from api.models import (
     Trade,
 )
 from api.services.redis_service import get_redis_sync
-from api.services.stock_service import get_market_snapshot
 
 logger = logging.getLogger("trade_execution")
 
 MAX_RETRIES = 3
+STALE_QUOTE_MS = int(os.getenv("STALE_QUOTE_MS", "5000"))
 
 
 def execute_order(order_id: str) -> None:
@@ -70,20 +72,18 @@ def _resolve_price(db: Session, order: Order) -> Decimal | None:
     try:
         cached = get_redis_sync().get(f"price:{order.stock.ticker}")
         if cached:
-            quote = json.loads(cached).get("close_price")
+            payload = json.loads(cached)
+            quote = payload.get("close_price")
+            ts = payload.get("timestamp")
+            if ts is not None:
+                age_ms = int(time.time() * 1000) - ts
+                if age_ms > STALE_QUOTE_MS:
+                    quote = None
     except Exception:
         quote = None
 
     if not quote:
-        try:
-            snapshot = get_market_snapshot(order.stock.ticker)
-            quote = snapshot.get("close_price") if snapshot else None
-        except Exception:
-            logger.exception("price fallback failed for %s", order.stock.ticker)
-            quote = None
-
-    if not quote:
-        return None
+        return None  # no cold-cache fallback; reject
     quote = Decimal(str(quote))
 
     if order.order_style == OrderStyle.LIMIT and order.limit_price is not None:

@@ -4,6 +4,8 @@ import time
 import redis
 import redis.asyncio as aioredis
 
+PRICE_TTL_SECONDS = int(os.getenv("PRICE_TTL_SECONDS", "15"))
+
 _client: aioredis.Redis | None = None
 _sync_client: redis.Redis | None = None
 
@@ -62,14 +64,15 @@ async def get_quote_with_timestamp(redis, ticker: str) -> tuple[dict | None, int
     timestamp_ms = int(timestamp_raw) if timestamp_raw is not None else None
     return payload, timestamp_ms
 
-async def set_quote_with_timestamp(redis, ticker: str, price: float) -> int:
+async def set_quote_with_timestamp(redis, ticker: str, payload: dict) -> int:
     timestamp_ms = int(time.time() * 1000)
+    payload = {**payload, "timestamp": timestamp_ms}
     pipe = redis.pipeline()
-    pipe.set(f"price:{ticker}", price)
+    pipe.set(f"price:{ticker}", json.dumps(payload), ex=PRICE_TTL_SECONDS)
     pipe.set(f"quote_timestamp:{ticker}", timestamp_ms)
     await pipe.execute()
     return timestamp_ms
 
-async def publish_quote(redis, ticker: str, price: float, timestamp_ms: int) -> None:
-    payload = json.dumps({"symbol": ticker, "price": price, "timestamp": timestamp_ms})
-    await redis.publish(f"quotes:{ticker}", payload)
+
+async def publish_quote(redis, ticker: str, payload: dict, timestamp_ms: int) -> None:
+    await redis.publish(f"quotes:{ticker}", json.dumps({**payload, "timestamp": timestamp_ms}))

@@ -4,13 +4,14 @@ from pydantic import BaseModel
 import json
 import pandas as pd
 import io
+import time
 from fastapi import APIRouter, status, HTTPException, File, UploadFile, Query
 from sqlalchemy import select
 
-from api.deps import db_dependency, admin_dependency
+from api.deps import db_dependency_async, admin_dependency
 
 from api.services.stock_service import (
-    upsert_stocks, fetch_stocks_from_vnstock, get_market_snapshot,
+    upsert_stocks, fetch_stocks_from_vnstock,
 )
 from api.services.redis_service import get_redis
 from api.models import Stock, PriceHistory
@@ -52,14 +53,14 @@ def _build_rows(df: pd.DataFrame) -> list[dict]:
 
 
 @router.post('/import', status_code=status.HTTP_201_CREATED)
-async def import_stocks(db: db_dependency, _: admin_dependency):
+async def import_stocks(db: db_dependency_async, _: admin_dependency):
     rows = fetch_stocks_from_vnstock()
-    n = upsert_stocks(db, rows)
+    n = await db.run_sync(upsert_stocks, rows)
     return {"imported": n}
 
 
 @router.post('/import-csv', status_code=status.HTTP_201_CREATED)
-async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: UploadFile = File(...)):
+async def import_stocks_csv(db: db_dependency_async, _: admin_dependency, file: UploadFile = File(...)):
     raw = await file.read()
     try:
         df = pd.read_csv(io.BytesIO(raw), dtype=str).fillna("")
@@ -73,22 +74,36 @@ async def import_stocks_csv(db: db_dependency, _: admin_dependency, file: Upload
     if missing:
         raise HTTPException(status_code=400, detail=f"missing columns: {sorted(missing)}")
 
-    n = upsert_stocks(db, _build_rows(df))
+    n = await db.run_sync(upsert_stocks, _build_rows(df))
     return {"imported": n, "source": "csv"}
 
 
 @router.get('/quotes', status_code=status.HTTP_200_OK)
-async def get_all_quotes(db: db_dependency):
-    tickers = [s.ticker for s in db.scalars(select(Stock)).all()]
+async def get_all_quotes(db: db_dependency_async):
+    tickers = [s.ticker for s in (await db.scalars(select(Stock))).all()]
     if not tickers:
         return {}
+    redis = get_redis()
     try:
-        cached = await get_redis().mget(*[f"price:{t}" for t in tickers])
+        pipe = redis.pipeline()
+        for ticker in tickers:
+            pipe.get(f"price:{ticker}")
+        raw_values = await pipe.execute()
     except Exception:
-        cached = [None] * len(tickers)
+        return {ticker: None for ticker in tickers}
     result = {}
-    for ticker, raw in zip(tickers, cached):
-        result[ticker] = json.loads(raw) if raw else None
+    for ticker, raw in zip(tickers, raw_values):
+        if raw is None:
+            result[ticker] = None
+            continue
+        try:
+            payload = json.loads(raw)
+        except (TypeError, ValueError):
+            result[ticker] = None
+            continue
+        timestamp = payload.get("timestamp")
+        age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
+        result[ticker] = {**payload, "age_ms": age_ms}
     return result
 
 
@@ -98,28 +113,33 @@ async def get_quote(ticker: str):
         cached = await get_redis().get(f"price:{ticker}")
     except Exception:
         cached = None
-    if cached:
-        return json.loads(cached)
-    q = get_market_snapshot(ticker)
-    if not q:
-        raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
-    return q
+    if not cached:
+        return None
+    try:
+        payload = json.loads(cached)
+    except (TypeError, ValueError):
+        return None
+    ts = payload.get("timestamp")
+    age_ms = (int(time.time() * 1000) - ts) if ts else None
+    return {**payload, "age_ms": age_ms}
 
 
 @router.get('/{ticker}/history', status_code=status.HTTP_200_OK)
 async def get_price_history(
     ticker: str,
-    db: db_dependency,
+    db: db_dependency_async,
     limit: int = Query(100, ge=1, le=500),
 ):
-    stock = db.scalar(select(Stock).where(Stock.ticker == ticker))
+    stock = await db.scalar(select(Stock).where(Stock.ticker == ticker))
     if stock is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
-    rows = db.scalars(
-        select(PriceHistory)
-        .where(PriceHistory.stock_id == stock.stock_id)
-        .order_by(PriceHistory.recorded_at.desc())
-        .limit(limit)
+    rows = (
+        await db.scalars(
+            select(PriceHistory)
+            .where(PriceHistory.stock_id == stock.stock_id)
+            .order_by(PriceHistory.recorded_at.desc())
+            .limit(limit)
+        )
     ).all()
     points = []
     for r in reversed(rows):
@@ -135,8 +155,8 @@ async def get_price_history(
 
 
 @router.get('/{ticker}', status_code=status.HTTP_200_OK)
-async def get_stock(ticker: str, db: db_dependency):
-    s = db.scalar(select(Stock).where(Stock.ticker == ticker))
+async def get_stock(ticker: str, db: db_dependency_async):
+    s = await db.scalar(select(Stock).where(Stock.ticker == ticker))
     if s is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
     return {
@@ -151,28 +171,28 @@ async def get_stock(ticker: str, db: db_dependency):
 
 
 @router.put('/{ticker}', status_code=status.HTTP_200_OK)
-async def update_stock(ticker: str, payload: StockUpdateRequest, db: db_dependency, _: admin_dependency):
-    s = db.scalar(select(Stock).where(Stock.ticker == ticker))
+async def update_stock(ticker: str, payload: StockUpdateRequest, db: db_dependency_async, _: admin_dependency):
+    s = await db.scalar(select(Stock).where(Stock.ticker == ticker))
     if s is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(s, field, value)
-    db.commit()
+    await db.commit()
     return {"detail": f"Stock '{ticker}' updated"}
 
 
 @router.delete('/{ticker}', status_code=status.HTTP_200_OK)
-async def delist_stock(ticker: str, db: db_dependency, _: admin_dependency):
-    s = db.scalar(select(Stock).where(Stock.ticker == ticker))
+async def delist_stock(ticker: str, db: db_dependency_async, _: admin_dependency):
+    s = await db.scalar(select(Stock).where(Stock.ticker == ticker))
     if s is None:
         raise HTTPException(status_code=404, detail=f"ticker '{ticker}' not found")
     s.listed = False
-    db.commit()
+    await db.commit()
     return {"detail": f"Stock '{ticker}' delisted"}
 
 
 @router.get('/', status_code=status.HTTP_200_OK)
-async def get_stocks(db: db_dependency):
+async def get_stocks(db: db_dependency_async):
     return [
         {
             "stock_id": str(s.stock_id),
@@ -183,5 +203,5 @@ async def get_stocks(db: db_dependency):
             "listing_date": s.listing_date.isoformat() if s.listing_date else None,
             "listed": s.listed,
         }
-        for s in db.scalars(select(Stock)).all()
+        for s in (await db.scalars(select(Stock))).all()
     ]

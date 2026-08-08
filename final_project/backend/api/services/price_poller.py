@@ -1,8 +1,8 @@
-import asyncio, json, logging, os
+import asyncio, logging, os
 from sqlalchemy import select, exists
 from api.database import AsyncSessionLocal
 from api.models import Stock, PriceHistory, Watchlist, Holding
-from api.services.redis_service import get_redis
+from api.services.redis_service import get_redis, set_quote_with_timestamp, publish_quote
 from api.services.stock_service import get_market_snapshot
 
 logger = logging.getLogger("price_poller")
@@ -54,7 +54,8 @@ class PricePoller:
                 try:
                     data = await asyncio.to_thread(get_market_snapshot, ticker)
                     close_price = data.get("close_price")
-                except Exception as e:
+                except (Exception, SystemExit) as e:
+                    # vnstock raises SystemExit on rate limit; don't let it kill the API process
                     logger.warning("quote fetch failed for %s: %s", ticker, e)
                     await asyncio.sleep(QUOTE_DELAY_SECONDS)
                     continue
@@ -64,7 +65,8 @@ class PricePoller:
                     continue
 
                 try:
-                    await self.redis_client.set(f"price:{ticker}", json.dumps(data), ex=PRICE_TTL_SECONDS)
+                    ts_ms = await set_quote_with_timestamp(self.redis_client, ticker, data)
+                    await publish_quote(self.redis_client, ticker, data, ts_ms)
                 except Exception as e:
                     logger.warning("redis set failed for %s: %s", ticker, e)
                 session.add(PriceHistory(
