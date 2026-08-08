@@ -48,3 +48,19 @@ def get_market_snapshot(ticker: str) -> dict:
     if df.empty:
         return {}
     return df.iloc[0].to_dict()
+
+
+def fetch_quotes_bulk(tickers: list[str]) -> dict[str, dict]:
+    """One vnstock request for all tickers -> {TICKER: quote dict}."""
+    if not tickers:
+        return {}
+    df = Market().quote(symbol=tickers)
+    if df is None or df.empty:
+        return {}
+    out: dict[str, dict] = {}
+    for r in df.to_dict(orient="records"):
+        ticker = str(r.get("symbol", "")).upper()
+        if not ticker:
+            continue
+        out[ticker] = {k: (None if v is None or v != v else v) for k, v in r.items()}
+    return out

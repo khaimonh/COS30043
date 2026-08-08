@@ -111,11 +111,12 @@ async def get_quote_with_timestamp(redis, ticker: str) -> tuple[dict | None, int
     timestamp_ms = int(timestamp_raw) if timestamp_raw is not None else None
     return payload, timestamp_ms
 
-async def set_quote_with_timestamp(redis, ticker: str, payload: dict, ts_ms: int | None = None) -> int:
+async def set_quote_with_timestamp(redis, ticker: str, payload: dict, ts_ms: int | None = None, ttl_seconds: int | None = None) -> int:
     timestamp_ms = ts_ms if ts_ms is not None else int(time.time() * 1000)
     payload = {**payload, "timestamp": timestamp_ms}
+    ttl = ttl_seconds if ttl_seconds is not None else PRICE_TTL_SECONDS
     pipe = redis.pipeline()
-    pipe.set(f"price:{ticker}", json.dumps(payload), ex=PRICE_TTL_SECONDS)
+    pipe.set(f"price:{ticker}", json.dumps(payload), ex=ttl)
     pipe.set(f"quote_timestamp:{ticker}", timestamp_ms)
     await pipe.execute()
     return timestamp_ms

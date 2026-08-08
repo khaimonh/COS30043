@@ -3,7 +3,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routers import auth, stocks, portfolios, bank_accounts, orders, watchlist, admin
+from api.routers import auth, stocks, portfolios, bank_accounts, orders, watchlist, admin, ws_quotes
 
 from contextlib import asynccontextmanager
 from api.services.price_poller import PricePoller
@@ -33,6 +33,7 @@ app.include_router(bank_accounts.router)
 app.include_router(orders.router)
 app.include_router(watchlist.router)
 app.include_router(admin.router)
+app.include_router(ws_quotes.router)
 
 @app.get("/")
 def health_check():

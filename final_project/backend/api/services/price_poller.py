@@ -8,12 +8,14 @@ from api.services.redis_service import (
     publish_quote,
     get_latest_history_batch,
 )
-from api.services.stock_service import get_market_snapshot
+from api.services.stock_service import get_market_snapshot, fetch_quotes_bulk
 
 logger = logging.getLogger("price_poller")
 
 POLL_INTERVAL_SECONDS = float(os.getenv("POLL_INTERVAL_SECONDS", "10"))
 PRICE_TTL_SECONDS = int(os.getenv("PRICE_TTL_SECONDS", "15"))
+COLD_POLL_INTERVAL_SECONDS = float(os.getenv("COLD_POLL_INTERVAL_SECONDS", "300"))
+COLD_TTL_SECONDS = int(os.getenv("COLD_TTL_SECONDS", "900"))
 
 QUOTE_DELAY_SECONDS = 3.1
 
@@ -21,14 +23,16 @@ class PricePoller:
     def __init__(self):
         self._seed_task: asyncio.Task | None = None
         self._task: asyncio.Task | None = None
+        self._cold_task: asyncio.Task | None = None
         self.redis_client=get_redis()
 
     async def start(self):
         self._seed_task = asyncio.create_task(self._seed_redis(), name="price-poller-seed")
         self._task = asyncio.create_task(self._run_forever(), name="price-poller")
+        self._cold_task = asyncio.create_task(self._run_cold_forever(), name="price-poller-cold")
 
     async def stop(self):
-        for task in (self._seed_task, self._task):
+        for task in (self._seed_task, self._task, self._cold_task):
             if task:
                 task.cancel()
                 try:
@@ -80,6 +84,42 @@ class PricePoller:
             except Exception:
                 logger.exception("poll cycle failed")
             await asyncio.sleep(POLL_INTERVAL_SECONDS)
+
+    async def _run_cold_forever(self):
+        while True:
+            try:
+                await self._cold_sweep()
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                logger.exception("cold sweep failed")
+            await asyncio.sleep(COLD_POLL_INTERVAL_SECONDS)
+
+    async def _cold_sweep(self):
+        # ponytail: covers every listed ticker so the market grid isn't empty;
+        # Redis-only (no PriceHistory write) — persisting 1730 x every 5min
+        # would add ~144k rows/day to Supabase.
+        async with AsyncSessionLocal() as session:
+            tickers = (
+                await session.execute(select(Stock.ticker).where(Stock.listed == True))
+            ).scalars().all()
+        if not tickers:
+            return
+        try:
+            quotes = await asyncio.to_thread(fetch_quotes_bulk, list(tickers))
+        except (Exception, SystemExit) as e:
+            logger.warning("bulk quote fetch failed: %s", e)
+            return
+        written = 0
+        for ticker, data in quotes.items():
+            try:
+                await set_quote_with_timestamp(
+                    self.redis_client, ticker, data, ttl_seconds=COLD_TTL_SECONDS
+                )
+                written += 1
+            except Exception as e:
+                logger.warning("cold redis set failed for %s: %s", ticker, e)
+        logger.info("cold sweep wrote %d/%d quotes", written, len(quotes))
 
     async def run_once(self):
         async with AsyncSessionLocal() as session:

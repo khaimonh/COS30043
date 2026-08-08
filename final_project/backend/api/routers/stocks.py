@@ -80,7 +80,7 @@ async def import_stocks_csv(db: db_dependency_async, _: admin_dependency, file: 
 
 @router.get('/quotes', status_code=status.HTTP_200_OK)
 async def get_all_quotes(db: db_dependency_async):
-    stocks = (await db.scalars(select(Stock.ticker, Stock.stock_id))).all()
+    stocks = (await db.execute(select(Stock.ticker, Stock.stock_id))).all()
     if not stocks:
         return {}
     redis = get_redis()
