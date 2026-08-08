@@ -8,7 +8,7 @@ import Select from "../components/ui/Select.vue";
 import CandleChart from "../components/ui/CandleChart.vue";
 import { api } from "../lib/api";
 import { token } from "../lib/session";
-import { fmtPrice, fmtQty, fmtShortDate, signed, dirClass } from "../lib/format";
+import { fmtPrice, fmtQty, fmtShortDate, signed, dirClass, num } from "../lib/format";
 import type { Stock, Quote, HistoryPoint, Portfolio, WatchlistEntry } from "../lib/types";
 
 const { t, tf } = useI18n();
@@ -61,7 +61,7 @@ async function loadWatchStatus() {
   try {
     const list = await api<WatchlistEntry[]>("/watchlist");
     watchEntry.value = list.find((w) => w.ticker === ticker.value) ?? null;
-    if (watchEntry.value) targetPrice.value = watchEntry.value.target_price ?? "";
+    if (watchEntry.value) targetPrice.value = watchEntry.value.target_price ? String((num(watchEntry.value.target_price) ?? 0) / 1000) : "";
   } catch {
     /* ignore */
   }
@@ -90,7 +90,7 @@ async function placeOrder() {
       order_style: orderStyle.value,
       quantity: Number(quantity.value),
     };
-    if (orderStyle.value === "Limit") body.limit_price = Number(limitPrice.value);
+    if (orderStyle.value === "Limit") body.limit_price = Number(limitPrice.value) * 1000;
     const res = await api<{ order_id: string }>("/orders", { body });
     orderMsg.value = tf("stock.orderSent", { id: res.order_id.slice(0, 8) });
     orderOk.value = true;
@@ -110,7 +110,7 @@ async function toggleWatch() {
       targetPrice.value = "";
     } else {
       const body: Record<string, unknown> = { ticker: ticker.value };
-      if (targetPrice.value) body.target_price = Number(targetPrice.value);
+      if (targetPrice.value) body.target_price = Number(targetPrice.value) * 1000;
       watchEntry.value = await api<WatchlistEntry>("/watchlist", { body });
     }
   } catch (e) {

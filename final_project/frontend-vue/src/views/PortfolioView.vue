@@ -249,7 +249,7 @@ onMounted(async () => {
                 <td class="hidden py-2 pr-4 text-right font-mono md:table-cell">{{ fmtQty(h.quantity) }}</td>
                 <td class="hidden py-2 pr-4 text-right font-mono sm:table-cell">{{ fmtPrice(h.avg_cost) }}</td>
                 <td class="py-2 pr-4 text-right font-mono">{{ fmtPrice(h.current_price) }}</td>
-                <td class="hidden py-2 pr-4 text-right font-mono sm:table-cell">{{ fmtPrice(h.market_value) }}</td>
+                <td class="hidden py-2 pr-4 text-right font-mono sm:table-cell">{{ fmtMoney(h.market_value) }}</td>
                 <td class="py-2 text-right font-mono" :class="dirClass(h.unrealized_pnl)">{{ signed(h.unrealized_pnl) }}</td>
               </tr>
             </tbody>
@@ -273,7 +273,7 @@ onMounted(async () => {
                 <td class="py-2 pr-4">
                   <Badge>{{ ev.type }}</Badge>
                 </td>
-                <td class="py-2 pr-4 text-right font-mono">{{ fmtPrice(ev.amount) }}</td>
+                <td class="py-2 pr-4 text-right font-mono">{{ fmtMoney(ev.amount) }}</td>
                 <td class="hidden py-2 pr-4 font-mono sm:table-cell">{{ ev.ticker ?? "—" }}</td>
                 <td class="py-2 text-right font-mono text-xs text-muted">{{ fmtDate(ev.created_at) }}</td>
               </tr>

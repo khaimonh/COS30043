@@ -7,7 +7,7 @@ export function num(v: string | number | null | undefined): number | null {
 export function fmtPrice(v: string | number | null | undefined): string {
   const n = num(v);
   if (n === null) return "—";
-  return n.toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  return `${(n / 1000).toFixed(1)}`;
 }
 
 export function fmtMoney(v: string | number | null | undefined): string {

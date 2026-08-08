@@ -37,7 +37,7 @@ async function addEntry() {
   busy.value = true;
   try {
     const body: Record<string, unknown> = { ticker: addTicker.value.trim().toUpperCase() };
-    if (addTarget.value) body.target_price = Number(addTarget.value);
+    if (addTarget.value) body.target_price = Number(addTarget.value) * 1000;
     await api("/watchlist", { body });
     addTicker.value = "";
     addTarget.value = "";
@@ -49,8 +49,10 @@ async function addEntry() {
   }
 }
 
-async function setTarget(entry: WatchlistEntry) {
+async function setTarget(entry: WatchlistEntry, ev: Event) {
   msg.value = "";
+  const raw = Number((ev.target as HTMLInputElement).value);
+  entry.target_price = Number.isFinite(raw) && raw > 0 ? String(raw * 1000) : "";
   try {
     const body: Record<string, unknown> = {};
     if (entry.target_price) body.target_price = Number(entry.target_price);
@@ -69,6 +71,11 @@ async function remove(entry: WatchlistEntry) {
   } catch (e) {
     msg.value = e instanceof Error ? e.message : "Error";
   }
+}
+
+function fmtTarget(entry: WatchlistEntry): string {
+  const n = num(entry.target_price);
+  return n === null ? "" : String(n / 1000);
 }
 
 function distance(entry: WatchlistEntry): number | null {
@@ -134,17 +141,17 @@ onMounted(async () => {
           <td class="py-3 pr-4 text-right">
             <span class="inline-flex items-center gap-2">
               <input
-                v-model="e.target_price"
+                :value="fmtTarget(e)"
                 type="number"
                 min="0"
                 step="0.01"
                 class="w-24 rounded-lg border border-rule bg-paper-2 px-2 py-1 font-mono text-xs text-ink transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
-                @change="setTarget(e)"
+                @change="setTarget(e, $event)"
               />
             </span>
           </td>
           <td class="hidden py-3 pr-4 text-right font-mono lg:table-cell" :class="dirClass(distance(e))">
-            {{ signed(distance(e)) }}
+            {{ signed((distance(e) ?? 0) / 1000) }}
           </td>
           <td class="hidden py-3 pr-4 font-mono text-xs text-muted md:table-cell">{{ fmtShortDate(e.created_at) }}</td>
           <td class="py-3 text-right">
