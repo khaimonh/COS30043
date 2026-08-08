@@ -29,35 +29,35 @@ onMounted(() => {
     autoSize: true,
     layout: {
       background: { type: ColorType.Solid, color: "transparent" },
-      textColor: "oklch(45% 0.03 60)",
+      textColor: "#625245",
       fontFamily: "Martian Mono, ui-monospace, monospace",
       fontSize: 11,
     },
     grid: {
-      vertLines: { color: "oklch(77% 0.03 85 / 0.5)" },
-      horzLines: { color: "oklch(77% 0.03 85 / 0.5)" },
+      vertLines: { color: "rgba(189,179,159,0.5)" },
+      horzLines: { color: "rgba(189,179,159,0.5)" },
     },
     rightPriceScale: {
-      borderColor: "oklch(77% 0.03 85)",
+      borderColor: "#bdb39f",
       scaleMargins: { top: 0.12, bottom: 0.12 },
     },
     timeScale: {
-      borderColor: "oklch(77% 0.03 85)",
+      borderColor: "#bdb39f",
       timeVisible: true,
     },
     crosshair: {
-      vertLine: { color: "oklch(28% 0.09 274 / 0.6)", labelBackgroundColor: "oklch(28% 0.09 274)" },
-      horzLine: { color: "oklch(28% 0.09 274 / 0.6)", labelBackgroundColor: "oklch(28% 0.09 274)" },
+      vertLine: { color: "rgba(28,34,84,0.6)", labelBackgroundColor: "#1c2254" },
+      horzLine: { color: "rgba(28,34,84,0.6)", labelBackgroundColor: "#1c2254" },
     },
   });
   series = chart.addSeries(CandlestickSeries, {
-    upColor: "oklch(48% 0.12 150)",
-    downColor: "oklch(48% 0.15 25)",
-    borderUpColor: "oklch(48% 0.12 150)",
-    borderDownColor: "oklch(48% 0.15 25)",
-    wickUpColor: "oklch(48% 0.12 150)",
-    wickDownColor: "oklch(48% 0.15 25)",
-    priceLineColor: "oklch(28% 0.09 274)",
+    upColor: "#197037",
+    downColor: "#a12f2f",
+    borderUpColor: "#197037",
+    borderDownColor: "#a12f2f",
+    wickUpColor: "#197037",
+    wickDownColor: "#a12f2f",
+    priceLineColor: "#1c2254",
     priceLineStyle: 2,
   });
   const data = buildData();

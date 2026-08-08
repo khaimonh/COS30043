@@ -21,6 +21,8 @@ const httpQuote = ref<Quote | null>(null);
 const quote = computed<Quote | null>(() => quoteFor(ticker.value) ?? httpQuote.value);
 const history = ref<HistoryPoint[]>([]);
 const portfolios = ref<Portfolio[]>([]);
+const historyLoading = ref(true);
+const portfolioLoading = ref(true);
 const watchEntry = ref<WatchlistEntry | null>(null);
 const loading = ref(true);
 const error = ref("");
@@ -43,23 +45,33 @@ async function loadQuote() {
 async function loadAll() {
   loading.value = true;
   error.value = "";
+
   try {
     const [s, h] = await Promise.all([
       api<Stock>(`/stocks/${ticker.value}`),
-      api<{ points: HistoryPoint[] }>(`/stocks/${ticker.value}/history?limit=60`),
+      api<{ points: HistoryPoint[] }>(
+        `/stocks/${ticker.value}/history?limit=60`
+      ),
     ]);
+
     stock.value = s;
     history.value = h.points;
+
+    await loadQuote();
+
+    if (token.value) {
+      await ensureUser();
+
+      await Promise.all([
+        loadWatchStatus(),
+        loadPortfolios(),
+      ]);
+    }
   } catch (e) {
     error.value = e instanceof Error ? e.message : "Error";
   } finally {
     loading.value = false;
-  }
-  loadQuote();
-  if (token.value) await ensureUser();
-  if (token.value) {
-    loadWatchStatus();
-    loadPortfolios();
+    historyLoading.value = false;
   }
 }
 
@@ -75,12 +87,14 @@ async function loadWatchStatus() {
 
 async function loadPortfolios() {
   try {
-    portfolios.value = await api<Portfolio[]>("/portfolios");
+    portfolios.value = await api<Portfolio[]>("/portfolios/");
     if (portfolios.value.length && !portfolios.value.some((p) => p.portfolio_id === portfolioId.value)) {
       portfolioId.value = portfolios.value[0].portfolio_id;
     }
-  } catch {
-    /* ignore */
+  } catch (e) {
+    console.error("Failed to load portfolios:", e);
+  } finally {
+    portfolioLoading.value = false;
   }
 }
 
@@ -177,7 +191,8 @@ onBeforeUnmount(() => {
             <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{{ t("market.liveNote") }}</p>
           </div>
 
-          <div v-if="history.length > 0" class="mt-5">
+          <div v-if="historyLoading" class="mt-6 text-sm text-muted">{{ t("news.loading") }}</div>
+          <div v-else-if="history.length > 0" class="mt-5">
             <CandleChart :points="history" />
           </div>
           <div v-else class="mt-6 text-sm text-muted">{{ t("market.empty") }}</div>
@@ -226,6 +241,9 @@ onBeforeUnmount(() => {
               {{ t("stock.noAuth") }}
               <RouterLink to="/login" class="font-mono text-band underline underline-offset-4">{{ t("nav.login") }}</RouterLink>
             </p>
+            <div v-else-if="portfolioLoading" class="mt-4 text-sm text-muted">
+              {{ t("news.loading") }}
+            </div>
             <div v-else-if="portfolios.length === 0" class="mt-4 text-sm text-muted">
               {{ t("stock.noPortfolio") }}
               <RouterLink to="/portfolio" class="font-mono text-band underline underline-offset-4">{{ t("nav.portfolio") }}</RouterLink>
