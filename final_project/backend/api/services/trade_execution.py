@@ -88,9 +88,13 @@ def _resolve_price(db: Session, order: Order) -> Decimal | None:
 
     if order.order_style == OrderStyle.LIMIT and order.limit_price is not None:
         if order.order_type.value == "Buy":
-            price = min(quote, order.limit_price)
-        else:
-            price = max(quote, order.limit_price)
+            if quote > order.limit_price:
+                return None  # market above the buy limit; do not fill
+            price = min(quote, order.limit_price)  # fill at the better of the two
+        else:  # Sell
+            if quote < order.limit_price:
+                return None  # market below the sell limit; do not fill
+            price = max(quote, order.limit_price)  # fill at the better of the two
     else:
         price = quote
     return price
