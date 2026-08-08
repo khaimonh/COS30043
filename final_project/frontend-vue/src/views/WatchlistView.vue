@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import { useI18n } from "../i18n";
 import Button from "../components/ui/Button.vue";
 import Input from "../components/ui/Input.vue";
 import { api } from "../lib/api";
 import { fmtPrice, fmtShortDate, signed, dirClass, num } from "../lib/format";
+import { quoteFor, subscribeTickers, unsubscribeTickers, connected as wsConnected } from "../lib/quotes";
 import type { WatchlistEntry, Stock } from "../lib/types";
 
 const { t } = useI18n();
@@ -19,6 +20,7 @@ const busy = ref(false);
 async function load() {
   try {
     entries.value = await api<WatchlistEntry[]>("/watchlist");
+    subscribeTickers(entries.value.map((e) => e.ticker));
   } catch (e) {
     msg.value = e instanceof Error ? e.message : "Error";
   }
@@ -78,16 +80,32 @@ function fmtTarget(entry: WatchlistEntry): string {
   return n === null ? "" : String(n / 1000);
 }
 
+function currentOf(entry: WatchlistEntry): number | null {
+  const q = quoteFor(entry.ticker);
+  return num(q?.close_price ?? entry.current_price);
+}
+
 function distance(entry: WatchlistEntry): number | null {
-  const cur = num(entry.current_price);
+  const cur = currentOf(entry);
   const target = num(entry.target_price);
   if (cur === null || target === null) return null;
   return cur - target;
 }
 
+const POLL_MS = 15000;
+let pollTimer: number | undefined;
+
 onMounted(async () => {
   await loadStocks();
   await load();
+  pollTimer = window.setInterval(() => {
+    if (!wsConnected.value) load();
+  }, POLL_MS);
+});
+
+onBeforeUnmount(() => {
+  unsubscribeTickers(entries.value.map((e) => e.ticker));
+  window.clearInterval(pollTimer);
 });
 </script>
 
@@ -137,7 +155,7 @@ onMounted(async () => {
             <RouterLink :to="`/stocks/${e.ticker}`" class="font-mono font-semibold text-ink hover:text-band">{{ e.ticker }}</RouterLink>
           </td>
           <td class="hidden py-3 pr-4 text-muted md:table-cell">{{ e.company_name }}</td>
-          <td class="py-3 pr-4 text-right font-mono">{{ fmtPrice(e.current_price) }}</td>
+          <td class="py-3 pr-4 text-right font-mono">{{ fmtPrice(currentOf(e)) }}</td>
           <td class="py-3 pr-4 text-right">
             <span class="inline-flex items-center gap-2">
               <input

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "../i18n";
 import Button from "../components/ui/Button.vue";
@@ -7,8 +7,9 @@ import Input from "../components/ui/Input.vue";
 import Select from "../components/ui/Select.vue";
 import CandleChart from "../components/ui/CandleChart.vue";
 import { api } from "../lib/api";
-import { token } from "../lib/session";
+import { token, ensureUser } from "../lib/session";
 import { fmtPrice, fmtQty, fmtShortDate, signed, dirClass, num } from "../lib/format";
+import { quoteFor, subscribeTickers, unsubscribeTickers, connected as wsConnected } from "../lib/quotes";
 import type { Stock, Quote, HistoryPoint, Portfolio, WatchlistEntry } from "../lib/types";
 
 const { t, tf } = useI18n();
@@ -16,7 +17,8 @@ const route = useRoute();
 
 const ticker = computed(() => String(route.params.ticker));
 const stock = ref<Stock | null>(null);
-const quote = ref<Quote | null>(null);
+const httpQuote = ref<Quote | null>(null);
+const quote = computed<Quote | null>(() => quoteFor(ticker.value) ?? httpQuote.value);
 const history = ref<HistoryPoint[]>([]);
 const portfolios = ref<Portfolio[]>([]);
 const watchEntry = ref<WatchlistEntry | null>(null);
@@ -34,23 +36,27 @@ const portfolioId = ref("");
 const targetPrice = ref<string>("");
 const placing = ref(false);
 
+async function loadQuote() {
+  httpQuote.value = await api<Quote>(`/stocks/${ticker.value}/quote`).catch(() => null);
+}
+
 async function loadAll() {
   loading.value = true;
   error.value = "";
   try {
-    const [s, q, h] = await Promise.all([
+    const [s, h] = await Promise.all([
       api<Stock>(`/stocks/${ticker.value}`),
-      api<Quote>(`/stocks/${ticker.value}/quote`).catch(() => null),
       api<{ points: HistoryPoint[] }>(`/stocks/${ticker.value}/history?limit=60`),
     ]);
     stock.value = s;
-    quote.value = q;
     history.value = h.points;
   } catch (e) {
     error.value = e instanceof Error ? e.message : "Error";
   } finally {
     loading.value = false;
   }
+  loadQuote();
+  if (token.value) await ensureUser();
   if (token.value) {
     loadWatchStatus();
     loadPortfolios();
@@ -120,11 +126,24 @@ async function toggleWatch() {
 
 const change = computed(() => quote.value?.change ?? quote.value?.change_price ?? quote.value?.pct_change ?? null);
 
+const POLL_MS = 15000;
+let pollTimer: number | undefined;
+
 onMounted(() => {
+  subscribeTickers([ticker.value]);
+  pollTimer = window.setInterval(() => {
+    if (!wsConnected.value) loadQuote();
+  }, POLL_MS);
   loadAll();
 });
-watch(ticker, () => {
+watch(ticker, (next, prev) => {
+  if (prev) unsubscribeTickers([prev]);
+  subscribeTickers([next]);
   loadAll();
+});
+onBeforeUnmount(() => {
+  unsubscribeTickers([ticker.value]);
+  window.clearInterval(pollTimer);
 });
 </script>
 
@@ -151,8 +170,8 @@ watch(ticker, () => {
         </div>
       </header>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
-        <section class="rounded-2xl border border-rule bg-paper-2 p-6 lg:col-span-3">
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-7">
+        <section class="rounded-2xl border border-rule bg-paper-2 p-6 lg:col-span-5">
           <div class="flex items-baseline justify-between gap-3">
             <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("stock.history") }}</h2>
             <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{{ t("market.liveNote") }}</p>
@@ -203,7 +222,10 @@ watch(ticker, () => {
           <section class="rounded-2xl border border-rule bg-paper-2 p-6">
             <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("stock.orderTitle") }}</h2>
 
-            <p v-if="!token" class="mt-4 text-sm text-muted">{{ t("stock.noAuth") }}</p>
+            <p v-if="!token" class="mt-4 text-sm text-muted">
+              {{ t("stock.noAuth") }}
+              <RouterLink to="/login" class="font-mono text-band underline underline-offset-4">{{ t("nav.login") }}</RouterLink>
+            </p>
             <div v-else-if="portfolios.length === 0" class="mt-4 text-sm text-muted">
               {{ t("stock.noPortfolio") }}
               <RouterLink to="/portfolio" class="font-mono text-band underline underline-offset-4">{{ t("nav.portfolio") }}</RouterLink>

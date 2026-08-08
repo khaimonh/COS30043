@@ -68,9 +68,15 @@ async function toggleWatch(ticker: string) {
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase();
-  if (!q) return stocks.value;
-  return stocks.value.filter(
-    (s) => s.ticker.toLowerCase().includes(q) || s.company_name.toLowerCase().includes(q)
+  const base = q
+    ? stocks.value.filter(
+        (s) => s.ticker.toLowerCase().includes(q) || s.company_name.toLowerCase().includes(q)
+      )
+    : stocks.value;
+  return [...base].sort(
+    (a, b) =>
+      Number(watched.value.has(b.ticker)) - Number(watched.value.has(a.ticker)) ||
+      a.ticker.localeCompare(b.ticker)
   );
 });
 
@@ -143,7 +149,6 @@ onBeforeUnmount(() => window.clearInterval(pollTimer));
           </td>
           <td class="py-3 text-right">
             <button
-              v-if="token"
               type="button"
               class="rounded-full border px-3 py-1 font-mono text-xs transition-colors duration-150"
               :class="
@@ -152,7 +157,7 @@ onBeforeUnmount(() => window.clearInterval(pollTimer));
                   : 'border-rule text-muted hover:text-ink'
               "
               :aria-label="s.ticker"
-              @click.stop="toggleWatch(s.ticker)"
+              @click.stop="token ? toggleWatch(s.ticker) : router.push('/login')"
             >
               {{ watched.has(s.ticker) ? t("market.remove") : t("market.add") }}
             </button>
