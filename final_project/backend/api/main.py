@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.routers import auth, stocks, portfolios, bank_accounts, orders, watchlist, admin, ws_quotes
@@ -41,7 +41,7 @@ app.include_router(watchlist.router)
 app.include_router(admin.router)
 app.include_router(ws_quotes.router)
 
-@app.get("/health")
+@app.get("/health", status_code=status.HTTP_200_OK)
 def health_check():
     return "Health check complete"
 
