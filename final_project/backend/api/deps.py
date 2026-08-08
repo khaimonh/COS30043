@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, UUID
-from api.database import SessionLocal
+from api.database import AsyncSessionLocal, SessionLocal
 import bcrypt
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
@@ -25,6 +26,11 @@ def get_db():
     finally:
         db.close()
 db_dependency = Annotated[Session, Depends(get_db)]
+
+async def get_db_async():
+    async with AsyncSessionLocal() as db:
+        yield db
+db_dependency_async = Annotated[AsyncSession, Depends(get_db_async)]
 
 def hash_password(plain: str) -> str:
       return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
