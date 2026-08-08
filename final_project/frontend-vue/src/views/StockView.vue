@@ -140,6 +140,10 @@ async function toggleWatch() {
 
 const change = computed(() => quote.value?.change ?? quote.value?.change_price ?? quote.value?.pct_change ?? null);
 
+const historyDesc = computed(() =>
+  [...history.value].sort((a, b) => (Date.parse(String(b.time)) || 0) - (Date.parse(String(a.time)) || 0))
+);
+
 const POLL_MS = 15000;
 let pollTimer: number | undefined;
 
@@ -221,7 +225,7 @@ onBeforeUnmount(() => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(p, i) in history" :key="p.time ?? i" class="border-b border-rule">
+              <tr v-for="(p, i) in historyDesc" :key="p.time ?? i" class="border-b border-rule">
                 <td class="py-2 pr-4 font-mono text-xs text-muted">{{ fmtShortDate(p.time) }}</td>
                 <td class="hidden py-2 pr-4 text-right font-mono tabular-nums sm:table-cell">{{ fmtPrice(p.open) }}</td>
                 <td class="hidden py-2 pr-4 text-right font-mono tabular-nums sm:table-cell">{{ fmtPrice(p.high) }}</td>
