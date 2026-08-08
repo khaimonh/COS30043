@@ -43,7 +43,7 @@ async def get_watchlist(db: db_dependency, current_user: user_dependency):
     ).all()
     result = []
     for entry in entries:
-        quote = await get_cached_quote(entry.stock.ticker)
+        quote = await get_cached_quote(entry.stock.ticker, db, entry.stock.stock_id)
         current_price = quote.get("close_price") if quote else None
         result.append({
             "watchlist_id": str(entry.watchlist_id),
