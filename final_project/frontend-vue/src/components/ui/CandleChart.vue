@@ -83,5 +83,5 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="el" class="h-72 w-full sm:h-80" role="img" :aria-label="`${points.length} historical candles`" />
+  <div ref="el" class="h-72 w-100 sm:h-80" role="img" :aria-label="`${points.length} historical candles`" />
 </template>

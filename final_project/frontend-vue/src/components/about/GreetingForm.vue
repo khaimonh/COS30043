@@ -16,10 +16,10 @@ function onSubmit(): void {
 </script>
 
 <template>
-  <form class="space-y-5" noValidate @submit.prevent="onSubmit">
-    <div class="grid gap-4 sm:grid-cols-2">
-      <label class="block">
-        <span class="mb-1.5 block text-sm font-medium text-ink">
+  <form class="d-flex flex-column gap-4" noValidate @submit.prevent="onSubmit">
+    <div class="row row-cols-1 row-cols-sm-2 g-4">
+      <label class="d-block">
+        <span class="mb-1.5 d-block text-sm fw-medium text-ink">
           {{ t("about.firstNameLabel") }}
         </span>
         <Input
@@ -29,8 +29,8 @@ function onSubmit(): void {
           name="firstName"
         />
       </label>
-      <label class="block">
-        <span class="mb-1.5 block text-sm font-medium text-ink">
+      <label class="d-block">
+        <span class="mb-1.5 d-block text-sm fw-medium text-ink">
           {{ t("about.lastNameLabel") }}
         </span>
         <Input
@@ -42,7 +42,7 @@ function onSubmit(): void {
       </label>
     </div>
     <Button type="submit">{{ t("about.greetButton") }}</Button>
-    <p v-if="name !== null" class="text-lg font-semibold tracking-tight text-up">
+    <p v-if="name !== null" class="text-lg fw-semibold tracking-tight text-up">
       {{ tf("about.welcome", { name }) }}
     </p>
   </form>

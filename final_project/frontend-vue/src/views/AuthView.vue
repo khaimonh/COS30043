@@ -42,40 +42,40 @@ async function submit() {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-md px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
-    <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
-    <h1 class="mt-3 font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-4xl">
+  <div class="mx-auto w-100 max-w-md px-3 pb-5 pt-5 px-sm-4 pt-sm-5">
+    <p class="font-mono text-xs text-uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
+    <h1 class="mt-3 font-display text-3xl fw-bold tracking-[-0.02em] text-ink sm:text-4xl">
       {{ mode === "login" ? t("auth.loginTitle") : t("auth.registerTitle") }}
     </h1>
 
-    <form class="mt-8 flex flex-col gap-4 rounded-2xl border border-rule bg-paper-2 p-6" @submit.prevent="submit">
-      <label v-if="mode === 'register'" class="flex flex-col gap-1.5">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("auth.firstName") }}</span>
+    <form class="mt-5 d-flex flex-column gap-4 rounded-4 border border-rule bg-paper-2 p-4" @submit.prevent="submit">
+      <label v-if="mode === 'register'" class="d-flex flex-column gap-1.5">
+        <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("auth.firstName") }}</span>
         <Input v-model="firstName" required autocomplete="given-name" />
       </label>
-      <label v-if="mode === 'register'" class="flex flex-col gap-1.5">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("auth.lastName") }}</span>
+      <label v-if="mode === 'register'" class="d-flex flex-column gap-1.5">
+        <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("auth.lastName") }}</span>
         <Input v-model="lastName" required autocomplete="family-name" />
       </label>
-      <label class="flex flex-col gap-1.5">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("auth.email") }}</span>
+      <label class="d-flex flex-column gap-1.5">
+        <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("auth.email") }}</span>
         <Input v-model="email" type="email" required autocomplete="email" />
       </label>
-      <label class="flex flex-col gap-1.5">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("auth.password") }}</span>
+      <label class="d-flex flex-column gap-1.5">
+        <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("auth.password") }}</span>
         <Input v-model="password" type="password" required autocomplete="current-password" />
       </label>
 
       <p v-if="error" class="font-mono text-sm text-down">{{ error }}</p>
 
-      <Button :disabled="busy" class="w-full">
+      <Button :disabled="busy" class="w-100">
         {{ mode === "login" ? t("auth.loginButton") : t("auth.registerButton") }}
       </Button>
     </form>
 
     <button
       type="button"
-      class="mt-6 font-mono text-sm text-muted underline-offset-4 hover:text-ink hover:underline"
+      class="mt-4 font-mono text-sm text-muted underline-offset-4 hover:text-ink hover:underline"
       @click="mode = mode === 'login' ? 'register' : 'login'"
     >
       {{ mode === "login" ? t("auth.registerCta") : t("auth.loginCta") }}

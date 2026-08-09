@@ -7,7 +7,7 @@ import Footer from "./components/layout/Footer.vue";
 <!-- Direction contract lives in index.html (survives the production build); this file's job is the shell. -->
 <template>
   <ObiBand />
-  <main class="min-h-screen pb-24">
+  <main class="min-h-screen pb-5">
     <RouterView />
   </main>
   <Footer />

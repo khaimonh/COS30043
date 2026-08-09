@@ -11,7 +11,7 @@ const classes = computed(() => {
     accent: "border-band bg-band text-band-ink",
   };
   return (
-    "inline-flex items-center whitespace-nowrap rounded-full border px-2.5 py-0.5 font-mono text-xs font-medium tracking-wide " +
+    "d-inline-flex align-items-center whitespace-nowrap rounded-pill border px-2.5 py-0.5 font-mono text-xs fw-medium tracking-wide " +
     variants[props.variant]
   );
 });

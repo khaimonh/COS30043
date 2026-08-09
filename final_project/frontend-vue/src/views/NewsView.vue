@@ -36,20 +36,20 @@ const visible = computed(() =>
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
-    <header class="pb-10">
-      <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">
+  <div class="mx-auto w-100 max-w-6xl px-3 pb-5 pt-5 px-sm-4 pt-sm-5">
+    <header class="pb-5">
+      <p class="font-mono text-xs text-uppercase tracking-[0.25em] text-muted">
         {{ t("brand.name") }}
       </p>
-      <h1 class="mt-3 font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-4xl">
+      <h1 class="mt-3 font-display text-3xl fw-bold tracking-[-0.02em] text-ink sm:text-4xl">
         {{ t("news.title") }}
       </h1>
       <p class="mt-3 max-w-[65ch] text-muted">{{ t("news.subtitle") }}</p>
       <p class="mt-1.5 font-mono text-[11px] tracking-[0.15em] text-muted/70">{{ t("news.demoNote") }}</p>
     </header>
 
-    <div class="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <div class="max-w-xl flex-1">
+    <div class="mb-5 d-flex flex-column gap-3 flex-sm-row align-items-sm-center justify-content-sm-between">
+      <div class="max-w-xl flex-grow-1">
         <NewsSearch
           :query="query"
           :category="category"
@@ -67,7 +67,7 @@ const visible = computed(() =>
     <p v-else-if="visible.length === 0" class="text-muted">{{ t("news.empty") }}</p>
     <template v-else>
       <NewsList :items="visible" />
-      <div class="mt-10">
+      <div class="mt-5">
         <Pagination :page="current" :total-pages="totalPages" @page="(p: number) => (page = p)" />
       </div>
     </template>

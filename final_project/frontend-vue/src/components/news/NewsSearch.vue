@@ -18,8 +18,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="grid gap-3 sm:grid-cols-[1fr_220px]">
+  <div class="row g-3">
     <Input
+      class="col"
       type="search"
       :model-value="query"
       :aria-label="t('news.searchPlaceholder')"
@@ -27,6 +28,7 @@ const emit = defineEmits<{
       @update:model-value="emit('update:query', String($event))"
     />
     <Select
+      class="col-12 col-sm-auto"
       :model-value="category"
       :aria-label="t('news.allCategories')"
       @update:model-value="emit('update:category', String($event))"

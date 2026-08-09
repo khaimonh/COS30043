@@ -110,21 +110,21 @@ onMounted(() => loadUsers());
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
-    <header class="pb-10">
-      <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
-      <h1 class="mt-3 font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-4xl">
+  <div class="mx-auto w-100 max-w-6xl px-3 pb-5 pt-5 px-sm-4 pt-sm-5">
+    <header class="pb-5">
+      <p class="font-mono text-xs text-uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
+      <h1 class="mt-3 font-display text-3xl fw-bold tracking-[-0.02em] text-ink sm:text-4xl">
         {{ t("nav.admin") }}
       </h1>
       <p class="mt-3 max-w-[65ch] text-muted">{{ t("admin.subtitle") }}</p>
     </header>
 
-    <div class="mb-8 flex flex-wrap gap-2">
+    <div class="mb-5 d-flex flex-wrap gap-2">
       <button
         v-for="tb in TABS"
         :key="tb.key"
         type="button"
-        class="rounded-full border px-4 py-2 font-mono text-sm transition-colors duration-150"
+        class="rounded-pill border px-3 py-2 font-mono text-sm transition-colors duration-150"
         :class="tab === tb.key ? 'border-band bg-band text-band-ink' : 'border-rule text-muted hover:text-ink'"
         @click="switchTab(tb.key)"
       >
@@ -132,29 +132,29 @@ onMounted(() => loadUsers());
       </button>
     </div>
 
-    <p v-if="error" class="mb-4 font-mono text-sm text-down">{{ error }}</p>
+    <p v-if="error" class="mb-3 font-mono text-sm text-down">{{ error }}</p>
 
-    <section v-if="tab === 'users'" class="rounded-2xl border border-rule bg-paper-2 p-6">
-      <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("admin.users") }}</h2>
-      <table class="mt-4 w-full border-collapse text-sm">
+    <section v-if="tab === 'users'" class="rounded-4 border border-rule bg-paper-2 p-4">
+      <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("admin.users") }}</h2>
+      <table class="mt-3 w-100 border-collapse text-sm">
         <thead>
-          <tr class="border-b border-rule text-left font-mono text-xs uppercase tracking-[0.2em] text-muted">
-            <th class="py-2 pr-4">{{ t("admin.email") }}</th>
-            <th class="hidden py-2 pr-4 sm:table-cell">{{ t("admin.name") }}</th>
-            <th class="py-2 pr-4">{{ t("admin.role") }}</th>
-            <th class="py-2 pr-4">{{ t("admin.status") }}</th>
-            <th class="hidden py-2 pr-4 md:table-cell">{{ t("admin.created") }}</th>
-            <th class="py-2 text-right"><span class="sr-only">Toggle</span></th>
+          <tr class="border-bottom border-rule text-start font-mono text-xs text-uppercase tracking-[0.2em] text-muted">
+            <th class="py-2 pe-3">{{ t("admin.email") }}</th>
+            <th class="d-none py-2 pe-3 d-sm-table-cell">{{ t("admin.name") }}</th>
+            <th class="py-2 pe-3">{{ t("admin.role") }}</th>
+            <th class="py-2 pe-3">{{ t("admin.status") }}</th>
+            <th class="d-none py-2 pe-3 d-md-table-cell">{{ t("admin.created") }}</th>
+            <th class="py-2 text-end"><span class="sr-only">Toggle</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="u in users" :key="u.user_id" class="border-b border-rule">
-            <td class="py-2 pr-4 font-medium text-ink">{{ u.email }}</td>
-            <td class="hidden py-2 pr-4 text-muted sm:table-cell">{{ u.full_name }}</td>
-            <td class="py-2 pr-4"><Badge :variant="u.role === 'Admin' ? 'accent' : 'neutral'">{{ u.role }}</Badge></td>
-            <td class="py-2 pr-4"><Badge>{{ u.status }}</Badge></td>
-            <td class="hidden py-2 pr-4 font-mono text-xs text-muted md:table-cell">{{ fmtShortDate(u.created_at) }}</td>
-            <td class="py-2 text-right">
+          <tr v-for="u in users" :key="u.user_id" class="border-bottom border-rule">
+            <td class="py-2 pe-3 fw-medium text-ink">{{ u.email }}</td>
+            <td class="d-none py-2 pe-3 text-muted d-sm-table-cell">{{ u.full_name }}</td>
+            <td class="py-2 pe-3"><Badge :variant="u.role === 'Admin' ? 'accent' : 'neutral'">{{ u.role }}</Badge></td>
+            <td class="py-2 pe-3"><Badge>{{ u.status }}</Badge></td>
+            <td class="d-none py-2 pe-3 font-mono text-xs text-muted d-md-table-cell">{{ fmtShortDate(u.created_at) }}</td>
+            <td class="py-2 text-end">
               <Button v-if="u.role !== 'Admin'" variant="ghost" size="sm" @click="toggleUser(u)">
                 {{ u.status === "Active" ? t("admin.suspend") : t("admin.activate") }}
               </Button>
@@ -164,87 +164,87 @@ onMounted(() => loadUsers());
       </table>
     </section>
 
-    <section v-if="tab === 'orders'" class="rounded-2xl border border-rule bg-paper-2 p-6">
-      <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("admin.orders") }}</h2>
-      <p v-if="orders.length === 0" class="mt-4 text-sm text-muted">{{ t("orders.empty") }}</p>
-      <table v-else class="mt-4 w-full border-collapse text-sm">
+    <section v-if="tab === 'orders'" class="rounded-4 border border-rule bg-paper-2 p-4">
+      <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("admin.orders") }}</h2>
+      <p v-if="orders.length === 0" class="mt-3 text-sm text-muted">{{ t("orders.empty") }}</p>
+      <table v-else class="mt-3 w-100 border-collapse text-sm">
         <thead>
-          <tr class="border-b border-rule text-left font-mono text-xs uppercase tracking-[0.2em] text-muted">
-            <th class="py-2 pr-4">{{ t("admin.email") }}</th>
-            <th class="py-2 pr-4">{{ t("market.ticker") }}</th>
-            <th class="py-2 pr-4">{{ t("portfolio.type") }}</th>
-            <th class="hidden py-2 pr-4 sm:table-cell">{{ t("orders.style") }}</th>
-            <th class="py-2 pr-4 text-right">{{ t("portfolio.qty") }}</th>
-            <th class="py-2 pr-4">{{ t("orders.status") }}</th>
-            <th class="py-2 text-right">{{ t("portfolio.date") }}</th>
+          <tr class="border-bottom border-rule text-start font-mono text-xs text-uppercase tracking-[0.2em] text-muted">
+            <th class="py-2 pe-3">{{ t("admin.email") }}</th>
+            <th class="py-2 pe-3">{{ t("market.ticker") }}</th>
+            <th class="py-2 pe-3">{{ t("portfolio.type") }}</th>
+            <th class="d-none py-2 pe-3 d-sm-table-cell">{{ t("orders.style") }}</th>
+            <th class="py-2 pe-3 text-end">{{ t("portfolio.qty") }}</th>
+            <th class="py-2 pe-3">{{ t("orders.status") }}</th>
+            <th class="py-2 text-end">{{ t("portfolio.date") }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="o in orders" :key="o.order_id" class="border-b border-rule">
-            <td class="py-2 pr-4 text-muted">{{ o.user_email }}</td>
-            <td class="py-2 pr-4 font-mono font-semibold text-ink">{{ o.ticker }}</td>
-            <td class="py-2 pr-4"><Badge>{{ o.order_type }}</Badge></td>
-            <td class="hidden py-2 pr-4 sm:table-cell">{{ o.order_style }}</td>
-            <td class="py-2 pr-4 text-right font-mono">{{ fmtQty(o.quantity) }}</td>
-            <td class="py-2 pr-4"><Badge>{{ o.status }}</Badge></td>
-            <td class="py-2 text-right font-mono text-xs text-muted">{{ fmtDate(o.created_at) }}</td>
+          <tr v-for="o in orders" :key="o.order_id" class="border-bottom border-rule">
+            <td class="py-2 pe-3 text-muted">{{ o.user_email }}</td>
+            <td class="py-2 pe-3 font-mono fw-semibold text-ink">{{ o.ticker }}</td>
+            <td class="py-2 pe-3"><Badge>{{ o.order_type }}</Badge></td>
+            <td class="d-none py-2 pe-3 d-sm-table-cell">{{ o.order_style }}</td>
+            <td class="py-2 pe-3 text-end font-mono">{{ fmtQty(o.quantity) }}</td>
+            <td class="py-2 pe-3"><Badge>{{ o.status }}</Badge></td>
+            <td class="py-2 text-end font-mono text-xs text-muted">{{ fmtDate(o.created_at) }}</td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <section v-if="tab === 'trades'" class="rounded-2xl border border-rule bg-paper-2 p-6">
-      <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("admin.trades") }}</h2>
-      <p v-if="trades.length === 0" class="mt-4 text-sm text-muted">{{ t("trades.empty") }}</p>
-      <table v-else class="mt-4 w-full border-collapse text-sm">
+    <section v-if="tab === 'trades'" class="rounded-4 border border-rule bg-paper-2 p-4">
+      <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("admin.trades") }}</h2>
+      <p v-if="trades.length === 0" class="mt-3 text-sm text-muted">{{ t("trades.empty") }}</p>
+      <table v-else class="mt-3 w-100 border-collapse text-sm">
         <thead>
-          <tr class="border-b border-rule text-left font-mono text-xs uppercase tracking-[0.2em] text-muted">
-            <th class="py-2 pr-4">{{ t("admin.email") }}</th>
-            <th class="py-2 pr-4">{{ t("market.ticker") }}</th>
-            <th class="py-2 pr-4 text-right">{{ t("orders.price") }}</th>
-            <th class="py-2 pr-4 text-right">{{ t("portfolio.qty") }}</th>
-            <th class="py-2 text-right">{{ t("portfolio.date") }}</th>
+          <tr class="border-bottom border-rule text-start font-mono text-xs text-uppercase tracking-[0.2em] text-muted">
+            <th class="py-2 pe-3">{{ t("admin.email") }}</th>
+            <th class="py-2 pe-3">{{ t("market.ticker") }}</th>
+            <th class="py-2 pe-3 text-end">{{ t("orders.price") }}</th>
+            <th class="py-2 pe-3 text-end">{{ t("portfolio.qty") }}</th>
+            <th class="py-2 text-end">{{ t("portfolio.date") }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="tr in trades" :key="tr.trade_id" class="border-b border-rule">
-            <td class="py-2 pr-4 text-muted">{{ tr.user_email }}</td>
-            <td class="py-2 pr-4 font-mono font-semibold text-ink">{{ tr.ticker }}</td>
-            <td class="py-2 pr-4 text-right font-mono">{{ fmtPrice(tr.execution_price) }}</td>
-            <td class="py-2 pr-4 text-right font-mono">{{ fmtQty(tr.executed_quantity) }}</td>
-            <td class="py-2 text-right font-mono text-xs text-muted">{{ fmtDate(tr.executed_at) }}</td>
+          <tr v-for="tr in trades" :key="tr.trade_id" class="border-bottom border-rule">
+            <td class="py-2 pe-3 text-muted">{{ tr.user_email }}</td>
+            <td class="py-2 pe-3 font-mono fw-semibold text-ink">{{ tr.ticker }}</td>
+            <td class="py-2 pe-3 text-end font-mono">{{ fmtPrice(tr.execution_price) }}</td>
+            <td class="py-2 pe-3 text-end font-mono">{{ fmtQty(tr.executed_quantity) }}</td>
+            <td class="py-2 text-end font-mono text-xs text-muted">{{ fmtDate(tr.executed_at) }}</td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <section v-if="tab === 'health'" class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div class="rounded-2xl border border-rule bg-paper-2 p-6">
-        <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("admin.queues") }}</h2>
-        <p v-if="!health" class="mt-4 text-sm text-muted">{{ t("news.loading") }}</p>
+    <section v-if="tab === 'health'" class="row row-cols-1 row-cols-sm-2 g-4">
+      <div class="rounded-4 border border-rule bg-paper-2 p-4">
+        <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("admin.queues") }}</h2>
+        <p v-if="!health" class="mt-3 text-sm text-muted">{{ t("news.loading") }}</p>
         <template v-else>
-          <div class="mt-4 flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("admin.queueStatus") }}</span>
+          <div class="mt-3 d-flex flex-column gap-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("admin.queueStatus") }}</span>
               <Badge :variant="health.queues.status === 'up' ? 'accent' : 'neutral'">{{ health.queues.status }}</Badge>
             </div>
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("admin.queueDepth") }}</span>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("admin.queueDepth") }}</span>
               <span class="font-mono text-sm text-ink">{{ health.queues.queue_depth ?? "—" }}</span>
             </div>
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("admin.dlq") }}</span>
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("admin.dlq") }}</span>
               <span class="font-mono text-sm text-ink">{{ health.queues.dlq_depth ?? "—" }}</span>
             </div>
           </div>
         </template>
       </div>
-      <div class="rounded-2xl border border-rule bg-paper-2 p-6">
-        <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("admin.orderCounts") }}</h2>
-        <p v-if="!health" class="mt-4 text-sm text-muted">{{ t("news.loading") }}</p>
-        <div v-else class="mt-4 flex flex-col gap-3">
-          <div v-for="(count, status) in health.order_counts" :key="status" class="flex items-center justify-between">
-            <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ status }}</span>
+      <div class="rounded-4 border border-rule bg-paper-2 p-4">
+        <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("admin.orderCounts") }}</h2>
+        <p v-if="!health" class="mt-3 text-sm text-muted">{{ t("news.loading") }}</p>
+        <div v-else class="mt-3 d-flex flex-column gap-3">
+          <div v-for="(count, status) in health.order_counts" :key="status" class="d-flex align-items-center justify-content-between">
+            <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ status }}</span>
             <span class="font-mono text-sm text-ink">{{ count }}</span>
           </div>
         </div>

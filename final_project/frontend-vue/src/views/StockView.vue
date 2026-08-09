@@ -166,142 +166,142 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
-    <p v-if="error" class="mb-4 font-mono text-sm text-down">{{ error }}</p>
+  <div class="mx-auto w-100 max-w-6xl px-3 pb-5 pt-5 px-sm-4 pt-sm-5">
+    <p v-if="error" class="mb-3 font-mono text-sm text-down">{{ error }}</p>
     <p v-if="loading" class="text-muted">{{ t("news.loading") }}</p>
 
     <template v-if="stock">
-      <header class="pb-8">
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">{{ t("nav.market") }}</p>
-        <div class="mt-3 flex flex-wrap items-end gap-x-6 gap-y-2">
-          <h1 class="font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-5xl">{{ stock.ticker }}</h1>
-          <div class="pb-1 text-left">
+      <header class="pb-5">
+        <p class="font-mono text-xs text-uppercase tracking-[0.25em] text-muted">{{ t("nav.market") }}</p>
+        <div class="mt-3 d-flex flex-wrap align-items-end gap-x-6 gap-y-2">
+          <h1 class="font-display text-3xl fw-bold tracking-[-0.02em] text-ink sm:text-5xl">{{ stock.ticker }}</h1>
+          <div class="pb-1 text-start">
             <p class="text-sm text-muted">{{ stock.company_name }}</p>
             <p class="font-mono text-xs text-muted">{{ stock.exchange }} · {{ stock.sector }}</p>
           </div>
         </div>
 
-        <div class="mt-5 flex flex-wrap items-baseline gap-x-4 gap-y-2">
-          <span class="font-mono text-3xl font-semibold tracking-tight text-ink tabular-nums">{{ fmtPrice(quote?.close_price) }}</span>
+        <div class="mt-3 d-flex flex-wrap align-items-baseline gap-x-4 gap-y-2">
+          <span class="font-mono text-3xl fw-semibold tracking-tight text-ink tabular-nums">{{ fmtPrice(quote?.close_price) }}</span>
           <span class="font-mono text-sm" :class="dirClass(change)">{{ signed(change) }}</span>
           <span class="font-mono text-xs text-muted">{{ stock.exchange }} · {{ stock.sector }}</span>
         </div>
       </header>
 
-      <div class="grid grid-cols-1 gap-6 lg:grid-cols-7">
-        <section class="rounded-2xl border border-rule bg-paper-2 p-6 lg:col-span-5">
-          <div class="flex items-baseline justify-between gap-3">
-            <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("stock.history") }}</h2>
-            <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{{ t("market.liveNote") }}</p>
+      <div class="row g-4">
+        <section class="rounded-4 border border-rule bg-paper-2 p-4 col-lg-5">
+          <div class="d-flex align-items-baseline justify-content-between gap-3">
+            <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("stock.history") }}</h2>
+            <p class="font-mono text-[11px] text-uppercase tracking-[0.2em] text-muted">{{ t("market.liveNote") }}</p>
           </div>
 
-          <div v-if="historyLoading" class="mt-6 text-sm text-muted">{{ t("news.loading") }}</div>
-          <div v-else-if="history.length > 0" class="mt-5">
+          <div v-if="historyLoading" class="mt-4 text-sm text-muted">{{ t("news.loading") }}</div>
+          <div v-else-if="history.length > 0" class="mt-3">
             <CandleChart :points="history" />
           </div>
-          <div v-else class="mt-6 text-sm text-muted">{{ t("market.empty") }}</div>
+          <div v-else class="mt-4 text-sm text-muted">{{ t("market.empty") }}</div>
 
-          <dl class="mt-5 grid grid-cols-2 gap-4 border-y border-rule py-4 sm:grid-cols-4">
+          <dl class="mt-3 row row-cols-2 row-cols-sm-4 g-4 border-top border-bottom border-rule py-3">
             <div v-for="stat in [
               { label: t('stock.open'), value: fmtPrice(quote?.open_price) },
               { label: t('stock.high'), value: fmtPrice(quote?.high_price) },
               { label: t('stock.low'), value: fmtPrice(quote?.low_price) },
               { label: t('stock.volume'), value: fmtQty(quote?.volume_accumulated) },
-            ]" :key="stat.label" class="flex flex-col gap-1">
-              <dt class="font-mono text-[11px] uppercase tracking-[0.2em] text-muted">{{ stat.label }}</dt>
+            ]" :key="stat.label" class="d-flex flex-column gap-1">
+              <dt class="font-mono text-[11px] text-uppercase tracking-[0.2em] text-muted">{{ stat.label }}</dt>
               <dd class="font-mono text-sm text-ink tabular-nums">{{ stat.value }}</dd>
             </div>
           </dl>
 
-          <table v-if="history.length > 0" class="mt-2 w-full border-collapse text-sm">
+          <table v-if="history.length > 0" class="mt-2 w-100 border-collapse text-sm">
             <thead>
-              <tr class="border-b border-rule text-left font-mono text-xs uppercase tracking-[0.2em] text-muted">
-                <th class="py-2 pr-4">{{ t("stock.date") }}</th>
-                <th class="hidden py-2 pr-4 text-right sm:table-cell">{{ t("stock.open") }}</th>
-                <th class="hidden py-2 pr-4 text-right sm:table-cell">{{ t("stock.high") }}</th>
-                <th class="hidden py-2 pr-4 text-right sm:table-cell">{{ t("stock.low") }}</th>
-                <th class="py-2 pr-4 text-right">{{ t("stock.close") }}</th>
-                <th class="py-2 text-right">{{ t("stock.volume") }}</th>
+              <tr class="border-bottom border-rule text-start font-mono text-xs text-uppercase tracking-[0.2em] text-muted">
+                <th class="py-2 pe-3">{{ t("stock.date") }}</th>
+                <th class="d-none py-2 pe-3 text-end d-sm-table-cell">{{ t("stock.open") }}</th>
+                <th class="d-none py-2 pe-3 text-end d-sm-table-cell">{{ t("stock.high") }}</th>
+                <th class="d-none py-2 pe-3 text-end d-sm-table-cell">{{ t("stock.low") }}</th>
+                <th class="py-2 pe-3 text-end">{{ t("stock.close") }}</th>
+                <th class="py-2 text-end">{{ t("stock.volume") }}</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(p, i) in historyDesc" :key="p.time ?? i" class="border-b border-rule">
-                <td class="py-2 pr-4 font-mono text-xs text-muted">{{ fmtShortDate(p.time) }}</td>
-                <td class="hidden py-2 pr-4 text-right font-mono tabular-nums sm:table-cell">{{ fmtPrice(p.open) }}</td>
-                <td class="hidden py-2 pr-4 text-right font-mono tabular-nums sm:table-cell">{{ fmtPrice(p.high) }}</td>
-                <td class="hidden py-2 pr-4 text-right font-mono tabular-nums sm:table-cell">{{ fmtPrice(p.low) }}</td>
-                <td class="py-2 pr-4 text-right font-mono font-semibold tabular-nums text-ink">{{ fmtPrice(p.close) }}</td>
-                <td class="py-2 text-right font-mono text-xs tabular-nums text-muted">{{ fmtQty(p.volume) }}</td>
+              <tr v-for="(p, i) in historyDesc" :key="p.time ?? i" class="border-bottom border-rule">
+                <td class="py-2 pe-3 font-mono text-xs text-muted">{{ fmtShortDate(p.time) }}</td>
+                <td class="d-none py-2 pe-3 text-end font-mono tabular-nums d-sm-table-cell">{{ fmtPrice(p.open) }}</td>
+                <td class="d-none py-2 pe-3 text-end font-mono tabular-nums d-sm-table-cell">{{ fmtPrice(p.high) }}</td>
+                <td class="d-none py-2 pe-3 text-end font-mono tabular-nums d-sm-table-cell">{{ fmtPrice(p.low) }}</td>
+                <td class="py-2 pe-3 text-end font-mono fw-semibold tabular-nums text-ink">{{ fmtPrice(p.close) }}</td>
+                <td class="py-2 text-end font-mono text-xs tabular-nums text-muted">{{ fmtQty(p.volume) }}</td>
               </tr>
             </tbody>
           </table>
         </section>
 
-        <aside class="flex flex-col gap-6 lg:col-span-2">
-          <section class="rounded-2xl border border-rule bg-paper-2 p-6">
-            <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("stock.orderTitle") }}</h2>
+        <aside class="d-flex flex-column gap-4 col-lg-2">
+          <section class="rounded-4 border border-rule bg-paper-2 p-4">
+            <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("stock.orderTitle") }}</h2>
 
-            <p v-if="!token" class="mt-4 text-sm text-muted">
+            <p v-if="!token" class="mt-3 text-sm text-muted">
               {{ t("stock.noAuth") }}
               <RouterLink to="/login" class="font-mono text-band underline underline-offset-4">{{ t("nav.login") }}</RouterLink>
             </p>
-            <div v-else-if="portfolioLoading" class="mt-4 text-sm text-muted">
+            <div v-else-if="portfolioLoading" class="mt-3 text-sm text-muted">
               {{ t("news.loading") }}
             </div>
-            <div v-else-if="portfolios.length === 0" class="mt-4 text-sm text-muted">
+            <div v-else-if="portfolios.length === 0" class="mt-3 text-sm text-muted">
               {{ t("stock.noPortfolio") }}
               <RouterLink to="/portfolio" class="font-mono text-band underline underline-offset-4">{{ t("nav.portfolio") }}</RouterLink>
             </div>
-            <form v-else class="mt-4 flex flex-col gap-4" @submit.prevent="placeOrder">
-              <div class="grid grid-cols-2 gap-3">
+            <form v-else class="mt-3 d-flex flex-column gap-4" @submit.prevent="placeOrder">
+              <div class="row row-cols-2 g-3">
                 <button
                   v-for="ty in ['Buy', 'Sell']"
                   :key="ty"
                   type="button"
-                  class="rounded-full border px-4 py-2 font-mono text-sm transition-colors duration-150"
+                  class="rounded-pill border px-3 py-2 font-mono text-sm transition-colors duration-150"
                   :class="orderType === ty ? 'border-band bg-band text-band-ink' : 'border-rule text-muted hover:text-ink'"
                   @click="orderType = ty"
                 >
                   {{ t(ty === 'Buy' ? 'stock.buy' : 'stock.sell') }}
                 </button>
               </div>
-              <div class="grid grid-cols-2 gap-3">
+              <div class="row row-cols-2 g-3">
                 <button
                   v-for="st in ['Market', 'Limit']"
                   :key="st"
                   type="button"
-                  class="rounded-full border px-4 py-2 font-mono text-sm transition-colors duration-150"
+                  class="rounded-pill border px-3 py-2 font-mono text-sm transition-colors duration-150"
                   :class="orderStyle === st ? 'border-band bg-band text-band-ink' : 'border-rule text-muted hover:text-ink'"
                   @click="orderStyle = st"
                 >
                   {{ t(st === 'Market' ? 'stock.market' : 'stock.limit') }}
                 </button>
               </div>
-              <label class="flex flex-col gap-1.5">
-                <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("nav.portfolio") }}</span>
+              <label class="d-flex flex-column gap-1.5">
+                <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("nav.portfolio") }}</span>
                 <Select v-model="portfolioId" required>
                   <option v-for="p in portfolios" :key="p.portfolio_id" :value="p.portfolio_id">{{ p.name }}</option>
                 </Select>
               </label>
-              <label class="flex flex-col gap-1.5">
-                <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("stock.quantity") }}</span>
+              <label class="d-flex flex-column gap-1.5">
+                <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("stock.quantity") }}</span>
                 <Input v-model.number="quantity" type="number" min="1" step="1" required />
               </label>
-              <label v-if="orderStyle === 'Limit'" class="flex flex-col gap-1.5">
-                <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("stock.limitPrice") }}</span>
+              <label v-if="orderStyle === 'Limit'" class="d-flex flex-column gap-1.5">
+                <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("stock.limitPrice") }}</span>
                 <Input v-model="limitPrice" type="number" min="0" step="0.01" required />
               </label>
               <p v-if="orderMsg" class="font-mono text-sm" :class="orderOk ? 'text-up' : 'text-down'">{{ orderMsg }}</p>
-              <Button :disabled="placing" class="w-full">{{ t("stock.placeOrder") }}</Button>
+              <Button :disabled="placing" class="w-100">{{ t("stock.placeOrder") }}</Button>
             </form>
           </section>
 
-          <section class="rounded-2xl border border-rule bg-paper-2 p-6">
-            <h2 class="font-display text-xl font-bold tracking-[-0.02em] text-ink">{{ t("stock.watchTitle") }}</h2>
-            <p v-if="!token" class="mt-4 text-sm text-muted">{{ t("stock.noAuth") }}</p>
-            <div v-else class="mt-4 flex flex-col gap-3">
-              <label class="flex flex-col gap-1.5">
-                <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("stock.target") }}</span>
+          <section class="rounded-4 border border-rule bg-paper-2 p-4">
+            <h2 class="font-display text-xl fw-bold tracking-[-0.02em] text-ink">{{ t("stock.watchTitle") }}</h2>
+            <p v-if="!token" class="mt-3 text-sm text-muted">{{ t("stock.noAuth") }}</p>
+            <div v-else class="mt-3 d-flex flex-column gap-3">
+              <label class="d-flex flex-column gap-1.5">
+                <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("stock.target") }}</span>
                 <Input v-model="targetPrice" type="number" min="0" step="0.01" :placeholder="fmtPrice(quote?.close_price)" />
               </label>
               <p v-if="watchMsg" class="font-mono text-sm text-down">{{ watchMsg }}</p>

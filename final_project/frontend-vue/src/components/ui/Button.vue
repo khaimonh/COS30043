@@ -11,7 +11,7 @@ const props = withDefaults(
 
 const classes = computed(() => {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full font-medium " +
+    "d-inline-flex bg-transparent align-items-center justify-content-center gap-2 rounded-pill fw-medium " +
     "transition-[color,background-color,border-color,transform] duration-150 ease-out " +
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus " +
     "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55 active:scale-[0.98]";
@@ -21,9 +21,9 @@ const classes = computed(() => {
     ghost: "text-muted hover:text-ink",
   };
   const sizes: Record<Size, string> = {
-    sm: "px-4 py-2 text-sm",
-    md: "px-5 py-2.5 text-sm",
-    lg: "px-7 py-3.5 text-base",
+    sm: "px-3 py-2 text-sm",
+    md: "px-3 py-2.5 text-sm",
+    lg: "px-4 py-3.5 text-base",
   };
   return [base, variants[props.variant], sizes[props.size]].join(" ");
 });

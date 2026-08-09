@@ -33,8 +33,8 @@ function pick(key: SceneKey): void {
 </script>
 
 <template>
-  <figure class="rounded-2xl border border-rule bg-paper-2 p-5">
-    <div class="flex items-baseline justify-between gap-3">
+  <figure class="rounded-4 border border-rule bg-paper-2 p-3">
+    <div class="d-flex align-items-baseline justify-content-between gap-3">
       <p class="font-mono text-xs tracking-[0.25em] text-muted">
         {{ t("about.sceneEyebrow").toUpperCase() }}
       </p>
@@ -46,12 +46,12 @@ function pick(key: SceneKey): void {
     <div
       role="radiogroup"
       :aria-label="t('about.sceneTitle')"
-      class="mt-4 inline-flex w-full rounded-full border border-rule bg-paper p-1"
+      class="mt-3 d-inline-flex w-100 rounded-pill border border-rule bg-paper p-1"
     >
       <label
         v-for="(s, i) in scenes"
         :key="s.key"
-        class="relative flex-1 cursor-pointer"
+        class="position-relative flex-grow-1 cursor-pointer"
       >
         <input
           v-model="scene"
@@ -61,13 +61,13 @@ function pick(key: SceneKey): void {
           class="peer sr-only"
         />
         <span
-          class="flex items-center justify-center gap-2 rounded-full px-4 py-2 font-mono text-xs tracking-[0.18em] uppercase transition-colors duration-150 ease-out text-muted hover:text-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus"
+          class="d-flex align-items-center justify-content-center gap-2 rounded-pill px-3 py-2 font-mono text-xs tracking-[0.18em] text-uppercase transition-colors duration-150 ease-out text-muted hover:text-ink peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus"
           :class="scene === s.key ? 'bg-band text-band-ink hover:text-band-ink' : ''"
           @click="pick(s.key)"
         >
           <span
             aria-hidden="true"
-            class="inline-block h-1.5 w-1.5 rounded-full"
+            class="d-inline-block h-1.5 w-1.5 rounded-pill"
             :class="scene === s.key ? 'bg-band-ink' : ''"
             :style="{ backgroundColor: scene === s.key ? undefined : s.swatch }"
           />
@@ -76,12 +76,12 @@ function pick(key: SceneKey): void {
         <span
           v-if="i < scenes.length - 1"
           aria-hidden="true"
-          class="pointer-events-none absolute right-0 top-1/2 h-4 w-px -translate-y-1/2 bg-rule"
+          class="pointer-events-none position-absolute end-0 top-50 h-4 w-px translate-middle-y bg-rule"
         />
       </label>
     </div>
 
-    <div class="mt-5 overflow-hidden rounded-2xl border border-rule bg-paper">
+    <div class="mt-3 overflow-hidden rounded-4 border border-rule bg-paper">
       <Transition mode="out-in" name="scene-fade">
         <img
           :key="selected.key"
@@ -91,7 +91,7 @@ function pick(key: SceneKey): void {
           height="500"
           loading="lazy"
           decoding="async"
-          class="block aspect-[8/5] w-full"
+          class="d-block aspect-[8/5] w-100"
         />
       </Transition>
     </div>

@@ -97,60 +97,60 @@ onBeforeUnmount(() => window.clearInterval(pollTimer));
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
-    <header class="pb-10">
-      <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
-      <h1 class="mt-3 font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-4xl">
+  <div class="mx-auto w-100 max-w-6xl px-3 pb-5 pt-5 px-sm-4 pt-sm-5">
+    <header class="pb-5">
+      <p class="font-mono text-xs text-uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
+      <h1 class="mt-3 font-display text-3xl fw-bold tracking-[-0.02em] text-ink sm:text-4xl">
         {{ t("market.title") }}
       </h1>
       <p class="mt-3 max-w-[65ch] text-muted">{{ t("market.subtitle") }}</p>
     </header>
 
-    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-4 d-flex flex-column gap-3 flex-sm-row align-items-sm-center justify-content-sm-between">
       <input
         v-model="query"
-        class="w-full max-w-xl rounded-lg border border-rule bg-paper-2 px-3.5 py-2 text-sm text-ink placeholder:text-muted transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
+        class="w-100 max-w-xl rounded-3 border border-rule bg-paper-2 px-3.5 py-2 text-sm text-ink placeholder:text-muted transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
         :placeholder="t('market.search')"
         type="search"
       />
       <p class="font-mono text-xs text-muted">{{ t("market.liveNote") }}</p>
     </div>
 
-    <p v-if="error" class="mb-4 font-mono text-sm text-down">{{ error }}</p>
-    <p v-if="watchMsg" class="mb-4 font-mono text-sm text-down">{{ watchMsg }}</p>
+    <p v-if="error" class="mb-3 font-mono text-sm text-down">{{ error }}</p>
+    <p v-if="watchMsg" class="mb-3 font-mono text-sm text-down">{{ watchMsg }}</p>
     <p v-if="loading" class="text-muted">{{ t("news.loading") }}</p>
     <p v-else-if="filtered.length === 0" class="text-muted">{{ t("market.empty") }}</p>
-    <table v-else class="w-full border-collapse text-sm">
+    <table v-else class="w-100 border-collapse text-sm">
       <thead>
-        <tr class="border-b border-rule text-left font-mono text-xs uppercase tracking-[0.2em] text-muted">
-          <th class="py-3 pr-4">{{ t("market.ticker") }}</th>
-          <th class="py-3 pr-4">{{ t("market.company") }}</th>
-          <th class="hidden py-3 pr-4 md:table-cell">{{ t("market.exchange") }}</th>
-          <th class="hidden py-3 pr-4 lg:table-cell">{{ t("market.sector") }}</th>
-          <th class="py-3 pr-4 text-right">{{ t("market.price") }}</th>
-          <th class="py-3 pr-4 text-right">{{ t("market.change") }}</th>
-          <th class="py-3 text-right"><span class="sr-only">Watch</span></th>
+        <tr class="border-bottom border-rule text-start font-mono text-xs text-uppercase tracking-[0.2em] text-muted">
+          <th class="py-3 pe-3">{{ t("market.ticker") }}</th>
+          <th class="py-3 pe-3">{{ t("market.company") }}</th>
+          <th class="d-none py-3 pe-3 d-md-table-cell">{{ t("market.exchange") }}</th>
+          <th class="d-none py-3 pe-3 d-lg-table-cell">{{ t("market.sector") }}</th>
+          <th class="py-3 pe-3 text-end">{{ t("market.price") }}</th>
+          <th class="py-3 pe-3 text-end">{{ t("market.change") }}</th>
+          <th class="py-3 text-end"><span class="sr-only">Watch</span></th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="s in filtered"
           :key="s.ticker"
-          class="cursor-pointer border-b border-rule transition-colors hover:bg-paper-2"
+          class="cursor-pointer border-bottom border-rule transition-colors hover:bg-paper-2"
           @click="router.push(`/stocks/${s.ticker}`)"
         >
-          <td class="py-3 pr-4 font-mono font-semibold tracking-wide text-ink">{{ s.ticker }}</td>
-          <td class="py-3 pr-4 text-muted">{{ s.company_name }}</td>
-          <td class="hidden py-3 pr-4 font-mono text-xs text-muted md:table-cell">{{ s.exchange }}</td>
-          <td class="hidden py-3 pr-4 text-xs text-muted lg:table-cell">{{ s.sector }}</td>
-          <td class="py-3 pr-4 font-mono tabular-nums">{{ fmtPrice(quotes[s.ticker]?.close_price) }}</td>
-          <td class="py-3 pr-4 text-right font-mono tabular-nums" :class="dirClass(changeOf(s.ticker))">
+          <td class="py-3 pe-3 font-mono fw-semibold tracking-wide text-ink">{{ s.ticker }}</td>
+          <td class="py-3 pe-3 text-muted">{{ s.company_name }}</td>
+          <td class="d-none py-3 pe-3 font-mono text-xs text-muted d-md-table-cell">{{ s.exchange }}</td>
+          <td class="d-none py-3 pe-3 text-xs text-muted d-lg-table-cell">{{ s.sector }}</td>
+          <td class="py-3 pe-3 font-mono tabular-nums">{{ fmtPrice(quotes[s.ticker]?.close_price) }}</td>
+          <td class="py-3 pe-3 text-end font-mono tabular-nums" :class="dirClass(changeOf(s.ticker))">
             {{ signed(changeOf(s.ticker)) }}
           </td>
-          <td class="py-3 text-right">
+          <td class="py-3 text-end">
             <button
               type="button"
-              class="rounded-full border px-3 py-1 font-mono text-xs transition-colors duration-150"
+              class="rounded-pill border px-3 py-1 font-mono text-xs transition-colors duration-150"
               :class="
                 watched.has(s.ticker)
                   ? 'border-band bg-band text-band-ink'

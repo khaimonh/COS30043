@@ -6,17 +6,17 @@ defineEmits<{ (e: "update:modelValue", value: string): void }>();
 </script>
 
 <template>
-  <div class="relative">
+  <div class="position-relative">
     <select
       v-bind="$attrs"
-      class="w-full appearance-none rounded-lg border border-rule bg-paper-2 px-3.5 py-2 pr-9 text-sm text-ink transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
+      class="w-100 appearance-none rounded-3 border border-rule bg-paper-2 px-3.5 py-2 pe-5 text-sm text-ink transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
       :value="modelValue"
       @change="$emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
     >
       <slot />
     </select>
     <svg
-      class="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+      class="pointer-events-none position-absolute end-3 top-50 h-4 w-4 translate-middle-y text-muted"
       viewBox="0 0 20 20"
       fill="none"
       stroke="currentColor"

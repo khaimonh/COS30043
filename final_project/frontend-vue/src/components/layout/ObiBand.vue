@@ -52,14 +52,14 @@ function signOut() {
 </script>
 
 <template>
-  <header class="fixed inset-x-0 bottom-0 z-50">
-    <div class="border-t-4 border-band bg-band text-band-ink shadow-float">
-      <div class="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
-        <div class="min-w-0 flex-1 overflow-hidden" role="marquee" aria-label="Live quotes">
-          <div class="ticker-marquee flex w-max items-center gap-9 whitespace-nowrap py-1 font-mono text-[13px]">
+  <header class="sticky-top z-3">
+    <div class="border-top border-4 border-band bg-band text-band-ink shadow-float">
+      <div class="mx-auto d-flex h-16 max-w-6xl align-items-center gap-3 px-3 px-sm-4">
+        <div class="min-w-0 flex-grow-1 overflow-hidden" role="marquee" aria-label="Live quotes">
+          <div class="ticker-marquee d-flex w-max align-items-center gap-5 whitespace-nowrap py-1 font-mono text-[13px]">
             <template v-for="dup in 2" :key="dup">
-              <span v-for="q in quotes" :key="q.symbol + dup" class="flex items-baseline gap-2">
-                <span class="font-semibold tracking-wide">{{ q.symbol }}</span>
+              <span v-for="q in quotes" :key="q.symbol + dup" class="d-flex align-items-baseline gap-2">
+                <span class="fw-semibold tracking-wide">{{ q.symbol }}</span>
                 <span class="text-band-ink">{{ q.price }}</span>
                 <span :class="q.chg >= 0 ? 'text-up-bright' : 'text-down-bright'">
                   {{ q.chg >= 0 ? "+" : "−" }}{{ Math.abs(q.chg) }}
@@ -69,13 +69,13 @@ function signOut() {
           </div>
         </div>
 
-        <nav class="hidden items-center gap-1 lg:flex" aria-label="Main">
+        <nav class="d-none align-items-center gap-1 d-lg-flex" aria-label="Main">
           <RouterLink
             v-for="link in links"
             :key="link.href"
             :to="link.href"
             :class="[
-              'rounded-full px-3 py-1.5 font-mono text-sm tracking-wide transition-colors duration-150',
+              'rounded-pill px-3 py-1.5 font-mono text-sm tracking-wide transition-colors duration-150',
               isActive(link.href) ? 'bg-paper text-ink' : 'text-band-ink hover:bg-band-2',
             ]"
           >
@@ -83,14 +83,14 @@ function signOut() {
           </RouterLink>
         </nav>
 
-        <div class="hidden items-center gap-2 lg:flex">
-          <div v-if="user" class="hidden xl:block">
+        <div class="d-none align-items-center gap-2 d-lg-flex">
+          <div v-if="user" class="d-none d-xl-block">
             <span class="max-w-[10rem] truncate font-mono text-xs text-band-muted">{{ user.full_name }}</span>
           </div>
           <button
             v-if="user"
             type="button"
-            class="rounded-full border border-band-ink/30 px-3 py-1 font-mono text-xs text-band-ink transition-colors duration-150 hover:bg-band-2"
+            class="rounded-pill bg-transparent border border-band-ink/30 px-3 py-1 font-mono text-xs text-band-ink transition-colors duration-150 hover:bg-band-2"
             @click="signOut"
           >
             {{ t("nav.signOut") }}
@@ -98,21 +98,21 @@ function signOut() {
           <RouterLink
             v-else
             to="/login"
-            class="rounded-full border border-band-ink/30 px-3 py-1 font-mono text-xs text-band-ink transition-colors duration-150 hover:bg-band-2"
+            class="rounded-pill bg-transparent border border-band-ink/30 px-3 py-1 font-mono text-xs text-band-ink transition-colors duration-150 hover:bg-band-2"
           >
             {{ t("nav.login") }}
           </RouterLink>
         </div>
 
-        <div class="hidden items-center gap-0.5 rounded-full border border-band-ink/30 p-0.5 lg:flex">
+        <div class="d-none align-items-center gap-0.5 rounded-pill border border-band-ink/30 p-0.5 d-lg-flex">
           <button
             v-for="l in langs"
             :key="l"
             type="button"
             :aria-pressed="lang === l"
             :class="[
-              'rounded-full px-3 py-1 font-mono text-xs transition-colors duration-150',
-              lang === l ? 'bg-paper text-ink' : 'text-band-ink hover:text-paper',
+              'rounded-pill px-3 py-1 font-mono text-xs transition-colors duration-150',
+              lang === l ? 'bg-paper text-ink' : 'bg-transparent text-band-ink hover:text-paper',
             ]"
             @click="setLang(l)"
           >
@@ -120,7 +120,7 @@ function signOut() {
           </button>
         </div>
 
-        <div class="hidden h-10 items-stretch gap-6 2xl:flex" aria-hidden="true">
+        <div class="d-none h-10 overflow-hidden align-items-stretch gap-4 d-xxl-flex" aria-hidden="true">
           <span
             v-for="line in credits"
             :key="line"
@@ -133,7 +133,7 @@ function signOut() {
 
         <button
           type="button"
-          class="grid h-9 w-9 place-items-center rounded-full text-band-ink transition-colors duration-150 hover:bg-band-2 lg:hidden"
+          class="d-flex bg-transparent h-9 w-9 align-items-center justify-content-center rounded-pill text-band-ink transition-colors duration-150 hover:bg-band-2 d-lg-none"
           :aria-expanded="open"
           aria-label="Toggle menu"
           @click="open = !open"
@@ -148,29 +148,29 @@ function signOut() {
 
     <nav
       v-if="open"
-      class="absolute bottom-full left-4 right-4 rounded-t-lg border-4 border-b-0 border-band bg-paper p-3 shadow-float lg:hidden"
+      class="position-absolute top-100 start-4 end-4 rounded-top-3 border-4 border-bottom-0 border-band bg-paper p-3 shadow-float d-lg-none"
       aria-label="Mobile"
     >
-      <div class="flex flex-col gap-1">
+      <div class="d-flex flex-column gap-1">
         <RouterLink
           v-for="link in links"
           :key="link.href"
           :to="link.href"
-          class="rounded-full px-4 py-2.5 font-mono text-sm tracking-wide"
-          :class="isActive(link.href) ? 'bg-paper-2 font-semibold text-ink' : 'text-muted'"
+          class="rounded-pill px-3 py-2.5 font-mono text-sm tracking-wide"
+          :class="isActive(link.href) ? 'bg-paper-2 fw-semibold text-ink' : 'text-muted'"
           @click="open = false"
         >
           {{ t(link.key) }}
         </RouterLink>
       </div>
-      <div class="mt-3 flex flex-wrap items-center gap-2 border-t border-rule pt-3">
-        <div class="flex items-center gap-0.5 rounded-full border border-rule p-0.5">
+      <div class="mt-3 d-flex flex-wrap align-items-center gap-2 border-top border-rule pt-3">
+        <div class="d-flex align-items-center gap-0.5 rounded-pill border border-rule p-0.5">
           <button
             v-for="l in langs"
             :key="l"
             type="button"
-            class="rounded-full px-4 py-2 font-mono text-sm"
-            :class="lang === l ? 'bg-band text-band-ink' : 'text-muted'"
+            class="rounded-pill px-3 py-2 font-mono text-sm"
+            :class="lang === l ? 'bg-band text-band-ink' : 'bg-transparent text-muted'"
             @click="setLang(l)"
           >
             {{ l.toUpperCase() }}
@@ -179,7 +179,7 @@ function signOut() {
         <button
           v-if="user"
           type="button"
-          class="rounded-full border border-rule px-4 py-2 font-mono text-sm text-muted"
+          class="rounded-pill border border-rule px-3 py-2 font-mono text-sm text-muted"
           @click="signOut"
         >
           {{ t("nav.signOut") }}
@@ -187,7 +187,7 @@ function signOut() {
         <RouterLink
           v-else
           to="/login"
-          class="rounded-full border border-rule px-4 py-2 font-mono text-sm text-muted"
+          class="rounded-pill border border-rule px-3 py-2 font-mono text-sm text-muted"
           @click="open = false"
         >
           {{ t("nav.login") }}

@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import "@fontsource/archivo/400.css";
 import "@fontsource/archivo/500.css";

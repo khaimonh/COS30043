@@ -110,72 +110,72 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-6xl px-4 pb-20 pt-10 sm:px-6 sm:pt-14">
-    <header class="pb-10">
-      <p class="font-mono text-xs uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
-      <h1 class="mt-3 font-display text-3xl font-bold tracking-[-0.02em] text-ink sm:text-4xl">
+  <div class="mx-auto w-100 max-w-6xl px-3 pb-5 pt-5 px-sm-4 pt-sm-5">
+    <header class="pb-5">
+      <p class="font-mono text-xs text-uppercase tracking-[0.25em] text-muted">{{ t("brand.name") }}</p>
+      <h1 class="mt-3 font-display text-3xl fw-bold tracking-[-0.02em] text-ink sm:text-4xl">
         {{ t("nav.watchlist") }}
       </h1>
       <p class="mt-3 max-w-[65ch] text-muted">{{ t("watch.subtitle") }}</p>
     </header>
 
-    <p v-if="msg" class="mb-4 font-mono text-sm text-down">{{ msg }}</p>
+    <p v-if="msg" class="mb-3 font-mono text-sm text-down">{{ msg }}</p>
 
-    <form class="mb-8 flex flex-col gap-3 rounded-2xl border border-rule bg-paper-2 p-6 sm:flex-row sm:items-end" @submit.prevent="addEntry">
-      <label class="flex flex-col gap-1.5 sm:max-w-[14rem]">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("watch.addTicker") }}</span>
+    <form class="mb-5 d-flex flex-column gap-3 rounded-4 border border-rule bg-paper-2 p-4 flex-sm-row align-items-sm-end" @submit.prevent="addEntry">
+      <label class="d-flex flex-column gap-1.5 sm:max-w-[14rem]">
+        <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("watch.addTicker") }}</span>
         <Input v-model="addTicker" list="stock-tickers" :placeholder="t('watch.tickerPlaceholder')" required />
         <datalist id="stock-tickers">
           <option v-for="s in stocks" :key="s.ticker" :value="s.ticker">{{ s.company_name }}</option>
         </datalist>
       </label>
-      <label class="flex flex-col gap-1.5">
-        <span class="font-mono text-xs uppercase tracking-[0.2em] text-muted">{{ t("watch.addTarget") }}</span>
+      <label class="d-flex flex-column gap-1.5">
+        <span class="font-mono text-xs text-uppercase tracking-[0.2em] text-muted">{{ t("watch.addTarget") }}</span>
         <Input v-model="addTarget" type="number" min="0" step="0.01" :placeholder="t('watch.optional')" />
       </label>
       <Button :disabled="busy" class="sm:mb-0.5">{{ t("watch.addButton") }}</Button>
     </form>
 
     <p v-if="entries.length === 0" class="text-muted">{{ t("watch.empty") }}</p>
-    <table v-else class="w-full border-collapse text-sm">
+    <table v-else class="w-100 border-collapse text-sm">
       <thead>
-        <tr class="border-b border-rule text-left font-mono text-xs uppercase tracking-[0.2em] text-muted">
-          <th class="py-3 pr-4">{{ t("market.ticker") }}</th>
-          <th class="hidden py-3 pr-4 md:table-cell">{{ t("market.company") }}</th>
-          <th class="py-3 pr-4 text-right">{{ t("watch.current") }}</th>
-          <th class="py-3 pr-4 text-right">{{ t("watch.target") }}</th>
-          <th class="hidden py-3 pr-4 text-right lg:table-cell">{{ t("watch.gap") }}</th>
-          <th class="hidden py-3 pr-4 md:table-cell">{{ t("watch.added") }}</th>
-          <th class="py-3 text-right"><span class="sr-only">Remove</span></th>
+        <tr class="border-bottom border-rule text-start font-mono text-xs text-uppercase tracking-[0.2em] text-muted">
+          <th class="py-3 pe-3">{{ t("market.ticker") }}</th>
+          <th class="d-none py-3 pe-3 d-md-table-cell">{{ t("market.company") }}</th>
+          <th class="py-3 pe-3 text-end">{{ t("watch.current") }}</th>
+          <th class="py-3 pe-3 text-end">{{ t("watch.target") }}</th>
+          <th class="d-none py-3 pe-3 text-end d-lg-table-cell">{{ t("watch.gap") }}</th>
+          <th class="d-none py-3 pe-3 d-md-table-cell">{{ t("watch.added") }}</th>
+          <th class="py-3 text-end"><span class="sr-only">Remove</span></th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="e in entries" :key="e.watchlist_id" class="border-b border-rule">
-          <td class="py-3 pr-4">
-            <RouterLink :to="`/stocks/${e.ticker}`" class="font-mono font-semibold text-ink hover:text-band">{{ e.ticker }}</RouterLink>
+        <tr v-for="e in entries" :key="e.watchlist_id" class="border-bottom border-rule">
+          <td class="py-3 pe-3">
+            <RouterLink :to="`/stocks/${e.ticker}`" class="font-mono fw-semibold text-ink hover:text-band">{{ e.ticker }}</RouterLink>
           </td>
-          <td class="hidden py-3 pr-4 text-muted md:table-cell">{{ e.company_name }}</td>
-          <td class="py-3 pr-4 text-right font-mono">{{ fmtPrice(currentOf(e)) }}</td>
-          <td class="py-3 pr-4 text-right">
-            <span class="inline-flex items-center gap-2">
+          <td class="d-none py-3 pe-3 text-muted d-md-table-cell">{{ e.company_name }}</td>
+          <td class="py-3 pe-3 text-end font-mono">{{ fmtPrice(currentOf(e)) }}</td>
+          <td class="py-3 pe-3 text-end">
+            <span class="d-inline-flex align-items-center gap-2">
               <input
                 :value="fmtTarget(e)"
                 type="number"
                 min="0"
                 step="0.01"
-                class="w-24 rounded-lg border border-rule bg-paper-2 px-2 py-1 font-mono text-xs text-ink transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
+                class="w-24 rounded-3 border border-rule bg-paper-2 px-2 py-1 font-mono text-xs text-ink transition-colors duration-150 hover:border-muted/60 focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-focus"
                 @change="setTarget(e, $event)"
               />
             </span>
           </td>
-          <td class="hidden py-3 pr-4 text-right font-mono lg:table-cell" :class="dirClass(distance(e))">
+          <td class="d-none py-3 pe-3 text-end font-mono d-lg-table-cell" :class="dirClass(distance(e))">
             {{ signed((distance(e) ?? 0) / 1000) }}
           </td>
-          <td class="hidden py-3 pr-4 font-mono text-xs text-muted md:table-cell">{{ fmtShortDate(e.created_at) }}</td>
-          <td class="py-3 text-right">
+          <td class="d-none py-3 pe-3 font-mono text-xs text-muted d-md-table-cell">{{ fmtShortDate(e.created_at) }}</td>
+          <td class="py-3 text-end">
             <button
               type="button"
-              class="rounded-full border border-rule px-3 py-1 font-mono text-xs text-muted transition-colors hover:border-down hover:text-down"
+              class="rounded-pill border border-rule px-3 py-1 font-mono text-xs text-muted transition-colors hover:border-down hover:text-down"
               @click="remove(e)"
             >
               {{ t("stock.removeWatch") }}
