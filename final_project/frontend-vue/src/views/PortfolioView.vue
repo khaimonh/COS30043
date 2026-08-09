@@ -63,7 +63,6 @@ async function loadBanks() {
   try {
     banks.value = await api<BankAccount[]>("/bank-accounts");
   } catch {
-    /* optional */
   }
 }
 

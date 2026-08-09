@@ -44,7 +44,6 @@ export async function api<T>(
       const body = await res.json();
       detail = body.detail ?? detail;
     } catch {
-      /* keep statusText */
     }
     throw new ApiError(res.status, String(detail));
   }

@@ -35,7 +35,6 @@ async function loadQuotes() {
   try {
     quotes.value = await api<Record<string, Quote | null>>("/stocks/quotes");
   } catch {
-    /* stale quotes are fine */
   }
 }
 
@@ -45,7 +44,6 @@ async function loadWatchlist() {
     const list = await api<{ ticker: string }[]>("/watchlist");
     watched.value = new Set(list.map((w) => w.ticker));
   } catch {
-    /* ignore */
   }
 }
 

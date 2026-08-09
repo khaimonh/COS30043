@@ -63,7 +63,6 @@ class User(Base):
     watchlists: Mapped[list["Watchlist"]] = relationship(back_populates="user")
 
 
-# every user will have these
 class Portfolio(Base):
     __tablename__ = "portfolio"
 
@@ -168,7 +167,6 @@ class Stock(Base):
     listed: Mapped[bool] = mapped_column(
         nullable=False, default=True, server_default="true"
     )
-    # Relationships
     holdings: Mapped[list["Holding"]] = relationship(back_populates="stock")
     orders: Mapped[list["Order"]] = relationship(back_populates="stock")
     price_history: Mapped[list["PriceHistory"]] = relationship(

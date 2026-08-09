@@ -30,7 +30,6 @@ async function loadStocks() {
   try {
     stocks.value = await api<Stock[]>("/stocks");
   } catch {
-    /* ignore */
   }
 }
 

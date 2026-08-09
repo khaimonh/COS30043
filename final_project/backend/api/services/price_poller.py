@@ -100,9 +100,7 @@ class PricePoller:
             await asyncio.sleep(COLD_POLL_INTERVAL_SECONDS)
 
     async def _cold_sweep(self):
-        # ponytail: covers every listed ticker so the market grid isn't empty;
-        # Redis-only (no PriceHistory write) — persisting 1730 x every 5min
-        # would add ~144k rows/day to Supabase.
+        # Redis-only (no PriceHistory write) — persisting every ticker would add ~144k rows/day
         async with AsyncSessionLocal() as session:
             tickers = (
                 await session.execute(select(Stock.ticker).where(Stock.listed == True))

@@ -81,7 +81,6 @@ async function loadWatchStatus() {
     watchEntry.value = list.find((w) => w.ticker === ticker.value) ?? null;
     if (watchEntry.value) targetPrice.value = watchEntry.value.target_price ? String((num(watchEntry.value.target_price) ?? 0) / 1000) : "";
   } catch {
-    /* ignore */
   }
 }
 

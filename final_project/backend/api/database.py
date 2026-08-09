@@ -9,7 +9,7 @@ load_dotenv(override=True)
 SQLALCHEMY_DATABASE_URL = os.getenv("SQL_ALCHEMY_DATABASE_URL")
 ASYNC_DATABASE_URL = os.getenv("ASYNC_DATABASE_URL")
 
-# ponytail: Supabase pooler caps at 15 conns/session; keep sync+async pools under it
+# Supabase pooler caps at 15 conns/session; keep sync+async pools under it
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     pool_size=4,
