@@ -4,7 +4,7 @@
     "builder": "DOCKERFILE",
     "dockerfilePath": "Dockerfile",
     "args": {
-      "VITE_API_URL": "frontend-production-1e18.up.railway.app"
+      "VITE_API_URL": "cos30043-production.up.railway.app"
     }
   },
   "deploy": {
