@@ -24,15 +24,15 @@ async def lifespan(app):
 
 app = FastAPI(lifespan=lifespan)
 
-cors_env = os.getenv("CORS_ORIGINS", "")
-origins = [
-    origin.strip().strip('"').strip("'")
-    for origin in cors_env.split(",")
-    if origin
-]
+# cors_env = os.getenv("CORS_ORIGINS", "")
+# origins = [
+#     origin.strip().strip('"').strip("'")
+#     for origin in cors_env.split(",")
+#     if origin
+# ]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["https://fluxus-app.up.railway.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
