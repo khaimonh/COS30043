@@ -1,0 +1,10 @@
+.venv
+.git
+node_modules
+**/node_modules
+**/dist
+*.png
+*.svg
+*.drawio
+.DS_Store
+.serena
