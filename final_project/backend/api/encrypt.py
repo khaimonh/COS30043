@@ -11,7 +11,7 @@ def _load_key() -> bytes:
     key_hex = os.getenv("ENCRYPTION_KEY")
     if not key_hex:
         raise RuntimeError(
-            "ENCRYPTION_KEY is not set. Run `python -m utils.init_encryption_key`."
+            "ENCRYPTION_KEY is not set."
         )
     key = bytes.fromhex(key_hex)
     if len(key) != 16:

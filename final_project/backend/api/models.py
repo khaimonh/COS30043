@@ -1,7 +1,7 @@
 from decimal import Decimal
 from typing import Optional
 
-from utils.models.encrypt import EncryptedString
+from api.encrypt import EncryptedString
 import uuid
 import enum
 

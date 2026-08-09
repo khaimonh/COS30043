@@ -8,3 +8,5 @@ node_modules
 *.drawio
 .DS_Store
 .serena
+__pycache__
+*.pyc
