@@ -11,7 +11,7 @@ from api.deps import db_dependency_async, admin_dependency
 from api.services.stock_service import (
     upsert_stocks, fetch_stocks_from_vnstock,
 )
-from api.services.redis_service import get_redis, get_latest_history, get_latest_history_batch
+from api.services.redis_service import get_redis, get_latest_history, get_latest_history_batch, is_valid_close
 from api.models import Stock, PriceHistory
 
 load_dotenv()
@@ -52,15 +52,17 @@ async def get_all_quotes(db: db_dependency_async):
     result = {}
     missing = []
     for (ticker, stock_id), raw in zip(stocks, raw_values):
+        payload = None
         if raw is not None:
             try:
                 payload = json.loads(raw)
-                timestamp = payload.get("timestamp")
-                age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
-                result[ticker] = {**payload, "age_ms": age_ms}
-                continue
             except (TypeError, ValueError):
-                pass
+                payload = None
+        if payload is not None and is_valid_close(payload.get("close_price")):
+            timestamp = payload.get("timestamp")
+            age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
+            result[ticker] = {**payload, "age_ms": age_ms}
+            continue
         missing.append(stock_id)
         result[ticker] = None
     if missing:
@@ -90,7 +92,7 @@ async def get_quote(ticker: str, db: db_dependency_async):
             payload = json.loads(cached)
         except (TypeError, ValueError):
             payload = None
-        if payload:
+        if payload is not None and is_valid_close(payload.get("close_price")):
             timestamp = payload.get("timestamp")
             age_ms = (int(time.time() * 1000) - timestamp) if timestamp else None
             return {**payload, "age_ms": age_ms}

@@ -33,6 +33,20 @@ def get_redis_sync() -> redis.Redis:
     return _sync_client
 
 
+def is_valid_close(close) -> bool:
+    """A close price is usable only if it's a positive number.
+
+    0 / "0" / "0.0" appear when vnstock has no live quote (market closed),
+    which is treated as a failed quote rather than a real price of zero.
+    """
+    if close is None:
+        return False
+    try:
+        return float(close) > 0
+    except (TypeError, ValueError):
+        return False
+
+
 async def get_cached_quote(ticker: str, db=None, stock_id=None) -> dict | None:
     """Read the cached quote JSON, falling back to the latest PriceHistory row.
 
@@ -46,9 +60,11 @@ async def get_cached_quote(ticker: str, db=None, stock_id=None) -> dict | None:
         cached = None
     if cached:
         try:
-            return json.loads(cached)
+            payload = json.loads(cached)
         except Exception:
-            pass
+            payload = None
+        if payload is not None and is_valid_close(payload.get("close_price")):
+            return payload
     if db is None or stock_id is None:
         return None
     price, recorded_at = get_latest_history(db, stock_id)

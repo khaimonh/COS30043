@@ -7,7 +7,7 @@ from sqlalchemy import select
 
 from api.database import AsyncSessionLocal
 from api.models import Stock
-from api.services.redis_service import get_redis, get_latest_history_batch
+from api.services.redis_service import get_redis, get_latest_history_batch, is_valid_close
 
 router = APIRouter(tags=["ws"])
 
@@ -22,14 +22,16 @@ async def _snapshot(tickers: list[str]) -> dict:
     result: dict = {}
     missing: list[str] = []
     for t, raw in zip(tickers, raw_values):
+        payload = None
         if raw is not None:
             try:
                 payload = json.loads(raw)
-                ts = payload.get("timestamp")
-                result[t] = {**payload, "age_ms": (now_ms - ts) if ts else None}
-                continue
             except (TypeError, ValueError):
-                pass
+                payload = None
+        if payload is not None and is_valid_close(payload.get("close_price")):
+            ts = payload.get("timestamp")
+            result[t] = {**payload, "age_ms": (now_ms - ts) if ts else None}
+            continue
         result[t] = None
         missing.append(t)
     if missing:
